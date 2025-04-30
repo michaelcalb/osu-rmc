@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="global.css">
+    <link rel="stylesheet" href="settings.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div class="overlay">
+        <div class="settings-alert invisible" id="settings-alert">
+            <div class="warning" id="warning">
+                <i class="bi bi-exclamation-circle"></i><span class="warning-text" id="warning-text"></span>
+            </div>
+        </div>
+        <div class="title-bar">
+            <i class="bi bi-list"></i>
+            <button class="close-button" id="close-settings"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <header class="header">
+            <nav class="h-nav">
+                <button class="nav-button active-nav" id="nav-setup">Setup</button>
+                <button class="nav-button" id="nav-settings">Settings</button>
+            </nav>
+            <a href="https://github.com/michaelcalb/osu-rmc" target="_blank" class="github"><img src="assets/github-mark.svg" alt="github-logo"></a>
+        </header>
+        <hr class="hr">
+        <div class="container" id="container">
+            <div class="setup-content content visible" id="setup-content">
+                <div class="setup-help">
+                    <ol class="setup-ol">
+                        <li>Go to <a href="https://osu.ppy.sh/home/account/edit#oauth" target="_blank" rel="noopener noreferrer" class="link">settings (OAuth)</a></li>
+                        <li>Create a new OAuth application</li>
+                        <ul>
+                            <li>Application Name: <span class="list-span">osu!rmc (or whatever you like)</span></li>
+                            <li>Leave "callback url" empty.</li>
+                        </ul>
+                        <li>Paste the application's info below</li>
+                    </ol>
+                </div>
+                <form class="setup-form" id="setup-form">
+                    <div class="setup-form-box">
+                        <label for="client-id" class="setup-form-label">Client ID</label>
+                        <input type="number" name="client-id" id="client-id" required placeholder="00000" class="setup-form-input num-input">
+                    </div>
+                    <div class="setup-form-box">
+                        <label for="client-secret" class="setup-form-label">Client Secret</label>
+                        <input type="password" name="client-secret" id="client-secret" required placeholder="xxxxxxxxxx" class="setup-form-input">
+                    </div>
+                    <p class="setup-obs">This information is saved locally.<br>This project is fully <a href="https://github.com/michaelcalb/osu-rmc" class="link" target="_blank">open-source</a>.</p>
+                    <input type="submit" value="Submit" class="setup-form-submit">
+                </form>
+            </div>
+            <div class="settings-content content visible" id="settings-content">
+                <label for="rich-presence-checkbox" class="setting-label custom-checkbox" id="rich-presence-label">
+                    <input type="checkbox" name="rich-presence-checkbox" id="rich-presence-checkbox" class="setting-checkbox">
+                    <span class="checkmark"></span>
+                    Discord Rich Presence
+                </label>
+                <label for="port-input" class="setting-label" id="port-label">
+                    Port:
+                    <input type="number" name="port-input" id="port-input" class="port-input num-input" placeholder="">
+                </label>
+                <span class="ily">
+                    made with <i class="bi bi-heart"></i>
+                </span>
+            </div>
+        </div>
+    </div>
+    <script src="settings.js"></script>
+</body>
+</html>

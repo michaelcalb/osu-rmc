@@ -1,0 +1,111 @@
+@import url('https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,100..900;1,100..900&family=Fragment+Mono:ital@0;1&display=swap');
+
+:root {
+    --st-green: #00C774;
+    --rst-red: #FF4B4B;
+    --border-color: #1D2951;
+    --surface-color: #0A0F29;
+    --background-color: #040715;
+    --text-secondary: #505B85;
+    --text-highlight: #6B6BFF;
+    --text-primary: #D3D3FF;
+    --text-body: #E5E5E5;
+    --bm-info-bg: rgba(10, 15, 41, 0.727); /* haha wysi */
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'urbanist', serif;
+}
+
+.overlay {
+    position: absolute;
+    width: 300px;
+    height: 500px;
+    border-radius: 10px;
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+}
+
+.header {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.title-bar {
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.bi-list {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--text-primary);
+    font-size: 20px;
+    opacity: 10%;
+    -webkit-app-region: drag;
+}
+
+.close-button {
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 20px;
+    border: none;
+    background-color: transparent;
+    transition: .3s;
+}
+
+.close-button:hover {
+    color: var(--text-primary);
+    transition: .3s;
+}
+
+.hr {
+    border: 1px solid var(--border-color);
+    border-radius: 2px;
+}
+
+.warning {
+    color: var(--text-body);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    border-radius: 50px;
+    background-color: rgba(255, 0, 0, 0.250);
+}
+
+.warning i {
+    color: red;
+}
+
+.visible {
+    visibility: visible;
+    opacity: 1;
+    transition: .3s;
+}
+
+.invisible {
+    position: absolute;
+    visibility: hidden;
+    opacity: 0;
+    transition: .3s;
+}
+
+.no-drag {
+    -webkit-app-region: no-drag;
+}

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>osu!rmc</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="global.css">
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="results.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div class="rmc-overlay overlay">
+        <header class="header">
+            <div class="h-buttons">
+                <i class="bi bi-list"></i>
+                <button class="h-button rmc-button visible no-drag" id="rmc-button">Start RMC</button>
+                <button class="h-button restart-button invisible no-drag" id="restart-button">
+                    Restart
+                    <span class="bg-fill"></span>
+                </button>
+            </div>
+            <button class="no-drag settings-button" id="settings-button"><i class="bi bi-gear"></i></button>
+        </header>
+        <hr class="hr">
+        <main class="main">
+            <div class="scores-container">
+                <div class="scores" id="fc-score">
+                    <span class="fc">FCs</span>
+                    <span class="counter" id="fc-counter">0</span>
+                </div>
+                <div class="scores" id="skip-score">
+                    <span class="skip">Skips</span>
+                    <span class="counter" id="skip-counter">0</span>
+                </div>
+            </div>
+            <div class="auto-timer-container">
+                <span class="timer auto-timer" id="main-timer">--:--</span>
+                <span class="timer auto-timer" id="cd-timer">-:--</span>
+            </div>
+            <div class="beatmap-container" id="copy-bm-info">
+                <div class="bm-alert invisible" id="bm-alert">
+                    <div class="warning">
+                        <i class="bi bi-exclamation-circle"></i><span id="warning-text"></span>
+                    </div>
+                </div>
+                <div id="rolling-bm" class="rolling-bm invisible">Rolling new beatmap...</div>
+                <a class="current-beatmap" id="bm-url" target="_blank">
+                    <img src="./assets/default-bg.jpg" alt="beatmap background" id="bm-background">
+                    <div class="bm-info-container">
+                        <div class="bm-text-container">
+                            <span class="bm-text" id="bm-title">Title</span>
+                            <span class="bm-text" id="bm-diff">Difficulty</span>
+                        </div>
+                        <div class="bm-icon-container">
+                            <div class="sr-container">
+                                <i class="bi bi-star-fill"></i><span class="bm-icon" id="bm-sr">0.00</span>
+                            </div>
+                            <div class="length-container">
+                                <i class="bi bi-clock-fill"></i><span class="bm-icon" id="bm-length">0:00</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </main>
+        <hr class="hr">
+        <footer class="footer">
+                <button id="skip-button" disabled>Skip Map</button>
+            <div class="rest-timer-container">
+                <span class="timer rest-timer" id="rest-timer">--:--</span>
+                <button id="rest-timer-button" class="rest-timer-frozen">
+                    <i class="bi bi-play-fill" id="rest-play-icon"></i>
+                    <i class="bi bi-pause-fill" id="rest-pause-icon"></i>
+                </button>
+            </div>
+        </footer>
+    </div>
+    <div class="rs-overlay overlay invisible" id="results-screen-container">
+        <div class="title-bar">
+            <i class="bi bi-list"></i>
+            <button class="close-button" id="close-rs"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <h2>Game Over!</h2>
+        <div class="rs-stats rs-box">
+            <h3 class="rs-box-title" id="rs-stats-title">Stats</h3>
+            <div class="rs-stats-list rs-list">
+                <p>FCs: <span id="rs-fcs">0</span></p>
+                <p>Skips: <span id="rs-skips">0</span></p>
+                <p>Pauses: <span id="rs-pauses">0</span></p>
+                <p>SS scores: <span id="rs-ss">0</span></p>
+                <p>Avg acc: <span id="rs-acc">0.00</span>%</p>
+                <p>Total misses: <span id="rs-misses">0</span></p>
+                <p>Total breaks: <span id="rs-breaks">0</span></p>
+            </div>
+        </div>
+        <div class="rs-maps rs-box rs-box-closed">
+            <h3 class="rs-box-title" id="rs-maps-title">Maps <span id="rs-map-counter"></span></h3>
+            <div class="rs-maps-list rs-list" id="rs-map-list">
+            </div>
+        </div>
+    </div>
+    <script src="libs/reconnecting-websocket.min.js"></script>
+    <script src="index.js"></script>
+</body>
+</html>

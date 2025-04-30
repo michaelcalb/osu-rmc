@@ -1,0 +1,110 @@
+.rs-overlay {
+    background-color: var(--background-color);
+    z-index: 1;
+}
+
+.rs-overlay h2 {
+    font-size: 30px;
+    text-align: center;
+}
+
+.rs-overlay h3 {
+    font-size: 25px;
+    color: var(--text-highlight);
+}
+
+.rs-box {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    border-left: 5px solid var(--text-highlight);
+    border-radius: 5px;
+    background-color: var(--surface-color);
+    color: var(--text-body);
+    overflow: hidden;
+    height: 300px;
+    transition: height .3s ease;
+}
+
+.rs-box-closed {
+    height: 50px;
+    transition: height .3s ease;
+}
+
+.rs-box-title {
+    width: 100%;
+    height: 50px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.rs-stats {
+    font-size: 20px;
+}
+
+.rs-list {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 0 10px 10px 10px;
+}
+
+.perf-stat {
+    color: gold;
+    text-shadow: 0 0 5px goldenrod;
+}
+
+.rs-maps-list {
+    gap: 5px;
+    overflow-y: scroll;
+    justify-content: flex-start;
+}
+
+.rs-map {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    height: 50px;
+    border-radius: 10px;
+    overflow: hidden;
+    text-decoration: none;
+    color: var(--text-body);
+    flex-shrink: 0;
+}
+
+.rs-map img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: blur(2px) brightness(50%);
+    transform: scale(1.1);
+    transition: .3s;
+}
+
+.rs-map p {
+    position: relative;
+    padding-left: 10px;
+}
+
+.rs-map:hover img {
+    filter: blur(1px) brightness(75%);
+    transform: scale(1.2);
+    transition: .3s;
+}
+
+.rs-maps-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.rs-maps-list::-webkit-scrollbar-track {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+.rs-maps-list::-webkit-scrollbar-thumb {
+    background: var(--text-secondary);
+    border-radius: 4px;
+}
