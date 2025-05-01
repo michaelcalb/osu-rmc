@@ -17,6 +17,8 @@ osu!rmc is a project I started working on around mid-February 2025 where **you h
 > In order to make osu!rmc work you need to have [Tosu](https://tosu.app) installed.
 * Download the [latest release of osu!rmc](https://github.com/michaelcalb/osu-rmc/releases).
 * Launch Setup.exe.
+* Despite needing Tosu opened to work, you are not supposed to use the dashboard for this game, neither moving its files to the `static` folder.
+* By default, Tosu accepts requests from any `localhost` port. [Follow these steps](#help-tosu-is-not-open) if you're having trouble.
 * After launching the app for the first time, open the settings and follow the setup instructions.
 
 > [!NOTE]
@@ -97,7 +99,14 @@ Here is [what the `saveConfig()` function does](https://github.com/michaelcalb/o
 
 Feel free to read through the rest of the code (There are some smelly spaghetti, especially inside `index.js`. You've been warned).
 
-## 4. Bug report / Feedback 🐛
+## 4. Help
+<details>
+<summary><a name="help-tosu-is-not-open">"Tosu is not open" doesn't go away!</a></summary>
+  
+That's because your Tosu isn't accepting requests from `localhost`. To fix that, open your [dashboard's settings](http://127.0.0.1:24050/?tab=2) and under "Server", include `localhost` in "Allowed IPs". Restart osu!rmc.
+</details>
+
+## 5. Bug report / Feedback 🐛
 If you encounter any bugs or have suggestions, feel free to reach out to me on Discord or osu! DMs. You can also open an issue on this repository if you're familiar with GitHub.
 
 I’m fully aware the code isn’t perfect, this project has been a huge learning experience and I had to pick up a lot along the way. There are definitely many ways it can be improved.
@@ -106,7 +115,7 @@ I’m fully aware the code isn’t perfect, this project has been a huge learnin
 <details>
 <summary>todo</summary>
   
-- [ ] Bot
+- [ ] A bot so i can host it somewhere and make this into a really serious thing
 - [ ] Leaderboards
 - [ ] Filters
 - [ ] RMS
