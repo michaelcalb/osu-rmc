@@ -17,7 +17,7 @@
                 <i class="bi bi-list"></i>
                 <button class="h-button rmc-button visible no-drag" id="rmc-button">Start RMC</button>
                 <button class="h-button restart-button invisible no-drag" id="restart-button">
-                    Restart
+                    Give Up
                     <span class="bg-fill"></span>
                 </button>
             </div>
@@ -67,7 +67,7 @@
         </main>
         <hr class="hr">
         <footer class="footer">
-                <button id="skip-button" disabled>Skip Map</button>
+                <button id="skip-button" disabled>Skip map</button>
             <div class="rest-timer-container">
                 <span class="timer rest-timer" id="rest-timer">--:--</span>
                 <button id="rest-timer-button" class="rest-timer-frozen">
@@ -86,6 +86,7 @@
         <div class="rs-stats rs-box">
             <h3 class="rs-box-title" id="rs-stats-title">Stats</h3>
             <div class="rs-stats-list rs-list">
+                <p>Time: <span id="rs-time" class="timer">00:00</span></p>
                 <p>FCs: <span id="rs-fcs">0</span></p>
                 <p>Skips: <span id="rs-skips">0</span></p>
                 <p>Pauses: <span id="rs-pauses">0</span></p>

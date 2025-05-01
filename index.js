@@ -74,7 +74,13 @@ let currentBeatmapsetId
 let currentBeatmapId
 
 // dom
-window.addEventListener('DOMContentLoaded', () => {    
+window.addEventListener('DOMContentLoaded', () => {
+
+    if (localStorage.getItem('resultsScreen')) {
+        resultsScreen()
+        return
+    }
+
     const savedBeatmap = localStorage.getItem('beatmap')
     if (savedBeatmap) {
         const bm = JSON.parse(savedBeatmap)
@@ -195,9 +201,14 @@ skipButton.addEventListener('click', () => {
 
     if (localStorage.getItem('_skip')) {
         localStorage.removeItem('_skip')
+
+        if (localStorage.getItem('freeSkip')) {
+            skipButton.disabled = false
+            skipButton.textContent = 'Skip map (free skip)'
+        }
     } else {
         localStorage.removeItem('freeSkip')
-        skipButton.textContent = 'Skip Map'
+        skipButton.textContent = 'Skip map'
     }
     
     updateScore('skips')
@@ -239,6 +250,8 @@ settingsButton.addEventListener('click', () => {
 
 closeRs.addEventListener('click', () => {
     resultsScreenContainer.classList.replace('visible', 'invisible')
+    localStorage.clear()
+    location.reload()
 })
 
 statsTitle.addEventListener('click', () => {
@@ -258,8 +271,7 @@ restartButton.addEventListener('mousedown', () => {
     restartButton.classList.add('holding')
 
     holdTimeout = setTimeout(() => {
-        localStorage.clear()
-        location.reload()
+        resultsScreen()
     }, 2000)
 })
 
@@ -424,6 +436,9 @@ function reduceTimer(timerEl, timerKey, timerSecs) {
                 gameOver = true
                 skipButton.disabled = true
                 restTimerButton.disabled = true
+                if (!results && !played) {
+                    resultsScreen()
+                }
             }
         } else {
             timerSecs--
@@ -449,18 +464,20 @@ function updateScore(key) {
 }
 
 function resultsScreen() {
-    skipButton.disabled = true
-    restTimerButton.disabled = true
-
-    const finalFcs = localStorage.getItem('fcs') || 0;
-    const finalSkips = localStorage.getItem('skips') || 0;
-    const finalPauses = localStorage.getItem('pauses') || 0;
-    const finalSs = localStorage.getItem('ss') || 0;
-    const finalAcc = localStorage.getItem('acc') || 0;
-    const finalMisses = localStorage.getItem('misses') || 0;
-    const finalBreaks = localStorage.getItem('breaks') || 0;
-    const mapList = JSON.parse(localStorage.getItem('beatmapList')) || [];
-
+    localStorage.setItem('resultsScreen', true)
+    currentTimerInterval ? clearInterval(currentTimerInterval) : null
+    results = true
+    const finalTime = localStorage.getItem('mainTimer') || 0
+    const finalFcs = localStorage.getItem('fcs') || 0
+    const finalSkips = localStorage.getItem('skips') || 0
+    const finalPauses = localStorage.getItem('pauses') || 0
+    const finalSs = localStorage.getItem('ss') || 0
+    const finalAcc = localStorage.getItem('acc') || 0
+    const finalMisses = localStorage.getItem('misses') || 0
+    const finalBreaks = localStorage.getItem('breaks') || 0
+    const mapList = JSON.parse(localStorage.getItem('beatmapList')) || []
+    
+    const rsTime = document.getElementById('rs-time')
     const rsFcs = document.getElementById('rs-fcs')
     const rsSkips = document.getElementById('rs-skips')
     const rsPauses = document.getElementById('rs-pauses')
@@ -469,7 +486,12 @@ function resultsScreen() {
     const rsMisses = document.getElementById('rs-misses')
     const rsBreaks = document.getElementById('rs-breaks')
 
-    const results = {
+    const stats = {
+        time: {
+            value: finalTime,
+            el: rsTime,
+            perf: 0
+        },
         fcs: {
             value: finalFcs,
             el: rsFcs,
@@ -506,20 +528,25 @@ function resultsScreen() {
         }
     }
 
-    results.ss.perf = results.fcs.value
+    stats.ss.perf = stats.fcs.value
     let perfCounter = 0
     
-    for (const key in results) {
-        results[key].el.textContent = results[key].value
+    for (const key in stats) {
+        stats[key].el.textContent = stats[key].value
 
-        if (results[key].value === results[key].perf) {
-            results[key].el.parentElement.classList.add('perf-stat')
+        if (stats[key].value == stats[key].perf) {
+            stats[key].el.parentElement.classList.add('perf-stat')
             perfCounter++
         }
     }
 
-    if (perfCounter === results.length - 1 && results.fcs.value >= 20) {
-        results.fcs.el.parentElement.classList.add('perf-stat')
+    const elapsedTime = timers.mainTimer.secs - parseInt(stats.time.value)
+    const elapsedMin = Math.floor(elapsedTime / 60)
+    const elapsedSec = elapsedTime % 60
+    stats.time.el.textContent = `${elapsedMin}:${elapsedSec.toString().padStart(2, '0')}`
+
+    if (perfCounter === stats.length - 1 && stats.fcs.value >= 20) {
+        stats.fcs.el.parentElement.classList.add('perf-stat')
     }
 
     const mapCounter = document.getElementById('rs-map-counter')
@@ -575,6 +602,7 @@ let bmFetched = false
 ws.onopen = () => {
     console.log('ws connected')
     bmAlert.classList.replace('visible', 'invisible')
+    rmcButton.disabled = false
 }
 
 ws.onclose = event => {
@@ -585,6 +613,7 @@ ws.onclose = event => {
 ws.onerror = error => {
     console.error('ws error: ', error)
     beatmapAlert('Tosu is not open')
+    rmcButton.disabled = true
 }
 
 async function randomBeatmapChallenge() {
@@ -685,7 +714,7 @@ async function randomBeatmapChallenge() {
                     if (!skipped) {
                         skipButton.disabled = false
                         localStorage.setItem('_skip', true)
-                        skipButton.textContent = 'Skip Map'
+                        skipButton.textContent = 'Skip map'
                         skipped = true
                     }
                 }
@@ -700,15 +729,13 @@ async function randomBeatmapChallenge() {
                 localStorage.getItem('restTimer') <= 0 || localStorage.getItem('mainTimer') <= 0 ? restTimerButton.disabled = true : restTimerButton.disabled = false
             }
 
-            if (localStorage.getItem('freeSkip') && skipButton.textContent === 'Skip Map') {
+            if (localStorage.getItem('freeSkip') && skipButton.textContent === 'Skip map') {
                 skipButton.disabled = false
                 skipButton.textContent = 'Skip map (free skip)'
             }
 
             if (!results && !played && gameOver) {
-                clearInterval(currentTimerInterval)
                 resultsScreen()
-                results = true
             }
         } catch (error) {
             console.error('ws error:', error)
