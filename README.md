@@ -27,13 +27,33 @@ Once you're all set up, click "**Start RMC**". This will roll a random beatmap a
 That means you have **one** minute to download the beatmap (just click on it) and open it in osu!.
 > osu! doesn't allow automatic downloads. That's the only manual step, I promise.
 
-After that, hit `Ctrl + V` in-game to paste the beatmap's name and difficulty in the search bar. Once you start the map, the app automatically switches to the 1-hour timer.
+After that, hit `Ctrl + V` in-game to paste the beatmap's name and difficulty in the search bar. Once you start the beatmap, the app automatically switches to the 1-hour timer.
 
-TODO...
+When you FC the beatmap, the app automatically switches timers and rolls another beatmap for you.
+**Any pass with no misses and no slider breaks counts as an FC, accuracy and slider ends don't matter.**
+
+### Pausing the game
+- You have a 10-minute "rest" timer to pause the game between maps.
+- This timer can't be activated while playing the beatmap.
+
+### Skipping a beatmap
+- You get a **one free skip** per run. Use it whenever you want.
+- Passing the beatmap with an **A-rank** allows you to skip it.
+  - This skip always take priority over the free skip.
+  - You can ignore the skip and keep retrying the beatmap until you FC it.
+ 
+### Keep in mind
+- Spamming the pause button reduces the timers by 1 second per click to prevent exploits.
+- Using the pause button properly rewards you with +1 second, to account for mouse movement.
+- If any timer hits 0, the app automatically switches back to the 1-hour timer.
+- Once the main timer hits 0, the challenge is over.
+- If the timer hits 0 during a beatmap and you FC it, it still counts.
+
+glhf!
 
 ## 3. Under the Hood 
 
-### 3.1 Randomness
+### Randomness
 Since the osu! API (v2) doesn't provide a built-in way to fetch a random beatmap, I had to come up with my own solution.
 <details>
 <summary>Here's what I did</summary>
@@ -58,7 +78,7 @@ As expected, not all genres fill all 200 pages (in fact, none do based on my rou
 > Use the newest ranked beatmapset ID as a limiter and picking a random number to get a beatmapset. Terrible idea, no explanation needed.
 </details>
 
-### 3.2 Client Credentials
+### Client Credentials
 The Client ID and Client Secret are saved in:
   
 ```
