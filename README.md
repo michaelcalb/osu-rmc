@@ -32,6 +32,8 @@ After that, hit `Ctrl + V` in-game to paste the beatmap's name and difficulty in
 When you FC the beatmap, the app automatically switches timers and rolls another beatmap for you.
 **Any pass with no misses and no slider breaks counts as an FC, accuracy and slider ends don't matter.**
 
+**TL;DR: You have 1 hour to FC as many random beatmaps as possible.**
+
 ### Pausing the game
 - You have a 10-minute "rest" timer to pause the game between maps.
 - This timer can't be activated while playing the beatmap.
