@@ -5,7 +5,8 @@
 <div align=center>
 <img src='public/osu-rmc-card.png'>
 </div>
-osu!rmc is a project I started working on around mid-February 2025. It's very similar to Trackmania's RMC, but adapted to make it work well for osu!.
+
+osu!rmc is a project I started working on around mid-February 2025 where **you have 1 hour to FC as many random beatmaps as possible**. It's very similar to Trackmania's RMC, but adapted to make it work well for osu!.
 
 > [!NOTE]
 > This project is not affiliated with osu!
@@ -16,6 +17,8 @@ osu!rmc is a project I started working on around mid-February 2025. It's very si
 > In order to make osu!rmc work you need to have [Tosu](https://tosu.app) installed.
 * Download the [latest release of osu!rmc](https://github.com/michaelcalb/osu-rmc/releases).
 * Launch Setup.exe.
+* Despite needing Tosu opened to work, you are not supposed to use the dashboard for this game, neither moving its files to the `static` folder.
+* By default, Tosu accepts requests from any `localhost` port. [Follow these steps](#help-tosu-is-not-open) if you're having trouble.
 * After launching the app for the first time, open the settings and follow the setup instructions.
 
 > [!NOTE]
@@ -48,6 +51,8 @@ When you FC the beatmap, the app automatically switches timers and rolls another
 - If any timer hits 0, the app automatically switches back to the 1-hour timer.
 - Once the main timer hits 0, the challenge is over.
 - If the timer hits 0 during a beatmap and you FC it, it still counts.
+
+Besides doing all I could to make this game "unexploitable" you can still just edit all the code and run it. So don't bother taking this to the competitive side (yet) and just try to have fun in osu! for once, please.
 
 glhf!
 
@@ -92,9 +97,16 @@ Here is [the exact endpoint where your client credentials are sent](https://gith
 
 Here is [what the `saveConfig()` function does](https://github.com/michaelcalb/osu-rmc/blob/main/config.js#L36).
 
-Beyond that, there's not much more I can do to prove I'm not stealing your info, so feel free to read through the rest of the code (There are some smelly spaghetti, especially inside `index.js`. You've been warned).
+Feel free to read through the rest of the code (There are some smelly spaghetti, especially inside `index.js`. You've been warned).
 
-## 4. Bug report / Feedback 🐛
+## 4. Help
+<details>
+<summary><a name="help-tosu-is-not-open">"Tosu is not open" doesn't go away!</a></summary>
+  
+That's because your Tosu isn't accepting requests from `localhost`. To fix that, open your [dashboard's settings](http://127.0.0.1:24050/?tab=2) and under "Allowed IPs" include `localhost`. Restart osu!rmc.
+</details>
+
+## 5. Bug report / Feedback 🐛
 If you encounter any bugs or have suggestions, feel free to reach out to me on Discord or osu! DMs. You can also open an issue on this repository if you're familiar with GitHub.
 
 I’m fully aware the code isn’t perfect, this project has been a huge learning experience and I had to pick up a lot along the way. There are definitely many ways it can be improved.
@@ -103,7 +115,7 @@ I’m fully aware the code isn’t perfect, this project has been a huge learnin
 <details>
 <summary>todo</summary>
   
-- [ ] Bot
+- [ ] A bot so i can host it somewhere and make this into a really serious thing
 - [ ] Leaderboards
 - [ ] Filters
 - [ ] RMS
