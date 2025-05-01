@@ -194,3 +194,5 @@ ipcMain.on('change-config', (event, configName, configValue) => {
   }
   saveConfig(configChanges)
 })
+
+if (require('electron-squirrel-startup')) app.quit();

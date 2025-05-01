@@ -4,13 +4,15 @@ const { FuseV1Options, FuseVersion } = require('@electron/fuses');
 module.exports = {
   packagerConfig: {
     asar: true,
-    icon: 'public/osu-rmc-logo'
+    icon: 'public/osu-rmc-logo.ico'
   },
   rebuildConfig: {},
   makers: [
     {
       name: '@electron-forge/maker-squirrel',
-      config: {},
+      config: {icon: 'public/osu-rmc-logo.ico',
+        setupIcon: 'public/osu-rmc-logo.ico'
+      },
     },
     {
       name: '@electron-forge/maker-zip',
