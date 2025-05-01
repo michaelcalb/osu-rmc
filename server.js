@@ -80,9 +80,9 @@ async function getAccessToken() {
 
 async function randomBeatmapsetSearch(accessToken, gamemode, bmStatus) {
     // The osu api (v2) doesnt have a built-in way to get a random beatmapset, therefore I came up with this method. If you want to know exactly how it works you can check the README on github or you can just read the code below if you have a basic js knowledge. (Yes, this is not perfect and there is probably a better way to do this, but I honestly couldn't figure it out. Any feedback is always appreciated :D )
-    let randomGenre = Math.floor(Math.random() * 13) + 2
+    let randomGenre = Math.floor(Math.random() * 14) + 1
     while (randomGenre == 8) {
-        randomGenre = Math.floor(Math.random() * 13) + 2
+        randomGenre = Math.floor(Math.random() * 14) + 1
     }
     const randomSort = Math.random() < 0.5 ? 'ranked_desc' : 'ranked_asc'
 
