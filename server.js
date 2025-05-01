@@ -1,7 +1,7 @@
 const express = require('express')
 const axios = require('axios')
 const path = require('path')
-const { loadConfig, saveConfig } = require('./config')
+const { loadConfig, saveConfig } = require('./scripts/config')
 
 const app = express()
 

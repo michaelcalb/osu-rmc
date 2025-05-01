@@ -2,7 +2,7 @@ const { app, BrowserWindow, shell, ipcMain } = require('electron')
 const path = require('path')
 const RPC = require('discord-rpc')
 const { startServer } = require('./server')
-const { loadConfig, saveConfig } = require('./config')
+const { loadConfig, saveConfig } = require('./scripts/config')
 
 const config = loadConfig()
 const PORT = config.port || 3000
