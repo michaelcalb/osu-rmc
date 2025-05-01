@@ -5,7 +5,8 @@
 <div align=center>
 <img src='public/osu-rmc-card.png'>
 </div>
-osu!rmc is a project I started working on around mid-February 2025. It's very similar to Trackmania's RMC, but adapted to make it work well for osu!.
+
+osu!rmc is a project I started working on around mid-February 2025 where **you have 1 hour to FC as many random beatmaps as possible**. It's very similar to Trackmania's RMC, but adapted to make it work well for osu!.
 
 > [!NOTE]
 > This project is not affiliated with osu!
@@ -32,8 +33,6 @@ After that, hit `Ctrl + V` in-game to paste the beatmap's name and difficulty in
 When you FC the beatmap, the app automatically switches timers and rolls another beatmap for you.
 **Any pass with no misses and no slider breaks counts as an FC, accuracy and slider ends don't matter.**
 
-**TL;DR: You have 1 hour to FC as many random beatmaps as possible.**
-
 ### Pausing the game
 - You have a 10-minute "rest" timer to pause the game between maps.
 - This timer can't be activated while playing the beatmap.
@@ -50,6 +49,8 @@ When you FC the beatmap, the app automatically switches timers and rolls another
 - If any timer hits 0, the app automatically switches back to the 1-hour timer.
 - Once the main timer hits 0, the challenge is over.
 - If the timer hits 0 during a beatmap and you FC it, it still counts.
+
+Besides doing all I could to make this game "unexploitable" you can still just edit all the code and run it. So don't bother taking this to the competitive side (yet) and just try to have fun in osu! for once, please.
 
 glhf!
 
