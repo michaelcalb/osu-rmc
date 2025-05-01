@@ -51,7 +51,7 @@ When you FC the beatmap, the app automatically switches timers and rolls another
 
 glhf!
 
-## 3. Under the Hood 
+## 3. Under the Hood ⚙️
 
 ### Randomness
 Since the osu! API (v2) doesn't provide a built-in way to fetch a random beatmap, I had to come up with my own solution.
@@ -94,7 +94,7 @@ Here is [what the `saveConfig()` function does](https://github.com/michaelcalb/o
 
 Beyond that, there's not much more I can do to prove I'm not stealing your info, so feel free to read through the rest of the code (There are some smelly spaghetti, especially inside `index.js`. You've been warned).
 
-## 4. Bug report / Feedback
+## 4. Bug report / Feedback 🐛
 If you encounter any bugs or have suggestions, feel free to reach out to me on Discord or osu! DMs. You can also open an issue on this repository if you're familiar with GitHub.
 
 I’m fully aware the code isn’t perfect, this project has been a huge learning experience and I had to pick up a lot along the way. There are definitely many ways it can be improved.
