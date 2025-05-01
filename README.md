@@ -103,7 +103,7 @@ Feel free to read through the rest of the code (There are some smelly spaghetti,
 <details>
 <summary><a name="help-tosu-is-not-open">"Tosu is not open" doesn't go away!</a></summary>
   
-That's because your Tosu isn't accepting requests from `localhost`. To fix that, open your [dashboard's settings](http://127.0.0.1:24050/?tab=2) and under "Server", include `localhost` in "Allowed IPs". Restart osu!rmc.
+That's because your Tosu isn't accepting requests from `localhost`. To fix that, open your [dashboard's settings](http://127.0.0.1:24050/?tab=2) and under "Allowed IPs" include `localhost`. Restart osu!rmc.
 </details>
 
 ## 5. Bug report / Feedback 🐛
