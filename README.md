@@ -92,7 +92,7 @@ Here is [the exact endpoint where your client credentials are sent](https://gith
 
 Here is [what the `saveConfig()` function does](https://github.com/michaelcalb/osu-rmc/blob/main/config.js#L36).
 
-Beyond that, there's not much more I can do to prove I'm not stealing your info, so feel free to read through the rest of the code (There are some smelly spaghetti, especially inside `index.js`. You've been warned).
+Feel free to read through the rest of the code (There are some smelly spaghetti, especially inside `index.js`. You've been warned).
 
 ## 4. Bug report / Feedback 🐛
 If you encounter any bugs or have suggestions, feel free to reach out to me on Discord or osu! DMs. You can also open an issue on this repository if you're familiar with GitHub.
