@@ -1,3 +1,6 @@
+> [!WARNING]
+> ### I'm remaking this from scratch to include official leaderboards and other gamemodes.
+
 <div align=center>
 
 # osu! Random Map Challenge
