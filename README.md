@@ -114,7 +114,7 @@ I'm aware there are currently 2 bugs involving the skip button and the beatmap d
 
 If you encounter any bugs or have suggestions, feel free to reach out to me on Discord or osu! DMs. You can also open an issue on this repository if you're familiar with GitHub.
 
-I’m fully aware the code isn’t perfect, this project has been a huge learning experience and I had to pick up a lot along the way. There are definitely many ways it can be improved.
+I’m fully aware the code isn’t perfect.
 
 <!--
 <details>
