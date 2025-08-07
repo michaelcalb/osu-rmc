@@ -1,5 +1,5 @@
 > [!WARNING]
-> ### I'm remaking this from scratch to include official leaderboards and other gamemodes.
+> ### I'm remaking this project from scratch to include official leaderboards and other gamemodes. (also it's kinda broken rn)
 
 <div align=center>
 
