@@ -1,5 +1,5 @@
 > [!WARNING]
-> ### I'm remaking this project from scratch to include official leaderboards and other gamemodes. (also it's kinda broken rn)
+> ### This only exists to prove such a thing can exist in osu!. <br> The source-code of the project is not perfect and has flaws. <br> I am remaking everything from scratch, allowing for leaderboards and server-side score validation.
 
 <div align=center>
 
@@ -114,7 +114,7 @@ I'm aware there are currently 2 bugs involving the skip button and the beatmap d
 
 If you encounter any bugs or have suggestions, feel free to reach out to me on Discord or osu! DMs. You can also open an issue on this repository if you're familiar with GitHub.
 
-I’m fully aware the code isn’t perfect.
+I’m fully aware the code isn’t perfect and has many, many flaws.
 
 <!--
 <details>
