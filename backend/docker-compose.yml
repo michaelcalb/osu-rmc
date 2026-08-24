@@ -1,0 +1,21 @@
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: osu-rmc-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: rmc
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in backend/.env}
+      POSTGRES_DB: rmc
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - rmc-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rmc -d rmc"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  rmc-pgdata:
