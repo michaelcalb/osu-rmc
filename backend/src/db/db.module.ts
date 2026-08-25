@@ -1,7 +1,7 @@
 import { Inject, Module, OnModuleDestroy } from '@nestjs/common'
-import { Kysely, PostgresDialect } from 'kysely'
-import { Pool } from 'pg'
+import { Kysely } from 'kysely'
 import type { Database } from './database'
+import { createKysely } from './create-kysely'
 
 export const KYSELY = 'KYSELY'
 
@@ -9,19 +9,7 @@ export const KYSELY = 'KYSELY'
     providers: [
         {
             provide: KYSELY,
-            useFactory: () => {
-                const connectionString = process.env.DATABASE_URL
-
-                if (!connectionString) {
-                    throw new Error('DATABASE_URL is not set')
-                }
-
-                return new Kysely<Database>({
-                    dialect: new PostgresDialect({
-                        pool: new Pool({ connectionString })
-                    })
-                })
-            }
+            useFactory: createKysely
         }
     ],
     exports: [KYSELY]
