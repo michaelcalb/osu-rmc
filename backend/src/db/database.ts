@@ -11,8 +11,6 @@ export interface PoolMapsTable {
     set_id: number
     star_rating: number
     hit_length: number
-    status: number
-    mode: number
     added_in_version: number
     removed_in_version: number | null
     max_combo: number | null
@@ -28,9 +26,6 @@ export interface PoolSetsTable {
     bpm: number | null
     cover_updated_at: Date | null
     nsfw: boolean
-    download_disabled: boolean
-    deleted_at: Date | null
-    active: boolean
 }
 
 export interface Database {

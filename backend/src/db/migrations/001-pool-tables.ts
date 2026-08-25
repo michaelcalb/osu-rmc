@@ -21,9 +21,6 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('bpm', 'double precision')
         .addColumn('cover_updated_at', 'timestamptz')
         .addColumn('nsfw', 'boolean', (col) => col.notNull())
-        .addColumn('download_disabled', 'boolean', (col) => col.notNull())
-        .addColumn('deleted_at', 'timestamptz')
-        .addColumn('active', 'boolean', (col) => col.notNull())
         .execute()
 
     await db.schema
@@ -34,8 +31,6 @@ export async function up(db: Kysely<any>): Promise<void> {
         )
         .addColumn('star_rating', 'double precision', (col) => col.notNull())
         .addColumn('hit_length', 'integer', (col) => col.notNull())
-        .addColumn('status', 'integer', (col) => col.notNull())
-        .addColumn('mode', 'integer', (col) => col.notNull())
         .addColumn('added_in_version', 'integer', (col) =>
             col.notNull().references('pool_versions.id')
         )
