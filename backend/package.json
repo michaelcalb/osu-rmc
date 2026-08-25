@@ -8,6 +8,7 @@
     "scripts": {
         "build": "nest build",
         "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+        "import-pool": "ts-node scripts/import-pool.ts",
         "migrate": "nest build && node dist/db/migrate.js",
         "start": "nest start",
         "start:dev": "nest start --watch",
