@@ -28,7 +28,7 @@ export async function up(db: Kysely<any>): Promise<void> {
 
     await db.schema
         .createTable('pool_maps')
-        .addColumn('map_id', 'integer', (col) => col.primaryKey())
+        .addColumn('map_id', 'integer', (col) => col.notNull())
         .addColumn('set_id', 'integer', (col) =>
             col.notNull().references('pool_sets.beatmapset_id')
         )
@@ -43,12 +43,24 @@ export async function up(db: Kysely<any>): Promise<void> {
             col.references('pool_versions.id')
         )
         .addColumn('max_combo', 'integer')
+        .addPrimaryKeyConstraint('pool_maps_pkey', [
+            'map_id',
+            'added_in_version'
+        ])
         .execute()
 
     await db.schema
         .createIndex('pool_maps_star_rating_idx')
         .on('pool_maps')
         .column('star_rating')
+        .execute()
+    
+    await db.schema
+        .createIndex('pool_maps_open_interval_idx')
+        .on('pool_maps')
+        .column('map_id')
+        .unique()
+        .where(sql.ref('removed_in_version'), 'is', null)
         .execute()
 }
 
