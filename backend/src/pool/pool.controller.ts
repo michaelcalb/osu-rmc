@@ -1,6 +1,8 @@
-import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Query, UseGuards } from '@nestjs/common';
+import { DevRoutesGuard } from '../common/dev-routes.guard';
 import { PoolService } from './pool.service';
 
+@UseGuards(DevRoutesGuard)
 @Controller('pool')
 export class PoolController {
     constructor(private readonly poolService: PoolService) {}

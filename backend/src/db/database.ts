@@ -34,6 +34,7 @@ export type RunStatus =
     | 'validating'
     | 'complete'
     | 'void'
+    | 'abandoned'
 
 export type Board = 'no_mod' | 'free_mod'
 

@@ -91,6 +91,17 @@ export class PoolService {
         })
     }
 
+    async getCurrentVersion(): Promise<number> {
+        const row = await this.db
+            .selectFrom('pool_versions')
+            .select('id')
+            .orderBy('id', 'desc')
+            .limit(1)
+            .executeTakeFirstOrThrow()
+        
+        return row.id
+    }
+
     async resolveRunSequence(version: number, seed: string): Promise<number[]> {
         const poolSize = await this.countMapsInVersion(version)
         const indices = resolveSequence(seed, poolSize)
@@ -98,4 +109,5 @@ export class PoolService {
 
         return maps.map((map) => map.map_id)
     }
+
 }

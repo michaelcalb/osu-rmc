@@ -39,7 +39,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         )
         .addCheckConstraint(
             'runs_status_check',
-            sql`status in ('active', 'pending_final', 'validating', 'complete', 'void')`
+            sql`status in ('active', 'pending_final', 'validating', 'complete', 'void', 'abandoned')`
         )
         .addCheckConstraint(
             'runs_resolved_board_check',
