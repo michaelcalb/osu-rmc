@@ -1,3 +1,13 @@
+export const SEQUENCE_LENGTH = 60
+
+
+
+
+
+
+
+
+
 // ABSOLUTELY DO NOT TOUCH THIS
 // ABSOLUTELY DO NOT TOUCH THIS
 // ABSOLUTELY DO NOT TOUCH THIS
@@ -18,16 +28,6 @@
 // EVERY RUN WILL BECOME UNREPRODUCIBLE AND UNVERIFIABLE
 // EVERY RUN WILL BECOME UNREPRODUCIBLE AND UNVERIFIABLE
 // EVERY RUN WILL BECOME UNREPRODUCIBLE AND UNVERIFIABLE
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -70,8 +70,6 @@ export function createRng(seed: string): () => number {
         return ((t ^ (t >>> 14)) >>> 0) / 4294967296
     }
 }
-
-export const SEQUENCE_LENGTH = 100
 
 export function resolveSequence(
     seed: string,
