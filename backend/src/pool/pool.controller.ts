@@ -20,4 +20,12 @@ export class PoolController {
             at.split(',').map(Number)
         )
     }
+
+    @Get(':version/sequence')
+    sequence(
+        @Param('version', ParseIntPipe) version: number,
+        @Query('seed') seed: string
+    ) {
+        return this.poolService.resolveRunSequence(version, seed)
+    }
 }

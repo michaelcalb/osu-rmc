@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Kysely } from 'kysely';
 import type { Database } from '../db/database';
 import { KYSELY } from '../db/db.module';
+import { resolveSequence } from './seed';
 
 @Injectable()
 export class PoolService {
@@ -73,5 +74,12 @@ export class PoolService {
 
             return row
         })
+    }
+
+    async resolveRunSequence(version: number, seed: string) {
+        const poolSize = await this.countMapsInVersion(version)
+        const indices = resolveSequence(seed, poolSize)
+
+        return this.getMapsAtIndices(version, indices)
     }
 }
