@@ -129,6 +129,25 @@ async function insertNewMaps(
     return result.rowCount ?? 0
 }
 
+async function updateOpenMaps(client: Client): Promise<number> {
+    const result = await client.query(`
+        UPDATE pool_maps p
+        SET star_rating = s.star_rating,
+            hit_length = s.hit_length,
+            max_combo = s.max_combo
+        FROM staging_maps s
+        WHERE p.map_id = s.map_id
+            AND p.removed_in_version IS NULL
+            AND (
+                p.star_rating IS DISTINCT FROM s.star_rating
+                OR p.hit_length IS DISTINCT FROM s.hit_length
+                OR p.max_combo IS DISTINCT FROM s.max_combo
+            )    
+    `)
+
+    return result.rowCount ?? 0
+}
+
 function assertDeltaWithinLimit(
     baseline: number,
     added: number,
@@ -181,9 +200,10 @@ async function main() {
         const baseline = await countOpenMaps(client)
         const removed = await markRemovedMaps(client, version)
         const added = await insertNewMaps(client, version)
+        const updated = await updateOpenMaps(client)
 
         console.log(
-            `maps: ${added} added, ${removed} removed (was ${baseline})`
+            `maps: ${added} added, ${removed} removed, ${updated} updated (was ${baseline})`
         )
 
         assertDeltaWithinLimit(baseline, added, removed)

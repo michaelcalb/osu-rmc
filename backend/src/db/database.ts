@@ -1,4 +1,4 @@
-import type { Generated } from 'kysely'
+import type { Generated, JSONColumnType } from 'kysely'
 
 export interface PoolVersionsTable {
     id: Generated<number>
@@ -28,8 +28,41 @@ export interface PoolSetsTable {
     nsfw: boolean
 }
 
+export type RunStatus =
+    | 'active'
+    | 'pending_final'
+    | 'validating'
+    | 'complete'
+    | 'void'
+
+export type Board = 'no_mod' | 'free_mod'
+
+export interface UsersTable {
+    osu_user_id: number
+    username: string
+}
+
+export interface RunsTable {
+    id: Generated<number>
+    user_id: number
+    seed: string
+    pool_version: number
+    declared_mode: Board
+    resolved_sequence: JSONColumnType<number[]>
+    status: Generated<RunStatus>
+    started_at: Generated<Date>
+    ended_at: Date | null
+    active_elapsed: Generated<number>
+    rest_used: Generated<number>
+    free_skip_used: Generated<boolean>
+    fc_count: number | null
+    resolved_board: Board | null
+}
+
 export interface Database {
     pool_versions: PoolVersionsTable
     pool_maps: PoolMapsTable
     pool_sets: PoolSetsTable
+    users: UsersTable
+    runs: RunsTable
 }

@@ -1,0 +1,60 @@
+import { Kysely, sql } from 'kysely'
+
+export async function up(db: Kysely<any>): Promise<void> {
+    await db.schema
+        .createTable('users')
+        .addColumn('osu_user_id', 'integer', (col) => col.primaryKey())
+        .addColumn('username', 'text', (col) => col.notNull())
+        .execute()
+
+    await db.schema
+        .createTable('runs')
+        .addColumn('id', 'serial', (col) => col.primaryKey())
+        .addColumn('user_id', 'integer', (col) =>
+            col.notNull().references('users.osu_user_id')
+        )
+        .addColumn('seed', 'text', (col) => col.notNull().unique())
+        .addColumn('pool_version', 'integer', (col) =>
+            col.notNull().references('pool_versions.id')
+        )
+        .addColumn('declared_mode', 'text', (col) => col.notNull())
+        .addColumn('resolved_sequence', 'jsonb', (col) => col.notNull())
+        .addColumn('status', 'text', (col) => col.notNull().defaultTo('active'))
+        .addColumn('started_at', 'timestamptz', (col) =>
+            col.notNull().defaultTo(sql`now()`)
+        )
+        .addColumn('ended_at', 'timestamptz')
+        .addColumn('active_elapsed', 'integer', (col) =>
+            col.notNull().defaultTo(0)
+        )
+        .addColumn('rest_used', 'integer', (col) => col.notNull().defaultTo(0))
+        .addColumn('free_skip_used', 'boolean', (col) =>
+            col.notNull().defaultTo(false)
+        )
+        .addColumn('fc_count', 'integer')
+        .addColumn('resolved_board', 'text')
+        .addCheckConstraint(
+            'runs_declared_mode_check',
+            sql`declared_mode in ('no_mod', 'free_mod')`
+        )
+        .addCheckConstraint(
+            'runs_status_check',
+            sql`status in ('active', 'pending_final', 'validating', 'complete', 'void')`
+        )
+        .addCheckConstraint(
+            'runs_resolved_board_check',
+            sql`resolved_board is null or resolved_board in ('no_mod', 'free_mod')`
+        )
+        .execute()
+
+    await db.schema
+        .createIndex('runs_user_id_idx')
+        .on('runs')
+        .column('user_id')
+        .execute()
+}
+
+export async function down(db: Kysely<any>): Promise<void> {
+    await db.schema.dropTable('runs').execute()
+    await db.schema.dropTable('users').execute()
+}
