@@ -1,9 +1,10 @@
 import { ConflictException, HttpException, HttpStatus, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Kysely, sql } from 'kysely';
-import type { Board, Database } from '../db/database';
+import type { Board, Database, RunPhase } from '../db/database';
 import { KYSELY } from '../db/db.module';
 import { PoolService } from '../pool/pool.service';
 import { generateSeed } from '../pool/seed';
+import { bankedElapsed, readClock, type ClockInput } from './clock';
 
 const MAX_STARTS_PER_HOUR = 6
 
@@ -82,7 +83,15 @@ export class RunsService {
     async revealNext(userId: number, runId: number) {
         const run = await this.db
             .selectFrom('runs')
-            .select(['id', 'pool_version', 'resolved_sequence', 'status'])
+            .select([
+                'id',
+                'pool_version',
+                'resolved_sequence',
+                'status',
+                'active_elapsed',
+                'phase',
+                'phase_since'
+            ])
             .where('id', '=', runId)
             .where('user_id', '=', userId)
             .executeTakeFirst()
@@ -93,6 +102,23 @@ export class RunsService {
 
         if (run.status !== 'active') {
             throw new ConflictException(`run is ${run.status}`)
+        }
+
+        const now = new Date()
+        const clock = readClock(run, now)
+
+        if (clock.expired) {
+            await this.db
+                .updateTable('runs')
+                .set({
+                    status: 'pending_final',
+                    active_elapsed: bankedElapsed(run, now),
+                    ended_at: now
+                })
+                .where('id', '=', runId)
+                .execute()
+
+            throw new ConflictException('time expired')
         }
 
         const served = await this.db
@@ -135,6 +161,8 @@ export class RunsService {
                 map_max_combo: map.max_combo
             })
             .execute()
+        
+        await this.settle(runId, run, now, 'download')
 
         return this.getServedMap(runId, seqIndex)
     }
@@ -164,5 +192,54 @@ export class RunsService {
             .where('rm.run_id', '=', runId)
             .where('rm.seq_index', '=', seqIndex)
             .executeTakeFirstOrThrow()
+    }
+
+    private async settle(
+        runId: number,
+        run: ClockInput,
+        now: Date,
+        phase: RunPhase
+    ) {
+        await this.db
+            .updateTable('runs')
+            .set({
+                active_elapsed: bankedElapsed(run, now),
+                phase,
+                phase_since: now
+            })
+            .where('id', '=', runId)
+            .execute()
+    }
+
+    async getRunState(userId: number, runId: number) {
+        const run = await this.db
+            .selectFrom('runs')
+            .select([
+                'id',
+                'status',
+                'fc_count',
+                'active_elapsed',
+                'phase',
+                'phase_since'
+            ])
+            .where('id', '=', runId)
+            .where('user_id', '=', userId)
+            .executeTakeFirst()
+
+        if (!run) {
+            throw new NotFoundException('run not found')
+        }
+
+        const now = new Date()
+        const clock = readClock(run, now)
+
+        return {
+            id: run.id,
+            status: run.status,
+            fcCount: run.fc_count,
+            serverNow: now.toISOString(),
+            mainSecondsLeft: clock.mainSecondsLeft,
+            prepSecondsLeft: clock.prepSecondsLeft
+        }
     }
 }

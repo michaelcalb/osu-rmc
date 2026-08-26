@@ -44,6 +44,8 @@ export interface UsersTable {
     username: string
 }
 
+export type RunPhase = 'download' | 'running'
+
 export interface RunsTable {
     id: Generated<number>
     user_id: number
@@ -55,7 +57,8 @@ export interface RunsTable {
     started_at: Generated<Date>
     ended_at: Date | null
     active_elapsed: Generated<number>
-    rest_used: Generated<number>
+    phase: Generated<RunPhase>
+    phase_since: Generated<Date>
     free_skip_used: Generated<boolean>
     fc_count: number | null
     resolved_board: Board | null

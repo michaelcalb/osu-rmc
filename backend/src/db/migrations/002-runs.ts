@@ -27,7 +27,10 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('active_elapsed', 'integer', (col) =>
             col.notNull().defaultTo(0)
         )
-        .addColumn('rest_used', 'integer', (col) => col.notNull().defaultTo(0))
+        .addColumn('phase', 'text', (col) => col.notNull().defaultTo('download'))
+        .addColumn('phase_since', 'timestamptz', (col) =>
+            col.notNull().defaultTo(sql`now()`)
+        )
         .addColumn('free_skip_used', 'boolean', (col) =>
             col.notNull().defaultTo(false)
         )
@@ -40,6 +43,10 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addCheckConstraint(
             'runs_status_check',
             sql`status in ('active', 'pending_final', 'validating', 'complete', 'void', 'abandoned')`
+        )
+        .addCheckConstraint(
+            'runs_phase_check',
+            sql`phase in ('download', 'running')`
         )
         .addCheckConstraint(
             'runs_resolved_board_check',

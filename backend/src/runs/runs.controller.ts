@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, HttpCode, HttpStatus, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
 import { DevRoutesGuard } from '../common/dev-routes.guard';
 import type { Board } from '../db/database';
 import { RunsService } from './runs.service';
@@ -40,5 +40,10 @@ export class RunsController {
     @Post(':id/reveal')
     reveal(@Param('id', ParseIntPipe) id: number) {
         return this.runsService.revealNext(devUserId(), id)
+    }
+
+    @Get(':id/state')
+    state(@Param('id', ParseIntPipe) id: number) {
+        return this.runsService.getRunState(devUserId(), id)
     }
 }
