@@ -38,6 +38,7 @@ export class PoolService {
                 'set_id',
                 'star_rating',
                 'hit_length',
+                'total_length',
                 'max_combo'
             ])
             .where('map_id', '=', mapId)
@@ -59,6 +60,7 @@ export class PoolService {
                         'set_id',
                         'star_rating',
                         'hit_length',
+                        'total_length',
                         'max_combo',
                         eb
                             .cast<number>(

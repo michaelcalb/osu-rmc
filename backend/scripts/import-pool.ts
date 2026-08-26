@@ -29,6 +29,7 @@ async function createStagingTables(client: Client) {
             set_id integer,
             star_rating double precision,
             hit_length integer,
+            total_length integer,
             max_combo integer
         ) ON COMMIT DROP
     `)
@@ -114,9 +115,9 @@ async function insertNewMaps(
     const result = await client.query(
         `
         INSERT INTO pool_maps (
-            map_id, set_id, star_rating, hit_length, max_combo, added_in_version
+            map_id, set_id, star_rating, hit_length, total_length, max_combo, added_in_version
         )
-        SELECT s.map_id, s.set_id, s.star_rating, s.hit_length, s.max_combo, $1
+        SELECT s.map_id, s.set_id, s.star_rating, s.hit_length, s.total_length, s.max_combo, $1
         FROM staging_maps s
         WHERE NOT EXISTS (
             SELECT 1 FROM pool_maps p
@@ -134,6 +135,7 @@ async function updateOpenMaps(client: Client): Promise<number> {
         UPDATE pool_maps p
         SET star_rating = s.star_rating,
             hit_length = s.hit_length,
+            total_length = s.total_length,
             max_combo = s.max_combo
         FROM staging_maps s
         WHERE p.map_id = s.map_id
@@ -141,6 +143,7 @@ async function updateOpenMaps(client: Client): Promise<number> {
             AND (
                 p.star_rating IS DISTINCT FROM s.star_rating
                 OR p.hit_length IS DISTINCT FROM s.hit_length
+                OR p.total_length IS DISTINCT FROM s.total_length
                 OR p.max_combo IS DISTINCT FROM s.max_combo
             )    
     `)

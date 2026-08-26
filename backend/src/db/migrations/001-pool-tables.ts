@@ -31,6 +31,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         )
         .addColumn('star_rating', 'double precision', (col) => col.notNull())
         .addColumn('hit_length', 'integer', (col) => col.notNull())
+        .addColumn('total_length', 'integer', (col) => col.notNull())
         .addColumn('added_in_version', 'integer', (col) =>
             col.notNull().references('pool_versions.id')
         )

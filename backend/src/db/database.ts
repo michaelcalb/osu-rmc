@@ -11,6 +11,7 @@ export interface PoolMapsTable {
     set_id: number
     star_rating: number
     hit_length: number
+    total_length: number
     added_in_version: number
     removed_in_version: number | null
     max_combo: number | null
@@ -85,6 +86,8 @@ export interface RunMapsTable {
     confirmed: Generated<boolean>
 
     original_star_rating: number
+    hit_length: number
+    total_length: number
     map_max_combo: number | null
 
     statistics: NullableJson<Record<string, number>>

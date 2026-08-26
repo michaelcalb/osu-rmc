@@ -36,4 +36,9 @@ export class RunsController {
     abandon(@Param('id', ParseIntPipe) id: number) {
         return this.runsService.abandonRun(devUserId(), id)
     }
+
+    @Post(':id/reveal')
+    reveal(@Param('id', ParseIntPipe) id: number) {
+        return this.runsService.revealNext(devUserId(), id)
+    }
 }
