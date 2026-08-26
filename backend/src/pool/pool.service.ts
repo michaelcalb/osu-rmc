@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Kysely } from 'kysely';
+import { Kysely, type ExpressionBuilder } from 'kysely';
 import type { Database } from '../db/database';
 import { KYSELY } from '../db/db.module';
 import { resolveSequence } from './seed';
@@ -8,20 +8,41 @@ import { resolveSequence } from './seed';
 export class PoolService {
     constructor(@Inject(KYSELY) private readonly db: Kysely<Database>) {}
 
-    async countMapsInVersion(version: number): Promise<number> {
-        const row = await this.db
-            .selectFrom('pool_maps')
-            .select((eb) => eb.fn.countAll<number>().as('count'))
-            .where('added_in_version', '<=', version)
-            .where((eb) =>
+    private inVersion(version: number) {
+        return (eb: ExpressionBuilder<Database, 'pool_maps'>) =>
+            eb.and([
+                eb('added_in_version', '<=', version),
                 eb.or([
                     eb('removed_in_version', 'is', null),
                     eb('removed_in_version', '>', version)
                 ])
-            )
+
+            ])
+    }
+
+    async countMapsInVersion(version: number): Promise<number> {
+        const row = await this.db
+            .selectFrom('pool_maps')
+            .select((eb) => eb.fn.countAll<number>().as('count'))
+            .where(this.inVersion(version))
             .executeTakeFirstOrThrow()
 
         return Number(row.count)
+    }
+
+    async getMapInVersion(version: number, mapId: number) {
+        return this.db
+            .selectFrom('pool_maps')
+            .select([
+                'map_id',
+                'set_id',
+                'star_rating',
+                'hit_length',
+                'max_combo'
+            ])
+            .where('map_id', '=', mapId)
+            .where(this.inVersion(version))
+            .executeTakeFirst()
     }
 
     async getMapsAtIndices(version: number, indices: number[]) {
@@ -48,13 +69,7 @@ export class PoolService {
                             )
                             .as('idx')
                     ])
-                    .where('added_in_version', '<=', version)
-                    .where((eb) =>
-                        eb.or([
-                            eb('removed_in_version', 'is', null),
-                            eb('removed_in_version', '>', version)
-                        ])
-                    )
+                    .where(this.inVersion(version))
             )
             .selectFrom('numbered')
             .selectAll()
@@ -76,10 +91,11 @@ export class PoolService {
         })
     }
 
-    async resolveRunSequence(version: number, seed: string) {
+    async resolveRunSequence(version: number, seed: string): Promise<number[]> {
         const poolSize = await this.countMapsInVersion(version)
         const indices = resolveSequence(seed, poolSize)
+        const maps = await this.getMapsAtIndices(version, indices)
 
-        return this.getMapsAtIndices(version, indices)
+        return maps.map((map) => map.map_id)
     }
 }

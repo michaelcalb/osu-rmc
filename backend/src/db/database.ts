@@ -59,10 +59,47 @@ export interface RunsTable {
     resolved_board: Board | null
 }
 
+export type MapOutcome = 
+    | 'unjudged'
+    | 'fc'
+    | 'a_skip'
+    | 'free_skip'
+    | 'unplayable'
+    | 'incomplete_final'
+
+export interface APIMod {
+    acronym: string
+    settings?: Record<string, unknown>
+}
+
+type NullableJson<T extends object> = JSONColumnType<T | null, string | null, string | null>
+
+export interface RunMapsTable {
+    run_id: number
+    seq_index: number
+    map_id: number
+    set_id: number
+    served_at: Generated<Date>
+    outcome: Generated<MapOutcome>
+    confirmed: Generated<boolean>
+
+    original_star_rating: number
+    map_max_combo: number | null
+
+    statistics: NullableJson<Record<string, number>>
+    maximum_statistics: NullableJson<Record<string, number>>
+    mods: NullableJson<APIMod[]>
+    confirmed_score_id: string | null
+    score_max_combo: number | null
+    score_started_at: Date | null
+    score_ended_at: Date | null
+}
+
 export interface Database {
     pool_versions: PoolVersionsTable
     pool_maps: PoolMapsTable
     pool_sets: PoolSetsTable
     users: UsersTable
     runs: RunsTable
+    run_maps: RunMapsTable
 }
