@@ -5,6 +5,7 @@ import { KYSELY } from '../db/db.module';
 import { PoolService } from '../pool/pool.service';
 import { generateSeed } from '../pool/seed';
 import { bankedElapsed, readClock, type ClockInput } from './clock';
+import { Cron } from '@nestjs/schedule';
 
 const MAX_STARTS_PER_HOUR = 6
 
@@ -145,6 +146,22 @@ export class RunsService {
         return this.getServedMap(runId, seqIndex)
     }
 
+    private async getCurrentMap(runId: number) {
+        const current = await this.db
+            .selectFrom('run_maps')
+            .select('seq_index')
+            .where('run_id', '=', runId)
+            .orderBy('seq_index', 'desc')
+            .limit(1)
+            .executeTakeFirst()
+
+        if (!current) {
+            return null
+        }
+
+        return this.getServedMap(runId, current.seq_index)
+    }
+
     private async getServedMap(runId: number, seqIndex: number) {
         return this.db
             .selectFrom('run_maps as rm')
@@ -258,8 +275,24 @@ export class RunsService {
             fcCount: run.fc_count,
             serverNow: now.toISOString(),
             mainSecondsLeft: clock.mainSecondsLeft,
-            prepSecondsLeft: clock.prepSecondsLeft
+            prepSecondsLeft: clock.prepSecondsLeft,
+            currentMap: await this.getCurrentMap(run.id)
         }
+    }
+
+    async getCurrentRun(userId: number) {
+        const active = await this.db
+            .selectFrom('runs')
+            .select('id')
+            .where('user_id', '=', userId)
+            .where('status', '=', 'active')
+            .executeTakeFirst()
+
+        if (!active) {
+            return null
+        }
+
+        return this.getRunState(userId, active.id)
     }
 
     async startPlaying(userId: number, runId: number) {
@@ -321,5 +354,22 @@ export class RunsService {
         this.assertActive(run)
 
         await this.finishRun(runId, run, new Date())
+    }
+
+    @Cron('*/5 * * * *')
+    async sweepExpiredRuns() {
+        const now = new Date()
+
+        const active = await this.db
+            .selectFrom('runs')
+            .select(['id', 'active_elapsed', 'phase', 'phase_since'])
+            .where('status', '=', 'active')
+            .execute()
+
+        for (const run of active) {
+            if (await this.expireIfDue(run, now)) {
+                console.log(`run ${run.id} expired by sweep`)
+            }
+        }
     }
 }

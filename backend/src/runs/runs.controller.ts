@@ -82,4 +82,9 @@ export class RunsController {
     end(@Param('id', ParseIntPipe) id: number) {
         return this.runsService.endRun(devUserId(), id)
     }
+
+    @Get('current')
+    current() {
+        return this.runsService.getCurrentRun(devUserId())
+    }
 }
