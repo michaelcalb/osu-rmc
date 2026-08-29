@@ -40,5 +40,8 @@ export function readClock(run: ClockInput, now: Date): ClockSnapshot {
 }
 
 export function bankedElapsed(run: ClockInput, now: Date): number {
-    return Math.round(readClock(run, now).activeElapsed)
+    return Math.min(
+        RUN_LIMIT_SECONDS,
+        Math.round(readClock(run, now).activeElapsed)
+    )
 }

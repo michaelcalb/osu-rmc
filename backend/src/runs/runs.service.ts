@@ -1,6 +1,6 @@
 import { ConflictException, HttpException, HttpStatus, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Kysely, sql } from 'kysely';
-import type { Board, Database, RunPhase } from '../db/database';
+import type { Board, Database, RunPhase, RunStatus } from '../db/database';
 import { KYSELY } from '../db/db.module';
 import { PoolService } from '../pool/pool.service';
 import { generateSeed } from '../pool/seed';
@@ -39,7 +39,7 @@ export class RunsService {
     async abandonRun(userId: number, runId: number) {
         const updated = await this.db
             .updateTable('runs')
-            .set({ status: 'abandoned', ended_at: sql<Date>`now()` })
+            .set({ status: 'abandoned', ended_at: new Date() })
             .where('id', '=', runId)
             .where('user_id', '=', userId)
             .where('status', '=', 'active')
@@ -93,28 +93,9 @@ export class RunsService {
     }
 
     async revealNext(userId: number, runId: number) {
-        const run = await this.db
-            .selectFrom('runs')
-            .select([
-                'id',
-                'pool_version',
-                'resolved_sequence',
-                'status',
-                'active_elapsed',
-                'phase',
-                'phase_since'
-            ])
-            .where('id', '=', runId)
-            .where('user_id', '=', userId)
-            .executeTakeFirst()
+        const run = await this.loadRun(userId, runId)
 
-        if (!run) {
-            throw new NotFoundException('run not found')
-        }
-
-        if (run.status !== 'active') {
-            throw new ConflictException(`run is ${run.status}`)
-        }
+        this.assertActive(run)
 
         const now = new Date()
 
@@ -131,11 +112,7 @@ export class RunsService {
         const seqIndex = Number(served.count)
 
         if (seqIndex >= run.resolved_sequence.length) {
-            await this.db
-                .updateTable('runs')
-                .set({ status: 'pending_final', ended_at: sql<Date>`now()` })
-                .where('id', '=', runId)
-                .execute()
+            await this.finishRun(runId, run, now)
 
             throw new ConflictException('sequence exhausted')
         }
@@ -220,29 +197,24 @@ export class RunsService {
             return false
         }
 
-        await this.db
-            .updateTable('runs')
-            .set({
-                status: 'pending_final',
-                active_elapsed: bankedElapsed(run, now),
-                ended_at: now
-            })
-            .where('id', '=', run.id)
-            .execute()
+        await this.finishRun(run.id, run, now)
 
         return true
     }
 
-    async getRunState(userId: number, runId: number) {
+    private async loadRun(userId: number, runId: number) {
         const run = await this.db
             .selectFrom('runs')
             .select([
                 'id',
                 'status',
+                'pool_version',
+                'resolved_sequence',
+                'free_skip_used',
                 'fc_count',
                 'active_elapsed',
                 'phase',
-                'phase_since'
+                'phase_since',
             ])
             .where('id', '=', runId)
             .where('user_id', '=', userId)
@@ -251,6 +223,30 @@ export class RunsService {
         if (!run) {
             throw new NotFoundException('run not found')
         }
+
+        return run
+    }
+
+    private assertActive(run: { status: RunStatus }) {
+        if (run.status !== 'active') {
+            throw new ConflictException(`run is ${run.status}`)
+        }
+    }
+
+    private async finishRun(runId: number, run: ClockInput, now: Date) {
+        await this.db
+            .updateTable('runs')
+            .set({
+                status: 'pending_final',
+                active_elapsed: bankedElapsed(run, now),
+                ended_at: now
+            })
+            .where('id', '=', runId)
+            .execute()
+    }
+
+    async getRunState(userId: number, runId: number) {
+        const run = await this.loadRun(userId, runId)
 
         const now = new Date()
         const expired = await this.expireIfDue(run, now)
@@ -267,22 +263,7 @@ export class RunsService {
     }
 
     async startPlaying(userId: number, runId: number) {
-        const run = await this.db
-            .selectFrom('runs')
-            .select([
-                'id',
-                'status',
-                'active_elapsed',
-                'phase',
-                'phase_since'
-            ])
-            .where('id', '=', runId)
-            .where('user_id', '=', userId)
-            .executeTakeFirst()
-
-        if (!run) {
-            throw new NotFoundException('run not found')
-        }
+        const run = await this.loadRun(userId, runId)
 
         if (run.status !== 'active' || run.phase !== 'download') {
             return
@@ -296,20 +277,9 @@ export class RunsService {
         runId: number,
         outcome: 'a_skip' | 'free_skip' | 'unplayable'
     ) {
-        const run = await this.db
-            .selectFrom('runs')
-            .select(['id', 'status', 'free_skip_used'])
-            .where('id', '=', runId)
-            .where('user_id', '=', userId)
-            .executeTakeFirst()
+        const run = await this.loadRun(userId, runId)
 
-        if (!run) {
-            throw new NotFoundException('run not found')
-        }
-
-        if (run.status !== 'active') {
-            throw new ConflictException(`run is ${run.status}`)
-        }
+        this.assertActive(run)
 
         if (outcome === 'free_skip' && run.free_skip_used) {
             throw new ConflictException('free skip already used')
@@ -346,31 +316,10 @@ export class RunsService {
     }
 
     async endRun(userId: number, runId: number) {
-        const run = await this.db
-            .selectFrom('runs')
-            .select(['id', 'status', 'active_elapsed', 'phase', 'phase_since'])
-            .where('id', '=', runId)
-            .where('user_id', '=', userId)
-            .executeTakeFirst()
+        const run = await this.loadRun(userId, runId)
 
-        if (!run) {
-            throw new NotFoundException('run not found')
-        }
+        this.assertActive(run)
 
-        if (run.status !== 'active') {
-            throw new ConflictException(`run is ${run.status}`)
-        }
-
-        const now = new Date()
-
-        await this.db
-            .updateTable('runs')
-            .set({
-                status: 'pending_final',
-                active_elapsed: bankedElapsed(run, now),
-                ended_at: now
-            })
-            .where('id', '=', runId)
-            .execute()
+        await this.finishRun(runId, run, new Date())
     }
 }
