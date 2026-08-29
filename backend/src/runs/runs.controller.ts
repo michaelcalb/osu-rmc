@@ -4,6 +4,7 @@ import type { Board } from '../db/database';
 import { RunsService } from './runs.service';
 
 const BOARDS: Board[] = ['no_mod', 'free_mod']
+const SKIP_KINDS = ['a_skip', 'free_skip'] as const
 
 function devUserId(): number {
     const raw = process.env.DEV_USER_ID
@@ -45,5 +46,40 @@ export class RunsController {
     @Get(':id/state')
     state(@Param('id', ParseIntPipe) id: number) {
         return this.runsService.getRunState(devUserId(), id)
+    }
+
+    @Post(':id/playing')
+    @HttpCode(HttpStatus.NO_CONTENT)
+    playing(@Param('id', ParseIntPipe) id: number) {
+        return this.runsService.startPlaying(devUserId(), id)
+    }
+
+    @Post(':id/skip')
+    skip(
+        @Param('id', ParseIntPipe) id: number,
+        @Body('kind') kind: string
+    ) {
+        if (!SKIP_KINDS.includes(kind as (typeof SKIP_KINDS)[number])) {
+            throw new BadRequestException(
+                `kind must be one of: ${SKIP_KINDS.join(', ')}`
+            )
+        }
+        
+        return this.runsService.advanceMap(
+            devUserId(),
+            id,
+            kind as 'a_skip' | 'free_skip'
+        )
+    }
+
+    @Post(':id/unplayable')
+    unplayable(@Param('id', ParseIntPipe) id: number) {
+        return this.runsService.advanceMap(devUserId(), id, 'unplayable')
+    }
+
+    @Post(':id/end')
+    @HttpCode(HttpStatus.NO_CONTENT)
+    end(@Param('id', ParseIntPipe) id: number) {
+        return this.runsService.endRun(devUserId(), id)
     }
 }

@@ -4,7 +4,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     await db.schema
         .createTable('run_maps')
         .addColumn('run_id', 'integer', (col) =>
-            col.notNull().references('runs.id')
+            col.notNull().references('runs.id').onDelete('cascade')
         )
         .addColumn('seq_index', 'integer', (col) => col.notNull())
         .addColumn('map_id', 'integer', (col) => col.notNull())

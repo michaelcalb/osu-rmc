@@ -54,17 +54,29 @@ export class RunsService {
     private async assertNoLiveRun(userId: number) {
         const live = await this.db
             .selectFrom('runs')
-            .select('id')
+            .select(['id', 'active_elapsed', 'phase', 'phase_since'])
             .where('user_id', '=', userId)
-            .where('status', 'in', ['active', 'pending_final', 'validating'])
+            .where('status', '=', 'active')
             .executeTakeFirst()
 
-        if (live) {
-            throw new ConflictException(`run ${live.id} is still in progress`)
+        if (!live) {
+            return
         }
+
+        if (await this.expireIfDue(live, new Date())) {
+            return
+        }
+
+        throw new ConflictException(`run ${live.id} is still in progress`)
     }
 
     private async assertUnderStartLimit(userId: number) {
+        await this.db
+            .deleteFrom('runs')
+            .where('status', '=', 'abandoned')
+            .where('started_at', '<', sql<Date>`now() - interval '1 hour'`)
+            .execute()
+
         const row = await this.db
             .selectFrom('runs')
             .select((eb) => eb.fn.countAll<number>().as('count'))
@@ -105,19 +117,8 @@ export class RunsService {
         }
 
         const now = new Date()
-        const clock = readClock(run, now)
 
-        if (clock.expired) {
-            await this.db
-                .updateTable('runs')
-                .set({
-                    status: 'pending_final',
-                    active_elapsed: bankedElapsed(run, now),
-                    ended_at: now
-                })
-                .where('id', '=', runId)
-                .execute()
-
+        if (await this.expireIfDue(run, now)) {
             throw new ConflictException('time expired')
         }
 
@@ -211,6 +212,27 @@ export class RunsService {
             .execute()
     }
 
+    private async expireIfDue(
+        run: ClockInput & { id: number },
+        now: Date
+    ): Promise<boolean> {
+        if (!readClock(run, now).expired) {
+            return false
+        }
+
+        await this.db
+            .updateTable('runs')
+            .set({
+                status: 'pending_final',
+                active_elapsed: bankedElapsed(run, now),
+                ended_at: now
+            })
+            .where('id', '=', run.id)
+            .execute()
+
+        return true
+    }
+
     async getRunState(userId: number, runId: number) {
         const run = await this.db
             .selectFrom('runs')
@@ -231,15 +253,124 @@ export class RunsService {
         }
 
         const now = new Date()
+        const expired = await this.expireIfDue(run, now)
         const clock = readClock(run, now)
 
         return {
             id: run.id,
-            status: run.status,
+            status: expired ? 'pending_final' : run.status,
             fcCount: run.fc_count,
             serverNow: now.toISOString(),
             mainSecondsLeft: clock.mainSecondsLeft,
             prepSecondsLeft: clock.prepSecondsLeft
         }
+    }
+
+    async startPlaying(userId: number, runId: number) {
+        const run = await this.db
+            .selectFrom('runs')
+            .select([
+                'id',
+                'status',
+                'active_elapsed',
+                'phase',
+                'phase_since'
+            ])
+            .where('id', '=', runId)
+            .where('user_id', '=', userId)
+            .executeTakeFirst()
+
+        if (!run) {
+            throw new NotFoundException('run not found')
+        }
+
+        if (run.status !== 'active' || run.phase !== 'download') {
+            return
+        }
+
+        await this.settle(runId, run, new Date(), 'running')
+    }
+
+    async advanceMap(
+        userId: number,
+        runId: number,
+        outcome: 'a_skip' | 'free_skip' | 'unplayable'
+    ) {
+        const run = await this.db
+            .selectFrom('runs')
+            .select(['id', 'status', 'free_skip_used'])
+            .where('id', '=', runId)
+            .where('user_id', '=', userId)
+            .executeTakeFirst()
+
+        if (!run) {
+            throw new NotFoundException('run not found')
+        }
+
+        if (run.status !== 'active') {
+            throw new ConflictException(`run is ${run.status}`)
+        }
+
+        if (outcome === 'free_skip' && run.free_skip_used) {
+            throw new ConflictException('free skip already used')
+        }
+
+        const current = await this.db
+            .selectFrom('run_maps')
+            .select('seq_index')
+            .where('run_id', '=', runId)
+            .orderBy('seq_index', 'desc')
+            .limit(1)
+            .executeTakeFirst()
+
+        if (!current) {
+            throw new ConflictException('no map has been served yet')
+        }
+
+        await this.db
+            .updateTable('run_maps')
+            .set({ outcome: outcome })
+            .where('run_id', '=', runId)
+            .where('seq_index', '=', current.seq_index)
+            .execute()
+
+        if (outcome === 'free_skip') {
+            await this.db
+                .updateTable('runs')
+                .set({ free_skip_used: true })
+                .where('id', '=', runId)
+                .execute()
+        }
+
+        return this.revealNext(userId, runId)
+    }
+
+    async endRun(userId: number, runId: number) {
+        const run = await this.db
+            .selectFrom('runs')
+            .select(['id', 'status', 'active_elapsed', 'phase', 'phase_since'])
+            .where('id', '=', runId)
+            .where('user_id', '=', userId)
+            .executeTakeFirst()
+
+        if (!run) {
+            throw new NotFoundException('run not found')
+        }
+
+        if (run.status !== 'active') {
+            throw new ConflictException(`run is ${run.status}`)
+        }
+
+        const now = new Date()
+
+        await this.db
+            .updateTable('runs')
+            .set({
+                status: 'pending_final',
+                active_elapsed: bankedElapsed(run, now),
+                ended_at: now
+            })
+            .where('id', '=', runId)
+            .execute()
     }
 }
