@@ -15,6 +15,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('outcome', 'text', (col) =>
             col.notNull().defaultTo('unjudged')
         )
+        .addColumn('claimed_outcome', 'text')
         .addColumn('confirmed', 'boolean', (col) =>
             col.notNull().defaultTo(false)
         )
@@ -33,6 +34,10 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addCheckConstraint(
             'run_maps_outcome_check',
             sql`outcome in ('unjudged', 'fc', 'a_skip', 'free_skip', 'unplayable', 'incomplete_final')`
+        )
+        .addCheckConstraint(
+            'run_maps_claimed_outcome_check',
+            sql`claimed_outcome is null or claimed_outcome in ('fc', 'a_skip', 'free_skip', 'unplayable')`
         )
         .execute()
 }

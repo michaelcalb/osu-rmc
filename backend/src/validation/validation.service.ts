@@ -53,7 +53,7 @@ export class ValidationService {
     }): Promise<Position[]> {
         const served = await this.db
             .selectFrom('run_maps')
-            .select(['seq_index', 'map_id', 'served_at', 'outcome'])
+            .select(['seq_index', 'map_id', 'served_at', 'claimed_outcome'])
             .where('run_id', '=', run.id)
             .orderBy('seq_index')
             .execute()
@@ -89,7 +89,7 @@ export class ValidationService {
         const statuses = new Map<number, string | null>()
 
         for (const { map } of matched) {
-            if (map.outcome === 'unplayable') {
+            if (map.claimed_outcome === 'unplayable') {
                 statuses.set(
                     map.map_id,
                     await this.osu.getBeatmapStatus(map.map_id)
@@ -99,7 +99,7 @@ export class ValidationService {
 
         return matched.map(({ map, score }, index) => ({
             seq_index: map.seq_index,
-            claimed: map.outcome,
+            claimed: map.claimed_outcome,
             score,
             withinLimit: charges[index].withinLimit,
             beatmapStatus: statuses.get(map.map_id) ?? null,
@@ -113,7 +113,11 @@ export class ValidationService {
     ): Promise<boolean> {
         const last = positions[positions.length - 1]
 
-        if (!last || last.score || last.claimed !== 'unjudged') {
+        if (!last ||
+            last.score ||
+            last.claimed === 'free_skip' ||
+            last.claimed === 'unplayable'
+        ) {
             return false
         }
 

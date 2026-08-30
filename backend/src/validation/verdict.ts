@@ -1,4 +1,4 @@
-import type { Board, MapOutcome } from "../db/database";
+import type { Board, ClaimedOutcome, MapOutcome } from "../db/database";
 import type { OsuScore } from "../osu/osu.service";
 import {
     hasBannedMod,
@@ -10,7 +10,7 @@ import {
 
 export interface Position {
     seq_index: number
-    claimed: MapOutcome
+    claimed: ClaimedOutcome | null
     score: OsuScore | null
     withinLimit: boolean
     beatmapStatus: string | null

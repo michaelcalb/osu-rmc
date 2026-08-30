@@ -115,6 +115,16 @@ export class RunsService {
 
         const seqIndex = Number(served.count)
 
+        if (seqIndex > 0) {
+            await this.db
+                .updateTable('run_maps')
+                .set({ claimed_outcome: 'fc' })
+                .where('run_id', '=', runId)
+                .where('seq_index', '=', seqIndex - 1)
+                .where('claimed_outcome', 'is', null)
+                .execute()
+        }
+
         if (seqIndex >= run.resolved_sequence.length) {
             await this.finishRun(runId, run, now)
 
@@ -282,6 +292,13 @@ export class RunsService {
         const expired = await this.expireIfDue(run, now)
         const clock = readClock(run, now)
 
+        const claimed = await this.db
+            .selectFrom('run_maps')
+            .select((eb) => eb.fn.countAll<number>().as('count'))
+            .where('run_id', '=', run.id)
+            .where('claimed_outcome', '=', 'fc')
+            .executeTakeFirstOrThrow()
+
         return {
             id: run.id,
             status: expired ? 'pending_final' : run.status,
@@ -289,7 +306,8 @@ export class RunsService {
             serverNow: now.toISOString(),
             mainSecondsLeft: clock.mainSecondsLeft,
             prepSecondsLeft: clock.prepSecondsLeft,
-            currentMap: await this.getCurrentMap(run.id)
+            currentMap: await this.getCurrentMap(run.id),
+            claimedFcCount: Number(claimed.count)
         }
     }
 
@@ -345,7 +363,7 @@ export class RunsService {
 
         await this.db
             .updateTable('run_maps')
-            .set({ outcome: outcome })
+            .set({ claimed_outcome: outcome })
             .where('run_id', '=', runId)
             .where('seq_index', '=', current.seq_index)
             .execute()

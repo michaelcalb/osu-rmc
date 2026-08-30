@@ -79,6 +79,8 @@ export interface APIMod {
 
 type NullableJson<T extends object> = JSONColumnType<T | null, string | null, string | null>
 
+export type ClaimedOutcome = 'fc' | 'a_skip' | 'free_skip' | 'unplayable'
+
 export interface RunMapsTable {
     run_id: number
     seq_index: number
@@ -86,6 +88,7 @@ export interface RunMapsTable {
     set_id: number
     served_at: Generated<Date>
     outcome: Generated<MapOutcome>
+    claimed_outcome: ClaimedOutcome | null
     confirmed: Generated<boolean>
 
     original_star_rating: number
