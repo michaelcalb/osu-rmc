@@ -6,6 +6,8 @@ import { PoolService } from '../pool/pool.service';
 import { generateSeed } from '../pool/seed';
 import { bankedElapsed, readClock, type ClockInput } from './clock';
 import { Cron } from '@nestjs/schedule';
+import { ValidationService } from '../validation/validation.service';
+import { SCORE_PUBLISH_DELAY_SECONDS } from '../osu/osu.service';
 
 const MAX_STARTS_PER_HOUR = 6
 
@@ -13,7 +15,8 @@ const MAX_STARTS_PER_HOUR = 6
 export class RunsService {
     constructor(
         @Inject(KYSELY) private readonly db: Kysely<Database>,
-        private readonly pool: PoolService
+        private readonly pool: PoolService,
+        private readonly validation: ValidationService
     ) {}
 
     async startRun(userId: number, declaredMode: Board) {
@@ -260,6 +263,16 @@ export class RunsService {
             })
             .where('id', '=', runId)
             .execute()
+
+        this.scheduleValidation(runId)
+    }
+
+    private scheduleValidation(runId: number) {
+        setTimeout(() => {
+            void this.validation.validateRun(runId).catch((error) => {
+                console.error(`validation failed for run ${runId}`, error)
+            })
+        }, SCORE_PUBLISH_DELAY_SECONDS * 1000).unref()
     }
 
     async getRunState(userId: number, runId: number) {
@@ -356,7 +369,7 @@ export class RunsService {
         await this.finishRun(runId, run, new Date())
     }
 
-    @Cron('*/5 * * * *')
+    @Cron('*/10 * * * *')
     async sweepExpiredRuns() {
         const now = new Date()
 

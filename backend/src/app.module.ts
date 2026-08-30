@@ -6,9 +6,10 @@ import { DbModule } from './db/db.module'
 import { PoolModule } from './pool/pool.module';
 import { RunsModule } from './runs/runs.module';
 import { OsuModule } from './osu/osu.module';
+import { ValidationModule } from './validation/validation.module';
 
 @Module({
-    imports: [ScheduleModule.forRoot(), DbModule, PoolModule, RunsModule, OsuModule],
+    imports: [ScheduleModule.forRoot(), DbModule, PoolModule, RunsModule, OsuModule, ValidationModule],
     controllers: [AppController],
     providers: [AppService]
 })

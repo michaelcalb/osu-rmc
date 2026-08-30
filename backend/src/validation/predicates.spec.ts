@@ -5,6 +5,7 @@ import {
     isFullCombo,
     isNoModEquivalent,
     isSkipWorthy,
+    unplayableClaimUpheld,
     type Mod,
     type Statistics
 } from './predicates'
@@ -83,5 +84,20 @@ describe('mods', () => {
 
     it('routes Relax to free-mod, not no-mod', () => {
         expect(isNoModEquivalent(modern[0].mods)).toBe(false)
+    })
+})
+
+describe('unplayable claims', () => {
+    it('upholds a claim on a deleted map', () => {
+        expect(unplayableClaimUpheld(null)).toBe(true)
+    })
+
+    it('upholds a claim on a graveyarded map', () => {
+        expect(unplayableClaimUpheld('graveyard')).toBe(true)
+    })
+
+    it('rejects a claim on a map that still submits scores', () => {
+        expect(unplayableClaimUpheld('ranked')).toBe(false)
+        expect(unplayableClaimUpheld('loved')).toBe(false)
     })
 })

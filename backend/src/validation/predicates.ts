@@ -11,6 +11,13 @@ const LEGACY_KEYS: readonly string[] =[
     'count_miss',
 ]
 
+const SUBMITTABLE_STATUSES: readonly string[] = [
+    'ranked',
+    'approved',
+    'qualified',
+    'loved'
+]
+
 export interface Mod {
     acronym: string
 }
@@ -46,4 +53,12 @@ export function hasBannedMod(mods: Mod[]): boolean {
 
 export function isNoModEquivalent(mods: Mod[]): boolean {
     return mods.every((mod) => NO_MOD_EQUIVALENT.includes(mod.acronym))
+}
+
+export function isSubmittable(status: string | null): boolean {
+    return status !== null && SUBMITTABLE_STATUSES.includes(status)
+}
+
+export function unplayableClaimUpheld(status: string | null): boolean {
+    return !isSubmittable(status)
 }

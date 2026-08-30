@@ -6,6 +6,8 @@ const API_VERSION = '20220705'
 const TIMEOUT_MS = 15_000
 const TOKEN_MARGIN_SECONDS = 60
 
+export const SCORE_PUBLISH_DELAY_SECONDS = 10
+
 export interface OsuMod {
     acronym: string
     settings?: Record<string, unknown>
@@ -25,6 +27,23 @@ export interface OsuScore {
     ended_at: string
 }
 
+export interface OsuBeatmap {
+    id: number
+    beatmapset_id: number
+    status: string
+    total_length: number
+    hit_length: number
+}
+
+export class OsuHttpError extends Error {
+    constructor(
+        readonly status: number,
+        message: string
+    ) {
+        super(message)
+    }
+}
+
 function requireEnv(name: string): string {
     const value = process.env[name]
 
@@ -42,6 +61,8 @@ export class OsuService {
 
     async getRecentScores(osuUserId: number): Promise<OsuScore[]> {
         return this.get<OsuScore[]>(`/users/${osuUserId}/scores/recent`, {
+            mode: 'osu',
+            include_fails: '0',
             limit: '100'
         })
     }
@@ -66,7 +87,8 @@ export class OsuService {
         })
 
         if (!res.ok) {
-            throw new Error(
+            throw new OsuHttpError(
+                res.status,
                 `osu! GET ${url.pathname}${url.search} -> ${res.status} ${await res.text()}`
             )
         }
@@ -109,5 +131,19 @@ export class OsuService {
         this.tokenExpiresAt = Date.now() + (body.expires_in - TOKEN_MARGIN_SECONDS) * 1000
 
         return this.token
+    }
+
+    async getBeatmapStatus(beatmapId: number): Promise<string | null> {
+        try {
+            const beatmap = await this.get<OsuBeatmap>(`/beatmaps/${beatmapId}`)
+
+            return beatmap.status
+        } catch (error) {
+            if (error instanceof OsuHttpError && error.status === 404) {
+                return null
+            }
+
+            throw error
+        }
     }
 }
