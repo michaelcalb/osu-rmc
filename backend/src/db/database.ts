@@ -46,6 +46,13 @@ export interface UsersTable {
 
 export type RunPhase = 'download' | 'running'
 
+export type TruncationReason =
+    | 'banned_mod'
+    | 'over_limit'
+    | 'missing_score'
+    | 'rejected_unplayable'
+    | 'not_qualifying'
+
 export interface RunsTable {
     id: Generated<number>
     user_id: number
@@ -62,6 +69,8 @@ export interface RunsTable {
     free_skip_used: Generated<boolean>
     fc_count: number | null
     resolved_board: Board | null
+    truncated_at_index: number | null
+    truncation_reason: TruncationReason | null
 }
 
 export type MapOutcome = 

@@ -154,9 +154,12 @@ export class RunsService {
             })
             .execute()
         
-        await this.settle(runId, run, now, 'download')
+        const settled = await this.settle(runId, run, now, 'download')
 
-        return this.getServedMap(runId, seqIndex)
+        return {
+            map: await this.getServedMap(runId, seqIndex),
+            clock: this.clockPayload(settled, now)
+        }
     }
 
     private async getCurrentMap(runId: number) {
@@ -207,16 +210,31 @@ export class RunsService {
         run: ClockInput,
         now: Date,
         phase: RunPhase
-    ) {
+    ): Promise<ClockInput> {
+        const settled: ClockInput = {
+            active_elapsed: bankedElapsed(run, now),
+            phase,
+            phase_since: now
+        }
+
         await this.db
             .updateTable('runs')
-            .set({
-                active_elapsed: bankedElapsed(run, now),
-                phase,
-                phase_since: now
-            })
+            .set(settled)
             .where('id', '=', runId)
             .execute()
+
+        return settled
+    }
+
+    private clockPayload(run: ClockInput, now: Date) {
+        const clock = readClock(run, now)
+
+        return {
+            serverNow: now.toISOString(),
+            phase: run.phase,
+            mainSecondsLeft: clock.mainSecondsLeft,
+            prepSecondsLeft: clock.prepSecondsLeft
+        }
     }
 
     private async expireIfDue(
@@ -290,7 +308,6 @@ export class RunsService {
 
         const now = new Date()
         const expired = await this.expireIfDue(run, now)
-        const clock = readClock(run, now)
 
         const claimed = await this.db
             .selectFrom('run_maps')
@@ -303,11 +320,9 @@ export class RunsService {
             id: run.id,
             status: expired ? 'pending_final' : run.status,
             fcCount: run.fc_count,
-            serverNow: now.toISOString(),
-            mainSecondsLeft: clock.mainSecondsLeft,
-            prepSecondsLeft: clock.prepSecondsLeft,
             currentMap: await this.getCurrentMap(run.id),
-            claimedFcCount: Number(claimed.count)
+            claimedFcCount: Number(claimed.count),
+            ...this.clockPayload(run, now)
         }
     }
 

@@ -1,4 +1,4 @@
-import type { Board, ClaimedOutcome, MapOutcome } from "../db/database";
+import type { Board, ClaimedOutcome, MapOutcome, TruncationReason } from "../db/database";
 import type { OsuScore } from "../osu/osu.service";
 import {
     hasBannedMod,
@@ -29,12 +29,14 @@ export interface RunVerdict {
     fcCount: number
     board: Board
     truncatedAt: number | null
+    truncationReason: TruncationReason | null
 }
 
 export function judgeRun(positions: Position[]): RunVerdict {
     const verdicts: PositionVerdict[] = []
     let fcCount = 0
     let truncatedAt: number | null = null
+    let truncationReason: TruncationReason | null = null
     let allNoMod = true
 
     for (const position of positions) {
@@ -42,6 +44,7 @@ export function judgeRun(positions: Position[]): RunVerdict {
 
         if (score && hasBannedMod(score.mods)) {
             truncatedAt = seq_index
+            truncationReason = 'banned_mod'
             break
         }
 
@@ -58,6 +61,7 @@ export function judgeRun(positions: Position[]): RunVerdict {
         if (position.claimed === 'unplayable') {
             if (!unplayableClaimUpheld(position.beatmapStatus)) {
                 truncatedAt = seq_index
+                truncationReason = 'rejected_unplayable'
                 break
             }
 
@@ -73,6 +77,7 @@ export function judgeRun(positions: Position[]): RunVerdict {
         if (!score) {
             if (!position.isLast) {
                 truncatedAt = seq_index
+                truncationReason = 'missing_score'
                 break
             }
 
@@ -92,6 +97,7 @@ export function judgeRun(positions: Position[]): RunVerdict {
         if (isFullCombo(score.statistics)) {
             if (!position.withinLimit) {
                 truncatedAt = seq_index
+                truncationReason = 'over_limit'
                 break
             }
 
@@ -116,6 +122,7 @@ export function judgeRun(positions: Position[]): RunVerdict {
         }
 
         truncatedAt = seq_index
+        truncationReason = 'not_qualifying'
         break
     }
 
@@ -123,6 +130,7 @@ export function judgeRun(positions: Position[]): RunVerdict {
         positions: verdicts,
         fcCount,
         board: allNoMod ? 'no_mod' : 'free_mod',
-        truncatedAt
+        truncatedAt,
+        truncationReason
     }
 }

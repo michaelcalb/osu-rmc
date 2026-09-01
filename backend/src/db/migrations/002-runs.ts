@@ -36,6 +36,8 @@ export async function up(db: Kysely<any>): Promise<void> {
         )
         .addColumn('fc_count', 'integer')
         .addColumn('resolved_board', 'text')
+        .addColumn('truncated_at_index', 'integer')
+        .addColumn('truncation_reason', 'text')
         .addCheckConstraint(
             'runs_declared_mode_check',
             sql`declared_mode in ('no_mod', 'free_mod')`
@@ -51,6 +53,14 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addCheckConstraint(
             'runs_resolved_board_check',
             sql`resolved_board is null or resolved_board in ('no_mod', 'free_mod')`
+        )
+        .addCheckConstraint(
+            'runs_truncation_reason_check',
+            sql`truncation_reason is null or truncation_reason in ('banned_mod', 'over_limit', 'missing_score', 'rejected_unplayable', 'not_qualifying')`
+        )
+        .addCheckConstraint(
+            'runs_truncation_pair_check',
+            sql`(truncated_at_index is null) = (truncation_reason is null)`
         )
         .execute()
 

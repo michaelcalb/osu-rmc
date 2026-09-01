@@ -180,7 +180,9 @@ export class ValidationService {
                 .set({
                     status: 'complete',
                     fc_count: verdict.fcCount,
-                    resolved_board: verdict.board
+                    resolved_board: verdict.board,
+                    truncated_at_index: verdict.truncatedAt,
+                    truncation_reason: verdict.truncationReason
                 })
                 .where('id', '=', runId)
                 .execute()
