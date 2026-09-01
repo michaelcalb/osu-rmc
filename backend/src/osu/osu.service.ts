@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { requireEnv } from '../common/env';
 
 const OSU_ROOT = 'https://osu.ppy.sh'
 const API = `${OSU_ROOT}/api/v2`
@@ -42,16 +43,6 @@ export class OsuHttpError extends Error {
     ) {
         super(message)
     }
-}
-
-function requireEnv(name: string): string {
-    const value = process.env[name]
-
-    if (!value) {
-        throw new Error(`${name} is not set`)
-    }
-
-    return value
 }
 
 @Injectable()
