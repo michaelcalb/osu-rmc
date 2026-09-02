@@ -25,7 +25,7 @@
         </section>
 
         <section v-if="map">
-            <h3>Current map</h3>
+            <h3>current map</h3>
             <p>seq_index: {{ map.seq_index }}</p>
             <p>map_id: {{ map.map_id }}</p>
             <p>set_id: {{ map.set_id }}</p>
@@ -46,6 +46,10 @@
                 rel="noreferrer"
                 >open beatmap</a
             >
+            <img
+                :src="coverUrl(map.set_id, map.cover_updated_at)"
+                :alt="`${map.artist} - ${map.title}`"
+            />
         </section>
 
         <section>
@@ -86,6 +90,7 @@
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useRun } from '../composables/useRun';
+import { coverUrl } from '../lib/covers';
 
 const router = useRouter()
 const loading = ref(true)
