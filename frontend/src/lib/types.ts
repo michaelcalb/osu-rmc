@@ -1,0 +1,175 @@
+export type Board = 'no_mod' | 'free_mod'
+export type RunPhase = 'download' | 'running'
+export type ClaimedOutcome = 'fc' | 'a_skip' | 'free_skip' | 'unplayable'
+
+export type RunStatus =
+    | 'active'
+    | 'pending_final'
+    | 'validating'
+    | 'complete'
+    | 'void'
+    | 'abandoned'
+
+export type MapOutcome =
+    | 'unjudged'
+    | 'fc'
+    | 'a_skip'
+    | 'free_skip'
+    | 'unplayable'
+    | 'incomplete_final'
+
+export interface APIMod {
+    acronym: string
+    settings?: Record<string, unknown>
+}
+
+export interface Identity {
+    id: number
+    username: string
+}
+
+export interface ServedMap {
+    seq_index: number
+    map_id: number
+    set_id: number
+    served_at: string
+    original_star_rating: number
+    hit_length: number
+    total_length: number
+    map_max_combo: number | null
+    artist: string
+    artist_unicode: string | null
+    title: string
+    title_unicode: string | null
+    creator: string
+    bpm: number | null
+    cover_updated_at: string | null
+    nsfw: boolean
+}
+
+export interface Clock {
+    serverNow: string
+    phase: RunPhase
+    mainSecondsLeft: number
+    prepSecondsLeft: number
+}
+
+export interface RevealResponse {
+    map: ServedMap
+    clock: Clock
+}
+
+export interface RunState extends Clock {
+    id: number
+    status: RunStatus
+    fcCount: number | null
+    freeSkipUsed: boolean
+    currentMap: ServedMap | null
+    claimedFcCount: number
+}
+
+export interface StartedRun {
+    id: number
+    pool_version: number
+    declared_mode: Board
+    status: RunStatus
+    started_at: string
+}
+
+export interface BoardRow {
+    id: number
+    user_id: number
+    username: string
+    fc_count: number | null
+    resolved_board: Board | null
+    pool_version: number
+    active_elapsed: number
+    ended_at: string | null
+    avg_fc_star_rating: number | null
+}
+
+export interface RunDetailMap {
+    seq_index: number
+    map_id: number
+    set_id: number
+    outcome: MapOutcome
+    confirmed: boolean
+    original_star_rating: number
+    total_length: number
+    map_max_combo: number | null
+    mods: APIMod[] | null
+    score_max_combo: number | null
+    confirmed_score_id: string | null
+    artist: string
+    artist_unicode: string | null
+    title: string
+    title_unicode: string | null
+    creator: string
+    bpm: number | null
+    cover_updated_at: string | null
+    nsfw: boolean
+}
+
+export interface RunDetail {
+    run: {
+        id: number
+        user_id: number
+        username: string
+        seed: string
+        pool_version: number
+        declared_mode: Board
+        resolved_board: Board | null
+        fc_count: number | null
+        active_elapsed: number
+        started_at: string
+        ended_at: string | null
+    }
+    maps: RunDetailMap[]
+}
+
+
+export type TruncationReason =
+    | 'banned_mod'
+    | 'over_limit'
+    | 'missing_score'
+    | 'rejected_unplayable'
+    | 'not_qualifying'
+
+export interface RunResultMap {
+    seq_index: number
+    map_id: number
+    set_id: number
+    claimed_outcome: ClaimedOutcome | null
+    outcome: MapOutcome
+    confirmed: boolean
+    original_star_rating: number
+    total_length: number
+    map_max_combo: number | null
+    mods: APIMod[] | null
+    score_max_combo: number | null
+    confirmed_score_id: string | null
+    served_at: string
+    score_started_at: string | null
+    score_ended_at: string | null
+    artist: string
+    title: string
+    creator: string
+}
+
+export interface RunResult {
+    run: {
+        id: number
+        status: RunStatus
+        pool_version: number
+        declared_mode: Board
+        resolved_board: Board | null
+        fc_count: number | null
+        active_elapsed: number
+        started_at: string
+        ended_at: string | null
+        truncated_at_index: number | null
+        truncation_reason: TruncationReason | null
+    }
+    maps: RunResultMap[]
+    claimedFcCount: number
+}

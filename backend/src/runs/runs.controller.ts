@@ -51,6 +51,14 @@ export class RunsController {
         return this.runsService.getRunState(userId, id)
     }
 
+    @Get(':id/result')
+    result(
+        @CurrentUser() userId: number,
+        @Param('id', ParseIntPipe) id: number
+    ) {
+        return this.runsService.getRunResult(userId, id)
+    }
+
     @Post(':id/playing')
     @HttpCode(HttpStatus.NO_CONTENT)
     playing(
