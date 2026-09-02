@@ -33,6 +33,24 @@
     </section>
 
     <p v-if="error">error: {{ error }}</p>
+
+    <section v-if="user && runs.length > 0">
+        <h3>your runs</h3>
+        <ul>
+            <li v-for="r in runs" :key="r.id">
+                <p>run {{ r.id }} — {{ r.status }}</p>
+                <p>
+                    declared: {{ r.declared_mode }} / board:
+                    {{ r.resolved_board }}
+                </p>
+                <p>fcs: {{ r.fc_count }}</p>
+                <p>active elapsed: {{ r.active_elapsed }}</p>
+                <p>started: {{ r.started_at }}</p>
+                <p>ended: {{ r.ended_at }}</p>
+                <RouterLink :to="`/run/${r.id}/result`">result</RouterLink>
+            </li>
+        </ul>
+    </section>
 </template>
 
 <script setup lang="ts">
@@ -40,7 +58,7 @@
     import { RouterLink, useRouter } from 'vue-router';
     import { ApiError, get, post } from '../lib/api';
     import { useSession } from '../composables/useSession';
-    import type { Board, RunState, StartedRun } from '../lib/types';
+    import type { Board, RunState, StartedRun, RunSummary } from '../lib/types';
 
     const router = useRouter()
     const { user, ready } = useSession()
@@ -50,6 +68,7 @@
     const loading = ref(true)
     const starting = ref(false)
     const error = ref<string | null>(null)
+    const runs = ref<RunSummary[]>([])
 
     function describe(e: unknown, fallback: string): string {
         return e instanceof ApiError ? e.message : fallback
@@ -64,9 +83,15 @@
         }
 
         try {
-            current.value = await get<RunState | null>('runs/current')
+            const [state, mine] = await Promise.all([
+                get<RunState | null>('/runs/current'),
+                get<RunSummary[]>('/runs/mine')
+            ])
+
+            current.value = state
+            runs.value = mine
         } catch (e) {
-            error.value = describe(e, 'could not load current run')
+            error.value = describe(e, 'could not load your runs')
         } finally {
             loading.value = false
         }

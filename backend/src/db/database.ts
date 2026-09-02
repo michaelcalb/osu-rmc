@@ -63,6 +63,7 @@ export interface RunsTable {
     status: Generated<RunStatus>
     started_at: Generated<Date>
     ended_at: Date | null
+    validating_since: Date | null
     active_elapsed: Generated<number>
     phase: Generated<RunPhase>
     phase_since: Generated<Date>

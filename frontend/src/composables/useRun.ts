@@ -42,6 +42,10 @@ export function useRun() {
 
     const signalled = computed(() => clock.value?.phase === 'running')
 
+    const canSignalStart = computed(
+        () => !signalled.value && prepSecondsLeft.value > 0
+    )
+
     const timeUp = computed(() => clock.value !== null && mainSecondsLeft.value <= 0)
 
     function sync(next: Clock) {
@@ -137,6 +141,10 @@ export function useRun() {
         await call(() => post(path('/end')))
     }
 
+    async function abandon() {
+        await call(() => post(path('/abandon')))
+    }
+
     return {
         run,
         map,
@@ -147,6 +155,7 @@ export function useRun() {
         prepSecondsLeft,
         mainSecondsLeft,
         signalled,
+        canSignalStart,
         timeUp,
         load,
         refresh,
@@ -154,6 +163,7 @@ export function useRun() {
         skip,
         unplayable,
         startPlaying,
-        end
+        end,
+        abandon
     }
 }

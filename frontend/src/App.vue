@@ -4,6 +4,9 @@
         <RouterLink to="/">osu!rmc</RouterLink>
 
         <nav>
+            <RouterLink to="/boards/no_mod">no_mod</RouterLink>
+            <RouterLink to="/boards/free_mod">free_mod</RouterLink>
+            
             <span v-if="loading">loading user...</span>
             <template v-else-if="user">
                 <span>{{ user.username }}</span>

@@ -400,6 +400,25 @@ export class RunsService {
         return { run, maps, claimedFcCount }
     }
 
+    async listRuns(userId: number, limit = 20) {
+        return this.db
+            .selectFrom('runs')
+            .select([
+                'id',
+                'status',
+                'declared_mode',
+                'resolved_board',
+                'fc_count',
+                'active_elapsed',
+                'started_at',
+                'ended_at'
+            ])
+            .where('user_id', '=', userId)
+            .orderBy('started_at', 'desc')
+            .limit(limit)
+            .execute()
+    }
+
     async startPlaying(userId: number, runId: number) {
         const run = await this.loadRun(userId, runId)
 

@@ -60,7 +60,7 @@
             </button>
 
             <template v-else>
-                <button :disabled="busy || signalled" @click="startPlaying">
+                <button :disabled="busy || !canSignalStart" @click="startPlaying">
                     start map
                 </button>
                 <button :disabled="busy" @click="onReveal">
@@ -78,7 +78,10 @@
             </template>
 
             <button :disabled="busy" @click="onEnd">
-                end run
+                end run (submit to lb)
+            </button>
+            <button :disabled="busy" @click="onAbandon">
+                abandon run (will be discarded)
             </button>
         </section>
 
@@ -87,7 +90,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useRun } from '../composables/useRun';
 import { coverUrl } from '../lib/covers';
@@ -105,6 +108,7 @@ const {
     prepSecondsLeft,
     mainSecondsLeft,
     signalled,
+    canSignalStart,
     timeUp,
     load,
     refresh,
@@ -112,7 +116,8 @@ const {
     skip,
     unplayable,
     startPlaying,
-    end
+    end,
+    abandon
 } = useRun()
 
 onMounted(async () => {
@@ -146,6 +151,9 @@ async function onReveal() {
 }
 
 async function onEnd() {
+    if (!confirm('end run?')) {
+        return
+    }
     await end()
 
     if (!error.value) {
@@ -159,4 +167,35 @@ async function onEnd() {
         await goToResult()
     }
 }
+
+async function onAbandon() {
+    if (!confirm('abandon run?')) {
+        return
+    }
+
+    await abandon()
+
+    if (!error.value) {
+        await router.push({ name: 'home' })
+        return
+    }
+
+    await refresh()
+
+    if (run.value && run.value.status !== 'active') {
+        await goToResult()
+    }
+}
+
+watch(timeUp, async (over) => {
+    if (!over) {
+        return
+    }
+
+    await refresh()
+
+    if (run.value && run.value.status !== 'active') {
+        await goToResult()
+    }
+})
 </script>

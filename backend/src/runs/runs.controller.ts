@@ -108,4 +108,9 @@ export class RunsController {
     current(@CurrentUser() userId: number) {
         return this.runsService.getCurrentRun(userId)
     }
+
+    @Get('mine')
+    mine(@CurrentUser() userId: number) {
+        return this.runsService.listRuns(userId)
+    }
 }

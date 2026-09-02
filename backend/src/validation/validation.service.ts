@@ -24,22 +24,28 @@ export class ValidationService {
             return
         }
 
-        const positions = await this.gatherPositions(run)
+        try {
 
-        if (await this.shouldDefer(runId, positions)) {
-            await this.release(runId)
-            return
+            const positions = await this.gatherPositions(run)
+            
+            if (await this.shouldDefer(runId, positions)) {
+                await this.release(runId)
+                return
+            }
+            
+            const verdict = judgeRun(positions)
+            
+            await this.applyVerdict(runId, verdict)
+        } catch (error) {
+            await this.release(runId).catch(() => undefined)
+            throw error
         }
-
-        const verdict = judgeRun(positions)
-
-        await this.applyVerdict(runId, verdict)
     }
 
     private async claim(runId: number) {
         return this.db
             .updateTable('runs')
-            .set({ status: 'validating' })
+            .set({ status: 'validating', validating_since: new Date() })
             .where('id', '=', runId)
             .where('status', '=', 'pending_final')
             .returning(['id', 'user_id', 'ended_at'])
@@ -141,8 +147,9 @@ export class ValidationService {
     private async release(runId: number) {
         await this.db
             .updateTable('runs')
-            .set({ status: 'pending_final' })
+            .set({ status: 'pending_final', validating_since: null })
             .where('id', '=', runId)
+            .where('status', '=', 'validating')
             .execute()
     }
 
@@ -179,6 +186,7 @@ export class ValidationService {
                 .updateTable('runs')
                 .set({
                     status: 'complete',
+                    validating_since: null,
                     fc_count: verdict.fcCount,
                     resolved_board: verdict.board,
                     truncated_at_index: verdict.truncatedAt,
@@ -191,6 +199,8 @@ export class ValidationService {
 
     @Cron('* * * * *')
     async sweepPendingValidation() {
+        await this.reclaimStuckValidations()
+
         const pending = await this.db
             .selectFrom('runs')
             .select('id')
@@ -204,6 +214,24 @@ export class ValidationService {
             } catch (error) {
                 console.error(`validation failed for run ${run.id}`, error)
             }
+        }
+    }
+
+    private async reclaimStuckValidations() {
+        const stuck = await this.db
+            .updateTable('runs')
+            .set({ status: 'pending_final', validating_since: null })
+            .where('status', '=', 'validating')
+            .where(
+                'validating_since',
+                '<',
+                sql<Date>`now() - interval '5 minutes'`
+            )
+            .returning('id')
+            .execute()
+
+        for (const run of stuck) {
+            console.warn(`reclaimed stuck validation for run ${run.id}`)
         }
     }
 }
