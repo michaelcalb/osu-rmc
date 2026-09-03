@@ -33,6 +33,7 @@
                     <p>seq_index: {{ m.seq_index }}</p>
                     <p>map_id: {{ m.map_id }}</p>
                     <p>{{ m.artist }} - {{ m.title }} ({{ m.creator }})</p>
+                    <p>difficulty: {{ m.difficulty_name }}</p>
                     <p>star rating: {{ m.original_star_rating }}</p>
                     <p>bpm: {{ m.bpm }}</p>
                     <p>total_length: {{ m.total_length }}</p>

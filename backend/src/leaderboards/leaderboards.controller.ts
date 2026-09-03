@@ -7,10 +7,8 @@ import {
     ParseIntPipe,
     Query
 } from '@nestjs/common';
-import type { Board } from '../db/database';
+import { BOARDS, type Board } from '../db/database';
 import { DEFAULT_LIMIT, LeaderboardsService } from './leaderboards.service';
-
-const BOARDS : Board[] = ['no_mod', 'free_mod']
 
 @Controller('leaderboards')
 export class LeaderboardsController {

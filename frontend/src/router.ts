@@ -38,6 +38,12 @@ const router = createRouter({
             name: 'run-detail',
             component: () => import('./views/RunDetailView.vue'),
             props: true
+        },
+        {
+            path: '/users/:id',
+            name: 'profile',
+            component: () => import('./views/ProfileView.vue'),
+            props: true
         }
     ]
 })

@@ -6,11 +6,6 @@
         <section v-if="waiting">
             <h2>validating</h2>
             <p>status: {{ result.run.status }}</p>
-            <p v-if="secondsUntilResolvable > 0">
-                waiting for your last score, about
-                {{ Math.ceil(secondsUntilResolvable) }}s
-            </p>
-            <p v-else>checking with osu!</p>
         </section>
 
         <template v-else>
@@ -37,6 +32,7 @@
                         <p>seq_index: {{ m.seq_index }}</p>
                         <p>map_id: {{ m.map_id }}</p>
                         <p>{{ m.artist }} - {{ m.title }} ({{ m.creator }})</p>
+                        <p>difficulty: {{ m.difficulty_name }}</p>
                         <p>star rating: {{ m.original_star_rating }}</p>
                         <p>total_length: {{ m.total_length }}</p>
                         <p>claimed: {{ m.claimed_outcome }}</p>
@@ -65,9 +61,7 @@ import type { RunResult } from '../lib/types';
 
 const props = defineProps<{ id: string }>()
 
-const POLL_MS = 3000
-const PREP_WINDOW_SECONDS = 60
-const SCORE_PUBLISH_DELAY_SECONDS = 10
+const POLL_MS = 10000
 
 const result = ref<RunResult | null>(null)
 const loading = ref(true)
@@ -84,23 +78,6 @@ const unconfirmed = computed(() =>
         ? result.value.claimedFcCount - (result.value.run.fc_count ?? 0)
         : 0
 )
-
-const secondsUntilResolvable = computed(() => {
-    const last = result.value?.maps.at(-1)
-
-    if (!last) {
-        return 0
-    }
-
-    const resolvable =
-        new Date(last.served_at).getTime() +
-        (PREP_WINDOW_SECONDS +
-            last.total_length +
-            SCORE_PUBLISH_DELAY_SECONDS) *
-            1000
-
-    return Math.max(0, (resolvable - Date.now()) / 1000)
-})
 
 let timer: ReturnType<typeof setTimeout> | null = null
 

@@ -148,6 +148,7 @@ export class RunsService {
                 map_id: map.map_id,
                 set_id: map.set_id,
                 original_star_rating: map.star_rating,
+                difficulty_name: map.difficulty_name,
                 hit_length: map.hit_length,
                 total_length: map.total_length,
                 map_max_combo: map.max_combo
@@ -188,6 +189,7 @@ export class RunsService {
                 'rm.set_id',
                 'rm.served_at',
                 'rm.original_star_rating',
+                'rm.difficulty_name',
                 'rm.hit_length',
                 'rm.total_length',
                 'rm.map_max_combo',

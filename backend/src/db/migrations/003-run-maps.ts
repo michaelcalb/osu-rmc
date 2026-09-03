@@ -20,6 +20,7 @@ export async function up(db: Kysely<any>): Promise<void> {
             col.notNull().defaultTo(false)
         )
         .addColumn('original_star_rating', 'double precision', (col) => col.notNull())
+        .addColumn('difficulty_name', 'text', (col) => col.notNull())
         .addColumn('hit_length', 'integer', (col) => col.notNull())
         .addColumn('total_length', 'integer', (col) => col.notNull())
         .addColumn('map_max_combo', 'integer')

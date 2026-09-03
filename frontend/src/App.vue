@@ -9,7 +9,7 @@
             
             <span v-if="loading">loading user...</span>
             <template v-else-if="user">
-                <span>{{ user.username }}</span>
+                <RouterLink :to="`/users/${user.id}`">{{ user.username }}</RouterLink>
                 <button @click="signOut">logout</button>
             </template>
             <button v-else @click="login">login with osu!</button>

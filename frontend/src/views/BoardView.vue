@@ -9,7 +9,7 @@
         <ol v-else :start="offset + 1">
             <li v-for="row in rows" :key="row.id">
                 <p>run id: {{ row.id }}</p>
-                <p>user: {{ row.username }} ({{ row.user_id }})</p>
+                <p>user: <RouterLink :to="`/users/${row.user_id}`">{{ row.username }}</RouterLink></p>
                 <p>fcs: {{ row.fc_count }}</p>
                 <p>board: {{ row.resolved_board }}</p>
                 <p>avg fc star rating: {{ row.avg_fc_star_rating }}</p>

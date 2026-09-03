@@ -30,6 +30,7 @@ export async function up(db: Kysely<any>): Promise<void> {
             col.notNull().references('pool_sets.beatmapset_id')
         )
         .addColumn('star_rating', 'double precision', (col) => col.notNull())
+        .addColumn('difficulty_name', 'text', (col) => col.notNull())
         .addColumn('hit_length', 'integer', (col) => col.notNull())
         .addColumn('total_length', 'integer', (col) => col.notNull())
         .addColumn('added_in_version', 'integer', (col) =>

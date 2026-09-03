@@ -31,6 +31,7 @@
             <p>set_id: {{ map.set_id }}</p>
             <p>artist: {{ map.artist }} / {{ map.artist_unicode }}</p>
             <p>title: {{ map.title }} / {{ map.title_unicode }}</p>
+            <p>difficulty: {{ map.difficulty_name }}</p>
             <p>creator: {{ map.creator }}</p>
             <p>star rating: {{ map.original_star_rating }}</p>
             <p>bpm: {{ map.bpm }}</p>

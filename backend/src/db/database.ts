@@ -10,6 +10,7 @@ export interface PoolMapsTable {
     map_id: number
     set_id: number
     star_rating: number
+    difficulty_name: string
     hit_length: number
     total_length: number
     added_in_version: number
@@ -38,6 +39,8 @@ export type RunStatus =
     | 'abandoned'
 
 export type Board = 'no_mod' | 'free_mod'
+
+export const BOARDS: Board[] = ['no_mod', 'free_mod']
 
 export interface UsersTable {
     osu_user_id: number
@@ -102,6 +105,7 @@ export interface RunMapsTable {
     confirmed: Generated<boolean>
 
     original_star_rating: number
+    difficulty_name: string
     hit_length: number
     total_length: number
     map_max_combo: number | null

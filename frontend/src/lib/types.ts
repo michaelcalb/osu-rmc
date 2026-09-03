@@ -34,6 +34,7 @@ export interface ServedMap {
     set_id: number
     served_at: string
     original_star_rating: number
+    difficulty_name: string
     hit_length: number
     total_length: number
     map_max_combo: number | null
@@ -95,6 +96,7 @@ export interface RunDetailMap {
     outcome: MapOutcome
     confirmed: boolean
     original_star_rating: number
+    difficulty_name: string
     total_length: number
     map_max_combo: number | null
     mods: APIMod[] | null
@@ -143,6 +145,7 @@ export interface RunResultMap {
     outcome: MapOutcome
     confirmed: boolean
     original_star_rating: number
+    difficulty_name: string
     total_length: number
     map_max_combo: number | null
     mods: APIMod[] | null
@@ -183,4 +186,25 @@ export interface RunSummary {
     active_elapsed: number
     started_at: string
     ended_at: string | null
+}
+
+export interface ProfileBoard {
+    board: Board
+    best: {
+        id: number
+        fc_count: number | null
+        ended_at: string | null
+        pool_version: number
+    } | null
+    rank: number | null
+}
+
+export interface Profile {
+    user: {
+        osu_user_id: number
+        username: string
+    }
+    completedRuns: number
+    totalFcs: number
+    boards: ProfileBoard[]
 }

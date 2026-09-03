@@ -1,4 +1,4 @@
-import type { OsuScore } from "src/osu/osu.service";
+import type { OsuScore } from "../osu/osu.service";
 import { isFullCombo } from "./predicates";
 
 const RANK_ORDER: readonly string[] = [

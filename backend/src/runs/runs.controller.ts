@@ -1,10 +1,9 @@
 import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
 import { CurrentUser } from '../auth/current-user.decorator';
-import { SessionGuard } from 'src/auth/session.guard';
-import type { Board } from '../db/database';
+import { SessionGuard } from '../auth/session.guard';
+import { BOARDS, type Board } from '../db/database';
 import { RunsService } from './runs.service';
 
-const BOARDS: Board[] = ['no_mod', 'free_mod']
 const SKIP_KINDS = ['a_skip', 'free_skip'] as const
 
 @UseGuards(SessionGuard)

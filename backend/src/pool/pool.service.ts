@@ -37,6 +37,7 @@ export class PoolService {
                 'map_id',
                 'set_id',
                 'star_rating',
+                'difficulty_name',
                 'hit_length',
                 'total_length',
                 'max_combo'
@@ -59,6 +60,7 @@ export class PoolService {
                         'map_id',
                         'set_id',
                         'star_rating',
+                        'difficulty_name',
                         'hit_length',
                         'total_length',
                         'max_combo',

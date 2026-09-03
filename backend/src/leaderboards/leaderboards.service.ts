@@ -79,6 +79,7 @@ export class LeaderboardsService {
                 'rm.outcome',
                 'rm.confirmed',
                 'rm.original_star_rating',
+                'rm.difficulty_name',
                 'rm.total_length',
                 'rm.map_max_combo',
                 'rm.mods',

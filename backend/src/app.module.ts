@@ -7,8 +7,9 @@ import { OsuModule } from './osu/osu.module';
 import { ValidationModule } from './validation/validation.module';
 import { AuthModule } from './auth/auth.module';
 import { LeaderboardsModule } from './leaderboards/leaderboards.module';
+import { ProfilesModule } from './profiles/profiles.module';
 
 @Module({
-    imports: [ScheduleModule.forRoot(), DbModule, PoolModule, RunsModule, OsuModule, ValidationModule, AuthModule, LeaderboardsModule],
+    imports: [ScheduleModule.forRoot(), DbModule, PoolModule, RunsModule, OsuModule, ValidationModule, AuthModule, LeaderboardsModule, ProfilesModule],
 })
 export class AppModule {}
