@@ -35,7 +35,7 @@ export class LeaderboardsService {
                     .as('avg_fc_star_rating')
             ])
             .where('r.status', '=', 'complete')
-            .where('r.fc_count', '=', 0)
+            .where('r.fc_count', '>', 0)
             .where('r.resolved_board', '=', board)
             .orderBy('r.fc_count', 'desc')
             .orderBy('r.ended_at', 'asc')
