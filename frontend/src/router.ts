@@ -27,13 +27,6 @@ const router = createRouter({
             meta: { requiresAuth: true }
         },
         {
-            path: '/run/:id/result',
-            name: 'result',
-            component: () => import ('./views/ResultView.vue'),
-            meta: { requiresAuth: true },
-            props: true
-        },
-        {
             path: '/boards/:board',
             name: 'board',
             component: () => import('./views/BoardView.vue')

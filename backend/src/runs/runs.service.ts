@@ -247,9 +247,7 @@ export class RunsService {
             return false
         }
 
-        await this.finishRun(run.id, run, now)
-
-        return true
+        return this.finishRun(run.id, run, now)
     }
 
     private async loadRun(userId: number, runId: number) {
@@ -283,8 +281,8 @@ export class RunsService {
         }
     }
 
-    private async finishRun(runId: number, run: ClockInput, now: Date) {
-        await this.db
+    private async finishRun(runId: number, run: ClockInput, now: Date): Promise<boolean> {
+        const finished = await this.db
             .updateTable('runs')
             .set({
                 status: 'pending_final',
@@ -292,9 +290,17 @@ export class RunsService {
                 ended_at: now
             })
             .where('id', '=', runId)
-            .execute()
+            .where('status', '=', 'active')
+            .returning('id')
+            .executeTakeFirst()
+
+        if (!finished) {
+            return false
+        }
 
         this.scheduleValidation(runId)
+
+        return true
     }
 
     private scheduleValidation(runId: number) {
@@ -342,64 +348,6 @@ export class RunsService {
         }
 
         return this.getRunState(userId, active.id)
-    }
-
-    async getRunResult(userId: number, runId: number) {
-        const run = await this.db
-            .selectFrom('runs')
-            .select([
-                'id',
-                'status',
-                'pool_version',
-                'declared_mode',
-                'resolved_board',
-                'fc_count',
-                'active_elapsed',
-                'started_at',
-                'ended_at',
-                'truncated_at_index',
-                'truncation_reason'
-            ])
-            .where('id', '=', runId)
-            .where('user_id', '=', userId)
-            .executeTakeFirst()
-
-        if (!run) {
-            throw new NotFoundException('run not found')
-        }
-
-        const maps = await this.db
-            .selectFrom('run_maps as rm')
-            .innerJoin('pool_sets as ps', 'ps.beatmapset_id', 'rm.set_id')
-            .select([
-                'rm.seq_index',
-                'rm.map_id',
-                'rm.set_id',
-                'rm.claimed_outcome',
-                'rm.outcome',
-                'rm.confirmed',
-                'rm.original_star_rating',
-                'rm.total_length',
-                'rm.map_max_combo',
-                'rm.mods',
-                'rm.score_max_combo',
-                'rm.confirmed_score_id',
-                'rm.served_at',
-                'rm.score_started_at',
-                'rm.score_ended_at',
-                'ps.artist',
-                'ps.title',
-                'ps.creator'
-            ])
-            .where('rm.run_id', '=', runId)
-            .orderBy('rm.seq_index')
-            .execute()
-
-        const claimedFcCount = maps.filter(
-            (map) => map.claimed_outcome === 'fc'
-        ).length
-
-        return { run, maps, claimedFcCount }
     }
 
     async listRuns(userId: number, limit = 20) {

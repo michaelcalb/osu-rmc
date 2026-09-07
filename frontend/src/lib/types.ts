@@ -55,11 +55,6 @@ export interface Clock {
     prepSecondsLeft: number
 }
 
-export interface RevealResponse {
-    map: ServedMap
-    clock: Clock
-}
-
 export interface RunState extends Clock {
     id: number
     status: RunStatus
@@ -93,6 +88,7 @@ export interface RunDetailMap {
     seq_index: number
     map_id: number
     set_id: number
+    claimed_outcome: ClaimedOutcome | null
     outcome: MapOutcome
     confirmed: boolean
     original_star_rating: number
@@ -102,6 +98,9 @@ export interface RunDetailMap {
     mods: APIMod[] | null
     score_max_combo: number | null
     confirmed_score_id: string | null
+    served_at: string
+    score_started_at: string | null
+    score_ended_at: string | null
     artist: string
     artist_unicode: string | null
     title: string
@@ -125,10 +124,11 @@ export interface RunDetail {
         active_elapsed: number
         started_at: string
         ended_at: string | null
+        truncated_at_index: number | null
+        truncation_reason: TruncationReason | null
     }
     maps: RunDetailMap[]
 }
-
 
 export type TruncationReason =
     | 'banned_mod'
@@ -136,46 +136,6 @@ export type TruncationReason =
     | 'missing_score'
     | 'rejected_unplayable'
     | 'not_qualifying'
-
-export interface RunResultMap {
-    seq_index: number
-    map_id: number
-    set_id: number
-    claimed_outcome: ClaimedOutcome | null
-    outcome: MapOutcome
-    confirmed: boolean
-    original_star_rating: number
-    difficulty_name: string
-    total_length: number
-    map_max_combo: number | null
-    mods: APIMod[] | null
-    score_max_combo: number | null
-    confirmed_score_id: string | null
-    served_at: string
-    score_started_at: string | null
-    score_ended_at: string | null
-    artist: string
-    title: string
-    creator: string
-}
-
-export interface RunResult {
-    run: {
-        id: number
-        status: RunStatus
-        pool_version: number
-        declared_mode: Board
-        resolved_board: Board | null
-        fc_count: number | null
-        active_elapsed: number
-        started_at: string
-        ended_at: string | null
-        truncated_at_index: number | null
-        truncation_reason: TruncationReason | null
-    }
-    maps: RunResultMap[]
-    claimedFcCount: number
-}
 
 export interface RunSummary {
     id: number

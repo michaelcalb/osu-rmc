@@ -12,7 +12,7 @@
         <p>run id: {{ current.id }}</p>
         <p>status: {{ current.status }}</p>
         <p>claimed fcs: {{ current.claimedFcCount }}</p>
-        <p>time left: {{ current.mainSecondsLeft }}</p>
+        <p v-if="current.status === 'active'">time left: {{ current.mainSecondsLeft }}</p>
         <RouterLink to="/run">resume</RouterLink>
     </section>
 
@@ -47,7 +47,18 @@
                 <p>active elapsed: {{ r.active_elapsed }}</p>
                 <p>started: {{ r.started_at }}</p>
                 <p>ended: {{ r.ended_at }}</p>
-                <RouterLink :to="`/run/${r.id}/result`">result</RouterLink>
+                <RouterLink v-if="r.status === 'complete'" :to="`/runs/${r.id}`">
+                    view run
+                </RouterLink>
+                <RouterLink v-else-if="r.status === 'void'" to="/help">
+                    this run couldn't be validated
+                </RouterLink>
+                <RouterLink
+                    v-else-if="r.status === 'pending_final' || r.status === 'validating'"
+                    to="/run"
+                >
+                    still validating
+                </RouterLink>
             </li>
         </ul>
     </section>

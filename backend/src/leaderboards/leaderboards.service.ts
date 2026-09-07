@@ -59,7 +59,9 @@ export class LeaderboardsService {
                 'r.fc_count',
                 'r.active_elapsed',
                 'r.started_at',
-                'r.ended_at'
+                'r.ended_at',
+                'r.truncated_at_index',
+                'r.truncation_reason'
             ])
             .where('r.id', '=', runId)
             .where('r.status', '=', 'complete')
@@ -76,6 +78,7 @@ export class LeaderboardsService {
                 'rm.seq_index',
                 'rm.map_id',
                 'rm.set_id',
+                'rm.claimed_outcome',
                 'rm.outcome',
                 'rm.confirmed',
                 'rm.original_star_rating',
@@ -85,6 +88,9 @@ export class LeaderboardsService {
                 'rm.mods',
                 'rm.score_max_combo',
                 'rm.confirmed_score_id',
+                'rm.served_at',
+                'rm.score_started_at',
+                'rm.score_ended_at',
                 'ps.artist',
                 'ps.artist_unicode',
                 'ps.title',
