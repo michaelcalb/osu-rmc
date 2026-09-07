@@ -10,10 +10,9 @@
             <p v-if="unconfirmed > 0">not confirmed: {{ unconfirmed }}</p>
 
             <p v-if="truncationText">
-                counting stopped at map {{ (detail.run.truncated_at_index ?? 0) + 1 }}<span
-                    v-if="truncatedMap"
-                >
-                    ({{ mapName(truncatedMap) }})</span
+                counting stopped at map
+                {{ (detail.run.truncated_at_index ?? 0) + 1
+                }}<span v-if="truncatedMap"> ({{ mapName(truncatedMap) }})</span
                 >: {{ truncationText }}
             </p>
             <p v-else>every map played was judged</p>
@@ -21,9 +20,14 @@
 
         <section>
             <h3>run</h3>
-            <p>board: {{ detail.run.declared_mode }} &rarr; {{ detail.run.resolved_board }}</p>
+            <p>
+                board: {{ detail.run.declared_mode }} &rarr;
+                {{ detail.run.resolved_board }}
+            </p>
             <p>time played: {{ formatDuration(detail.run.active_elapsed) }}</p>
-            <p v-if="wallSeconds !== null">wall clock: {{ formatDuration(wallSeconds) }}</p>
+            <p v-if="wallSeconds !== null">
+                wall clock: {{ formatDuration(wallSeconds) }}
+            </p>
             <p v-if="pausedSeconds !== null">
                 paused / resting: {{ formatDuration(pausedSeconds) }}
             </p>
@@ -47,7 +51,8 @@
         <section>
             <h3>difficulty</h3>
             <p v-if="avgFcStars !== null">
-                average star rating of confirmed fcs: {{ avgFcStars.toFixed(2) }}
+                average star rating of confirmed fcs:
+                {{ avgFcStars.toFixed(2) }}
             </p>
             <p v-if="avgServedStars !== null">
                 average star rating served: {{ avgServedStars.toFixed(2) }}
@@ -56,11 +61,13 @@
                 average bpm of confirmed fcs: {{ Math.round(avgFcBpm) }}
             </p>
             <p v-if="hardestFc">
-                hardest fc: {{ hardestFc.original_star_rating.toFixed(2) }}&#9733; -
+                hardest fc:
+                {{ hardestFc.original_star_rating.toFixed(2) }}&#9733; -
                 {{ mapName(hardestFc) }}
             </p>
             <p v-if="fastestFc?.bpm">
-                fastest fc: {{ Math.round(fastestFc.bpm) }} bpm - {{ mapName(fastestFc) }}
+                fastest fc: {{ Math.round(fastestFc.bpm) }} bpm -
+                {{ mapName(fastestFc) }}
             </p>
             <p v-if="longestFc">
                 longest fc: {{ formatDuration(longestFc.total_length) }} -
@@ -83,7 +90,8 @@
             <h3>claims the validator did not agree with</h3>
             <ul>
                 <li v-for="m in disagreements" :key="m.seq_index">
-                    map {{ m.seq_index + 1 }}: claimed {{ m.claimed_outcome }}, judged
+                    map {{ m.seq_index + 1 }}: claimed {{ m.claimed_outcome }},
+                    judged
                     {{ OUTCOME_LABELS[m.outcome] }}
                 </li>
             </ul>
@@ -106,11 +114,16 @@
                         >
                         <span v-else-if="!m.confirmed">(unconfirmed)</span>
                     </p>
-                    <p v-if="m.claimed_outcome && m.claimed_outcome !== m.outcome">
+                    <p
+                        v-if="
+                            m.claimed_outcome && m.claimed_outcome !== m.outcome
+                        "
+                    >
                         claimed: {{ m.claimed_outcome }}
                     </p>
                     <p v-if="m.score_max_combo !== null">
-                        combo: {{ m.score_max_combo }} / {{ m.map_max_combo ?? '?' }}
+                        combo: {{ m.score_max_combo }} /
+                        {{ m.map_max_combo ?? '?' }}
                         <span v-if="comboPercent(m) !== null"
                             >({{ comboPercent(m)!.toFixed(1) }}%)</span
                         >
@@ -119,12 +132,15 @@
                         mods: {{ m.mods.map((mod) => mod.acronym).join(', ') }}
                     </p>
                     <p v-if="prepSeconds(m) !== null">
-                        time before starting: {{ formatDuration(prepSeconds(m)!) }}
+                        time before starting:
+                        {{ formatDuration(prepSeconds(m)!) }}
                     </p>
                     <p v-if="playSeconds(m) !== null">
                         time on the map: {{ formatDuration(playSeconds(m)!) }}
                     </p>
-                    <p v-if="m.confirmed_score_id">score id: {{ m.confirmed_score_id }}</p>
+                    <p v-if="m.confirmed_score_id">
+                        score id: {{ m.confirmed_score_id }}
+                    </p>
                     <p v-if="m.nsfw">nsfw</p>
                     <a
                         :href="`https://osu.ppy.sh/b/${m.map_id}`"
@@ -141,7 +157,12 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { ApiError, get } from '../lib/api'
-import type { MapOutcome, RunDetail, RunDetailMap, TruncationReason } from '../lib/types'
+import type {
+    MapOutcome,
+    RunDetail,
+    RunDetailMap,
+    TruncationReason
+} from '../lib/types'
 
 const props = defineProps<{ id: string }>()
 
@@ -156,9 +177,11 @@ const OUTCOME_LABELS: Record<MapOutcome, string> = {
 
 const TRUNCATION_LABELS: Record<TruncationReason, string> = {
     banned_mod: 'the score on it used a banned mod',
-    rejected_unplayable: 'it was marked unplayable, but its status did not justify that',
+    rejected_unplayable:
+        'it was marked unplayable, but its status did not justify that',
     missing_score: 'no score was found for it',
-    over_limit: 'it was full-comboed, but the score landed outside the time limit',
+    over_limit:
+        'it was full-comboed, but the score landed outside the time limit',
     not_qualifying: 'the score was neither a full combo nor good enough to skip'
 }
 
@@ -183,7 +206,7 @@ const truncatedMap = computed(() => {
 
     return index === null || index === undefined
         ? null
-        : maps.value.find((m) => m.seq_index === index) ?? null
+        : (maps.value.find((m) => m.seq_index === index) ?? null)
 })
 
 const truncationText = computed(() => {
@@ -230,7 +253,9 @@ const avgFcBpm = computed(() =>
     )
 )
 
-const hardestFc = computed(() => best(fcMaps.value, (m) => m.original_star_rating))
+const hardestFc = computed(() =>
+    best(fcMaps.value, (m) => m.original_star_rating)
+)
 
 const fastestFc = computed(() => best(fcMaps.value, (m) => m.bpm ?? 0))
 
@@ -244,14 +269,19 @@ const wallSeconds = computed(() => {
     const run = detail.value?.run
 
     return run?.ended_at
-        ? Math.round((Date.parse(run.ended_at) - Date.parse(run.started_at)) / 1000)
+        ? Math.round(
+              (Date.parse(run.ended_at) - Date.parse(run.started_at)) / 1000
+          )
         : null
 })
 
 const pausedSeconds = computed(() =>
     wallSeconds.value === null
         ? null
-        : Math.max(0, wallSeconds.value - (detail.value?.run.active_elapsed ?? 0))
+        : Math.max(
+              0,
+              wallSeconds.value - (detail.value?.run.active_elapsed ?? 0)
+          )
 )
 
 const disagreements = computed(() =>
@@ -296,7 +326,8 @@ function comboPercent(m: RunDetailMap): number | null {
 function playSeconds(m: RunDetailMap): number | null {
     return m.score_started_at && m.score_ended_at
         ? Math.round(
-              (Date.parse(m.score_ended_at) - Date.parse(m.score_started_at)) / 1000
+              (Date.parse(m.score_ended_at) - Date.parse(m.score_started_at)) /
+                  1000
           )
         : null
 }
@@ -306,7 +337,8 @@ function prepSeconds(m: RunDetailMap): number | null {
         ? Math.max(
               0,
               Math.round(
-                  (Date.parse(m.score_started_at) - Date.parse(m.served_at)) / 1000
+                  (Date.parse(m.score_started_at) - Date.parse(m.served_at)) /
+                      1000
               )
           )
         : null
@@ -321,7 +353,8 @@ watch(
         try {
             detail.value = await get<RunDetail>(`/leaderboards/runs/${id}`)
         } catch (e) {
-            error.value = e instanceof ApiError ? e.message : 'could not load run'
+            error.value =
+                e instanceof ApiError ? e.message : 'could not load run'
             detail.value = null
         } finally {
             loading.value = false

@@ -1,12 +1,17 @@
-import type { Board, ClaimedOutcome, MapOutcome, TruncationReason } from "../db/database";
-import type { OsuScore } from "../osu/osu.service";
+import type {
+    Board,
+    ClaimedOutcome,
+    MapOutcome,
+    TruncationReason
+} from '../db/database'
+import type { OsuScore } from '../osu/osu.service'
 import {
     hasBannedMod,
     isFullCombo,
     isNoModEquivalent,
     isSkipWorthy,
     unplayableClaimUpheld
-} from "./predicates";
+} from './predicates'
 
 export interface Position {
     seq_index: number

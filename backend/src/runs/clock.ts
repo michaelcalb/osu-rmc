@@ -1,4 +1,4 @@
-import type { RunPhase } from "../db/database";
+import type { RunPhase } from '../db/database'
 
 export const PREP_WINDOW_SECONDS = 60
 export const RUN_LIMIT_SECONDS = 3600
@@ -23,11 +23,11 @@ export function readClock(run: ClockInput, now: Date): ClockSnapshot {
         run.phase === 'download'
             ? Math.max(0, PREP_WINDOW_SECONDS - sincePhase)
             : 0
-    
-    const runningSeconds = 
+
+    const runningSeconds =
         run.phase === 'download'
-        ? Math.max(0, sincePhase - PREP_WINDOW_SECONDS)
-        : sincePhase
+            ? Math.max(0, sincePhase - PREP_WINDOW_SECONDS)
+            : sincePhase
 
     const activeElapsed = run.active_elapsed + runningSeconds
 

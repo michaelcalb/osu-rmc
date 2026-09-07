@@ -1,8 +1,19 @@
-import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
-import { CurrentUser } from '../auth/current-user.decorator';
-import { SessionGuard } from '../auth/session.guard';
-import { BOARDS, type Board } from '../db/database';
-import { RunsService } from './runs.service';
+import {
+    BadRequestException,
+    Body,
+    Controller,
+    Get,
+    HttpCode,
+    HttpStatus,
+    Param,
+    ParseIntPipe,
+    Post,
+    UseGuards
+} from '@nestjs/common'
+import { CurrentUser } from '../auth/current-user.decorator'
+import { SessionGuard } from '../auth/session.guard'
+import { BOARDS, type Board } from '../db/database'
+import { RunsService } from './runs.service'
 
 const SKIP_KINDS = ['a_skip', 'free_skip'] as const
 
@@ -70,7 +81,7 @@ export class RunsController {
                 `kind must be one of: ${SKIP_KINDS.join(', ')}`
             )
         }
-        
+
         return this.runsService.advanceMap(
             userId,
             id,
@@ -88,10 +99,7 @@ export class RunsController {
 
     @Post(':id/end')
     @HttpCode(HttpStatus.NO_CONTENT)
-    end(
-        @CurrentUser() userId: number,
-        @Param('id', ParseIntPipe) id: number
-    ) {
+    end(@CurrentUser() userId: number, @Param('id', ParseIntPipe) id: number) {
         return this.runsService.endRun(userId, id)
     }
 

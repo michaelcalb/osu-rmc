@@ -1,16 +1,7 @@
-import type { OsuScore } from "../osu/osu.service";
-import { isFullCombo } from "./predicates";
+import type { OsuScore } from '../osu/osu.service'
+import { isFullCombo } from './predicates'
 
-const RANK_ORDER: readonly string[] = [
-    'D',
-    'C',
-    'B',
-    'A',
-    'S',
-    'SH',
-    'X',
-    'XH'
-]
+const RANK_ORDER: readonly string[] = ['D', 'C', 'B', 'A', 'S', 'SH', 'X', 'XH']
 
 export interface ServedMap {
     seq_index: number

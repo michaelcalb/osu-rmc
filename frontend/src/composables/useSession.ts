@@ -1,6 +1,6 @@
-import { readonly, ref } from "vue";
-import { get, goToLogin, post } from "../lib/api";
-import type { Identity } from "../lib/types";
+import { readonly, ref } from 'vue'
+import { get, goToLogin, post } from '../lib/api'
+import type { Identity } from '../lib/types'
 
 const currentUser = ref<Identity | null>(null)
 const isLoading = ref(true)

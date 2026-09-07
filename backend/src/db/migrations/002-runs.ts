@@ -28,7 +28,9 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('active_elapsed', 'integer', (col) =>
             col.notNull().defaultTo(0)
         )
-        .addColumn('phase', 'text', (col) => col.notNull().defaultTo('download'))
+        .addColumn('phase', 'text', (col) =>
+            col.notNull().defaultTo('download')
+        )
         .addColumn('phase_since', 'timestamptz', (col) =>
             col.notNull().defaultTo(sql`now()`)
         )

@@ -1,14 +1,14 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Kysely } from 'kysely';
-import type { Database } from '../db/database';
-import { KYSELY } from '../db/db.module';
-import { OsuService, SCORE_PUBLISH_DELAY_SECONDS } from '../osu/osu.service';
-import { chargeSequence, type TimedMap } from './charging';
-import { matchScore } from './matching';
-import { judgeRun, RunVerdict, type Position } from './verdict';
-import { Cron } from '@nestjs/schedule';
-import { sql } from 'kysely';
-import { PREP_WINDOW_SECONDS, RUN_LIMIT_SECONDS } from '../runs/clock';
+import { Inject, Injectable } from '@nestjs/common'
+import { Kysely } from 'kysely'
+import type { Database } from '../db/database'
+import { KYSELY } from '../db/db.module'
+import { OsuService, SCORE_PUBLISH_DELAY_SECONDS } from '../osu/osu.service'
+import { chargeSequence, type TimedMap } from './charging'
+import { matchScore } from './matching'
+import { judgeRun, RunVerdict, type Position } from './verdict'
+import { Cron } from '@nestjs/schedule'
+import { sql } from 'kysely'
+import { PREP_WINDOW_SECONDS, RUN_LIMIT_SECONDS } from '../runs/clock'
 
 const MANUAL_END_GRACE_SECONDS = 60
 
@@ -27,16 +27,15 @@ export class ValidationService {
         }
 
         try {
-
             const positions = await this.gatherPositions(run)
-            
+
             if (await this.shouldDefer(run, positions)) {
                 await this.release(runId)
                 return
             }
-            
+
             const verdict = judgeRun(positions)
-            
+
             await this.applyVerdict(runId, verdict)
         } catch (error) {
             await this.release(runId).catch(() => undefined)
@@ -121,7 +120,8 @@ export class ValidationService {
     ): Promise<boolean> {
         const last = positions[positions.length - 1]
 
-        if (!last ||
+        if (
+            !last ||
             last.score ||
             last.claimed === 'free_skip' ||
             last.claimed === 'unplayable'
@@ -257,7 +257,9 @@ export class ValidationService {
             .execute()
 
         for (const run of crashed) {
-            console.error(`run ${run.id} crashed validation repeatedly, marked void`)
+            console.error(
+                `run ${run.id} crashed validation repeatedly, marked void`
+            )
         }
 
         const stuck = await this.db

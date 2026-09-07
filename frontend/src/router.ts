@@ -1,5 +1,5 @@
-import { createRouter, createWebHistory } from "vue-router";
-import { useSession } from "./composables/useSession";
+import { createRouter, createWebHistory } from 'vue-router'
+import { useSession } from './composables/useSession'
 
 declare module 'vue-router' {
     interface RouteMeta {
@@ -13,17 +13,17 @@ const router = createRouter({
         {
             path: '/',
             name: 'home',
-            component: () => import ('./views/HomeView.vue')
+            component: () => import('./views/HomeView.vue')
         },
         {
             path: '/help',
             name: 'help',
-            component: () => import ('./views/HelpView.vue')
+            component: () => import('./views/HelpView.vue')
         },
         {
             path: '/run',
             name: 'run',
-            component: () => import ('./views/RunView.vue'),
+            component: () => import('./views/RunView.vue'),
             meta: { requiresAuth: true }
         },
         {

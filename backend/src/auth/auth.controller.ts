@@ -1,7 +1,17 @@
-import { Controller, Get, HttpCode, HttpStatus, Post, Query, Req, Res, UnauthorizedException } from '@nestjs/common';
-import { randomBytes } from 'node:crypto';
-import type { Request, Response } from 'express';
-import { AuthService } from './auth.service';
+import {
+    Controller,
+    Get,
+    HttpCode,
+    HttpStatus,
+    Post,
+    Query,
+    Req,
+    Res,
+    UnauthorizedException
+} from '@nestjs/common'
+import { randomBytes } from 'node:crypto'
+import type { Request, Response } from 'express'
+import { AuthService } from './auth.service'
 import {
     SESSION_COOKIE,
     STATE_COOKIE,

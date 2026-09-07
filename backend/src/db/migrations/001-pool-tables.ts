@@ -51,7 +51,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .on('pool_maps')
         .column('star_rating')
         .execute()
-    
+
     await db.schema
         .createIndex('pool_maps_open_interval_idx')
         .on('pool_maps')

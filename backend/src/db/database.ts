@@ -77,7 +77,7 @@ export interface RunsTable {
     truncation_reason: TruncationReason | null
 }
 
-export type MapOutcome = 
+export type MapOutcome =
     | 'unjudged'
     | 'fc'
     | 'a_skip'
@@ -90,7 +90,11 @@ export interface APIMod {
     settings?: Record<string, unknown>
 }
 
-type NullableJson<T extends object> = JSONColumnType<T | null, string | null, string | null>
+type NullableJson<T extends object> = JSONColumnType<
+    T | null,
+    string | null,
+    string | null
+>
 
 export type ClaimedOutcome = 'fc' | 'a_skip' | 'free_skip' | 'unplayable'
 

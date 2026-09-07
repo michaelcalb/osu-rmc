@@ -1,8 +1,8 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Kysely, type ExpressionBuilder } from 'kysely';
-import type { Database } from '../db/database';
-import { KYSELY } from '../db/db.module';
-import { resolveSequence } from './seed';
+import { Inject, Injectable } from '@nestjs/common'
+import { Kysely, type ExpressionBuilder } from 'kysely'
+import type { Database } from '../db/database'
+import { KYSELY } from '../db/db.module'
+import { resolveSequence } from './seed'
 
 @Injectable()
 export class PoolService {
@@ -16,7 +16,6 @@ export class PoolService {
                     eb('removed_in_version', 'is', null),
                     eb('removed_in_version', '>', version)
                 ])
-
             ])
     }
 
@@ -79,7 +78,7 @@ export class PoolService {
             .selectAll()
             .where('idx', 'in', indices)
             .execute()
-        
+
         const byIndex = new Map(rows.map((row) => [row.idx, row]))
 
         return indices.map((idx) => {
@@ -102,7 +101,7 @@ export class PoolService {
             .orderBy('id', 'desc')
             .limit(1)
             .executeTakeFirstOrThrow()
-        
+
         return row.id
     }
 
@@ -113,5 +112,4 @@ export class PoolService {
 
         return maps.map((map) => map.map_id)
     }
-
 }

@@ -35,7 +35,9 @@
                         <p>rank: {{ b.rank }}</p>
                         <p>pool version: {{ b.best.pool_version }}</p>
                         <p>ended at: {{ b.best.ended_at }}</p>
-                        <RouterLink :to="`/runs/${b.best.id}`">view run</RouterLink>
+                        <RouterLink :to="`/runs/${b.best.id}`"
+                            >view run</RouterLink
+                        >
                     </template>
                     <p v-else>no run yet</p>
                 </li>

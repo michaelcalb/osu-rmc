@@ -1,6 +1,6 @@
-import { computed, onScopeDispose, ref } from "vue";
-import { ApiError, get, post } from "../lib/api";
-import type { Clock, RunState, ServedMap } from "../lib/types";
+import { computed, onScopeDispose, ref } from 'vue'
+import { ApiError, get, post } from '../lib/api'
+import type { Clock, RunState, ServedMap } from '../lib/types'
 
 const TICK_MS = 500
 
@@ -27,7 +27,8 @@ export function useRun() {
 
     const prepSecondsLeft = computed(() =>
         clock.value
-            ? Math.max(0, clock.value.prepSecondsLeft - sinceSync.value) : 0
+            ? Math.max(0, clock.value.prepSecondsLeft - sinceSync.value)
+            : 0
     )
 
     const mainSecondsLeft = computed(() => {
@@ -46,7 +47,9 @@ export function useRun() {
         () => !signalled.value && prepSecondsLeft.value > 0
     )
 
-    const timeUp = computed(() => clock.value !== null && mainSecondsLeft.value <= 0)
+    const timeUp = computed(
+        () => clock.value !== null && mainSecondsLeft.value <= 0
+    )
 
     function sync(next: Clock) {
         clock.value = next

@@ -2,13 +2,13 @@ const BANNED_MODS: readonly string[] = ['AT', 'CN', 'RX', 'AP']
 const NO_MOD_EQUIVALENT: readonly string[] = ['CL']
 const SKIP_RANKS: readonly string[] = ['A', 'S', 'SH', 'X', 'XH']
 
-const LEGACY_KEYS: readonly string[] =[
+const LEGACY_KEYS: readonly string[] = [
     'count_300',
     'count_100',
     'count_50',
     'count_geki',
     'count_katu',
-    'count_miss',
+    'count_miss'
 ]
 
 const SUBMITTABLE_STATUSES: readonly string[] = [
@@ -38,8 +38,7 @@ export function isFullCombo(statistics: Statistics): boolean {
     assertModernShape(statistics)
 
     return (
-        (statistics.miss ?? 0) === 0 &&
-        (statistics.large_tick_miss ?? 0) === 0
+        (statistics.miss ?? 0) === 0 && (statistics.large_tick_miss ?? 0) === 0
     )
 }
 

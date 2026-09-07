@@ -1,7 +1,7 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { Kysely } from 'kysely';
-import type { Board, Database } from '../db/database';
-import { KYSELY } from '../db/db.module';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common'
+import { Kysely } from 'kysely'
+import type { Board, Database } from '../db/database'
+import { KYSELY } from '../db/db.module'
 
 export const DEFAULT_LIMIT = 50
 const MAX_LIMIT = 100
@@ -98,7 +98,7 @@ export class LeaderboardsService {
                 'ps.creator',
                 'ps.bpm',
                 'ps.cover_updated_at',
-                'ps.nsfw',
+                'ps.nsfw'
             ])
             .where('rm.run_id', '=', runId)
             .orderBy('rm.seq_index')

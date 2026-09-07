@@ -1,13 +1,20 @@
-import { ConflictException, HttpException, HttpStatus, Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { Kysely, sql } from 'kysely';
-import type { Board, Database, RunPhase, RunStatus } from '../db/database';
-import { KYSELY } from '../db/db.module';
-import { PoolService } from '../pool/pool.service';
-import { generateSeed } from '../pool/seed';
-import { bankedElapsed, readClock, type ClockInput } from './clock';
-import { Cron } from '@nestjs/schedule';
-import { ValidationService } from '../validation/validation.service';
-import { SCORE_PUBLISH_DELAY_SECONDS } from '../osu/osu.service';
+import {
+    ConflictException,
+    HttpException,
+    HttpStatus,
+    Inject,
+    Injectable,
+    NotFoundException
+} from '@nestjs/common'
+import { Kysely, sql } from 'kysely'
+import type { Board, Database, RunPhase, RunStatus } from '../db/database'
+import { KYSELY } from '../db/db.module'
+import { PoolService } from '../pool/pool.service'
+import { generateSeed } from '../pool/seed'
+import { bankedElapsed, readClock, type ClockInput } from './clock'
+import { Cron } from '@nestjs/schedule'
+import { ValidationService } from '../validation/validation.service'
+import { SCORE_PUBLISH_DELAY_SECONDS } from '../osu/osu.service'
 
 const MAX_STARTS_PER_HOUR = 6
 
@@ -36,7 +43,13 @@ export class RunsService {
                 declared_mode: declaredMode,
                 resolved_sequence: JSON.stringify(mapIds)
             })
-            .returning(['id', 'pool_version', 'declared_mode', 'status', 'started_at'])
+            .returning([
+                'id',
+                'pool_version',
+                'declared_mode',
+                'status',
+                'started_at'
+            ])
             .executeTakeFirstOrThrow()
     }
 
@@ -154,7 +167,7 @@ export class RunsService {
                 map_max_combo: map.max_combo
             })
             .execute()
-        
+
         const settled = await this.settle(runId, run, now, 'download')
 
         return {
@@ -262,7 +275,7 @@ export class RunsService {
                 'fc_count',
                 'active_elapsed',
                 'phase',
-                'phase_since',
+                'phase_since'
             ])
             .where('id', '=', runId)
             .where('user_id', '=', userId)
@@ -281,7 +294,11 @@ export class RunsService {
         }
     }
 
-    private async finishRun(runId: number, run: ClockInput, now: Date): Promise<boolean> {
+    private async finishRun(
+        runId: number,
+        run: ClockInput,
+        now: Date
+    ): Promise<boolean> {
         const finished = await this.db
             .updateTable('runs')
             .set({

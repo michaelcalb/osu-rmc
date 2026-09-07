@@ -1,4 +1,4 @@
-import { CanActivate, Injectable, NotFoundException } from "@nestjs/common";
+import { CanActivate, Injectable, NotFoundException } from '@nestjs/common'
 
 @Injectable()
 export class DevRoutesGuard implements CanActivate {

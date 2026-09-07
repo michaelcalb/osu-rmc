@@ -1,6 +1,10 @@
-import { createParamDecorator, ExecutionContext, UnauthorizedException } from "@nestjs/common";
-import { Request } from "express";
-import { readSession } from "./session";
+import {
+    createParamDecorator,
+    ExecutionContext,
+    UnauthorizedException
+} from '@nestjs/common'
+import { Request } from 'express'
+import { readSession } from './session'
 
 export const CurrentUser = createParamDecorator(
     (_data: unknown, context: ExecutionContext): number => {

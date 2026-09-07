@@ -1,3 +1,1 @@
-<template>
-    help
-</template>
+<template>help</template>

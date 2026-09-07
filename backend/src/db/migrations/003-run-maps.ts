@@ -1,4 +1,4 @@
-import { Kysely, sql } from "kysely";
+import { Kysely, sql } from 'kysely'
 
 export async function up(db: Kysely<any>): Promise<void> {
     await db.schema
@@ -19,7 +19,9 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('confirmed', 'boolean', (col) =>
             col.notNull().defaultTo(false)
         )
-        .addColumn('original_star_rating', 'double precision', (col) => col.notNull())
+        .addColumn('original_star_rating', 'double precision', (col) =>
+            col.notNull()
+        )
         .addColumn('difficulty_name', 'text', (col) => col.notNull())
         .addColumn('hit_length', 'integer', (col) => col.notNull())
         .addColumn('total_length', 'integer', (col) => col.notNull())

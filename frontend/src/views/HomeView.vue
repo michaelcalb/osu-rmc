@@ -12,7 +12,9 @@
         <p>run id: {{ current.id }}</p>
         <p>status: {{ current.status }}</p>
         <p>claimed fcs: {{ current.claimedFcCount }}</p>
-        <p v-if="current.status === 'active'">time left: {{ current.mainSecondsLeft }}</p>
+        <p v-if="current.status === 'active'">
+            time left: {{ current.mainSecondsLeft }}
+        </p>
         <RouterLink to="/run">resume</RouterLink>
     </section>
 
@@ -47,14 +49,20 @@
                 <p>active elapsed: {{ r.active_elapsed }}</p>
                 <p>started: {{ r.started_at }}</p>
                 <p>ended: {{ r.ended_at }}</p>
-                <RouterLink v-if="r.status === 'complete'" :to="`/runs/${r.id}`">
+                <RouterLink
+                    v-if="r.status === 'complete'"
+                    :to="`/runs/${r.id}`"
+                >
                     view run
                 </RouterLink>
                 <RouterLink v-else-if="r.status === 'void'" to="/help">
                     this run couldn't be validated
                 </RouterLink>
                 <RouterLink
-                    v-else-if="r.status === 'pending_final' || r.status === 'validating'"
+                    v-else-if="
+                        r.status === 'pending_final' ||
+                        r.status === 'validating'
+                    "
                     to="/run"
                 >
                     still validating
@@ -65,60 +73,60 @@
 </template>
 
 <script setup lang="ts">
-    import { onMounted, ref } from 'vue';
-    import { RouterLink, useRouter } from 'vue-router';
-    import { ApiError, get, post } from '../lib/api';
-    import { useSession } from '../composables/useSession';
-    import type { Board, RunState, StartedRun, RunSummary } from '../lib/types';
+import { onMounted, ref } from 'vue'
+import { RouterLink, useRouter } from 'vue-router'
+import { ApiError, get, post } from '../lib/api'
+import { useSession } from '../composables/useSession'
+import type { Board, RunState, StartedRun, RunSummary } from '../lib/types'
 
-    const router = useRouter()
-    const { user, ready } = useSession()
+const router = useRouter()
+const { user, ready } = useSession()
 
-    const current = ref<RunState | null>(null)
-    const declaredMode = ref<Board>('no_mod')
-    const loading = ref(true)
-    const starting = ref(false)
-    const error = ref<string | null>(null)
-    const runs = ref<RunSummary[]>([])
+const current = ref<RunState | null>(null)
+const declaredMode = ref<Board>('no_mod')
+const loading = ref(true)
+const starting = ref(false)
+const error = ref<string | null>(null)
+const runs = ref<RunSummary[]>([])
 
-    function describe(e: unknown, fallback: string): string {
-        return e instanceof ApiError ? e.message : fallback
+function describe(e: unknown, fallback: string): string {
+    return e instanceof ApiError ? e.message : fallback
+}
+
+onMounted(async () => {
+    await ready
+
+    if (!user.value) {
+        loading.value = false
+        return
     }
 
-    onMounted(async () => {
-        await ready
+    try {
+        const [state, mine] = await Promise.all([
+            get<RunState | null>('/runs/current'),
+            get<RunSummary[]>('/runs/mine')
+        ])
 
-        if (!user.value) {
-            loading.value = false
-            return
-        }
-
-        try {
-            const [state, mine] = await Promise.all([
-                get<RunState | null>('/runs/current'),
-                get<RunSummary[]>('/runs/mine')
-            ])
-
-            current.value = state
-            runs.value = mine
-        } catch (e) {
-            error.value = describe(e, 'could not load your runs')
-        } finally {
-            loading.value = false
-        }
-    })
-
-    async function start() {
-        starting.value = true
-        error.value = null
-
-        try {
-            await post<StartedRun>('/runs', { declaredMode: declaredMode.value })
-            await router.push({ name: 'run' })
-        } catch (e) {
-            error.value = describe(e, 'could not start run')
-        } finally {
-            starting.value = false
-        }
+        current.value = state
+        runs.value = mine
+    } catch (e) {
+        error.value = describe(e, 'could not load your runs')
+    } finally {
+        loading.value = false
     }
+})
+
+async function start() {
+    starting.value = true
+    error.value = null
+
+    try {
+        await post<StartedRun>('/runs', { declaredMode: declaredMode.value })
+        await router.push({ name: 'run' })
+    } catch (e) {
+        error.value = describe(e, 'could not start run')
+    } finally {
+        starting.value = false
+    }
+}
 </script>

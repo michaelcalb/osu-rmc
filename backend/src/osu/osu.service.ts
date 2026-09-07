@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { requireEnv } from '../common/env';
+import { Injectable } from '@nestjs/common'
+import { requireEnv } from '../common/env'
 
 const OSU_ROOT = 'https://osu.ppy.sh'
 const API = `${OSU_ROOT}/api/v2`
@@ -67,7 +67,7 @@ export class OsuService {
     ): Promise<T> {
         return this.schedule(async () => {
             const url = new URL(`${API}${endpoint}`)
-            
+
             for (const [key, value] of Object.entries(params)) {
                 url.searchParams.set(key, value)
             }
@@ -80,21 +80,22 @@ export class OsuService {
                 },
                 signal: AbortSignal.timeout(TIMEOUT_MS)
             })
-            
+
             if (!res.ok) {
                 throw new OsuHttpError(
                     res.status,
                     `osu! GET ${url.pathname}${url.search} -> ${res.status} ${await res.text()}`
                 )
             }
-            
+
             return (await res.json()) as T
         })
     }
 
     private schedule<T>(fn: () => Promise<T>): Promise<T> {
         const result = this.queue.then(async () => {
-            const wait = this.lastRequestAt + MIN_REQUESTS_INTERVAL_MS - Date.now()
+            const wait =
+                this.lastRequestAt + MIN_REQUESTS_INTERVAL_MS - Date.now()
 
             if (wait > 0) {
                 await new Promise((resolve) => setTimeout(resolve, wait))
@@ -142,7 +143,8 @@ export class OsuService {
         }
 
         this.token = body.access_token
-        this.tokenExpiresAt = Date.now() + (body.expires_in - TOKEN_MARGIN_SECONDS) * 1000
+        this.tokenExpiresAt =
+            Date.now() + (body.expires_in - TOKEN_MARGIN_SECONDS) * 1000
 
         return this.token
     }

@@ -6,9 +6,9 @@ import {
     Param,
     ParseIntPipe,
     Query
-} from '@nestjs/common';
-import { BOARDS, type Board } from '../db/database';
-import { DEFAULT_LIMIT, LeaderboardsService } from './leaderboards.service';
+} from '@nestjs/common'
+import { BOARDS, type Board } from '../db/database'
+import { DEFAULT_LIMIT, LeaderboardsService } from './leaderboards.service'
 
 @Controller('leaderboards')
 export class LeaderboardsController {
@@ -22,7 +22,8 @@ export class LeaderboardsController {
     @Get(':board')
     board(
         @Param('board') board: string,
-        @Query('limit', new DefaultValuePipe(DEFAULT_LIMIT), ParseIntPipe) limit: number,
+        @Query('limit', new DefaultValuePipe(DEFAULT_LIMIT), ParseIntPipe)
+        limit: number,
         @Query('offset', new DefaultValuePipe(0), ParseIntPipe) offset: number
     ) {
         if (!BOARDS.includes(board as Board)) {

@@ -1,8 +1,8 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-import { Kysely } from 'kysely';
-import type { Database } from '../db/database';
-import { KYSELY } from '../db/db.module';
-import { requireEnv } from '../common/env';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
+import { Kysely } from 'kysely'
+import type { Database } from '../db/database'
+import { KYSELY } from '../db/db.module'
+import { requireEnv } from '../common/env'
 
 const OSU_ROOT = 'https://osu.ppy.sh'
 const TIMEOUT_MS = 15_000

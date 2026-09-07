@@ -1,4 +1,4 @@
-import { PREP_WINDOW_SECONDS, RUN_LIMIT_SECONDS } from "../runs/clock";
+import { PREP_WINDOW_SECONDS, RUN_LIMIT_SECONDS } from '../runs/clock'
 
 export interface TimedMap {
     seq_index: number
@@ -30,7 +30,8 @@ export function chargeSequence(maps: TimedMap[]): ChargeResult[] {
 
         const justified = Math.min(PREP_WINDOW_SECONDS, prep)
 
-        const cumulativeAtPlayStart = cumulative + Math.max(0, prep - PREP_WINDOW_SECONDS)
+        const cumulativeAtPlayStart =
+            cumulative + Math.max(0, prep - PREP_WINDOW_SECONDS)
 
         const chargedSeconds = Math.max(0, elapsed - justified)
 

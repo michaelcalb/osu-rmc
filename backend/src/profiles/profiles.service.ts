@@ -1,7 +1,7 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { Kysely } from 'kysely';
-import { BOARDS, type Board, type Database } from '../db/database';
-import { KYSELY } from '../db/db.module';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common'
+import { Kysely } from 'kysely'
+import { BOARDS, type Board, type Database } from '../db/database'
+import { KYSELY } from '../db/db.module'
 
 @Injectable()
 export class ProfilesService {
@@ -22,7 +22,7 @@ export class ProfilesService {
             .selectFrom('runs')
             .select((eb) => [
                 eb.fn.countAll<number>().as('runs'),
-                eb.fn.sum<number>('fc_count').as('fcs'),
+                eb.fn.sum<number>('fc_count').as('fcs')
             ])
             .where('user_id', '=', osuUserId)
             .where('status', '=', 'complete')

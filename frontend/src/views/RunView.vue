@@ -5,7 +5,10 @@
         <section v-if="validating">
             <h2>validating</h2>
             <p>status: {{ run.status }}</p>
-            <p v-if="slow">this run is taking a big longer to validate. dont worry, we're handling everything ;)</p>
+            <p v-if="slow">
+                this run is taking a big longer to validate. dont worry, we're
+                handling everything ;)
+            </p>
         </section>
 
         <section v-else-if="run.status === 'void'">
@@ -31,12 +34,8 @@
                 <p v-if="signalled">
                     you may have slightly more time than shown.
                 </p>
-                <p v-else>
-                    you may have less time than shown.
-                </p>
-                <p v-if="timeUp">
-                    time over
-                </p>
+                <p v-else>you may have less time than shown.</p>
+                <p v-if="timeUp">time over</p>
             </section>
 
             <section v-if="map">
@@ -76,16 +75,20 @@
                 </button>
 
                 <template v-else>
-                    <button :disabled="busy || !canSignalStart" @click="startPlaying">
+                    <button
+                        :disabled="busy || !canSignalStart"
+                        @click="startPlaying"
+                    >
                         start map
                     </button>
-                    <button :disabled="busy" @click="onReveal">
-                        next map
-                    </button>
+                    <button :disabled="busy" @click="onReveal">next map</button>
                     <button :disabled="busy" @click="skip('a_skip')">
                         skip (A rank)
                     </button>
-                    <button :disabled="busy || run.freeSkipUsed" @click="skip('free_skip')">
+                    <button
+                        :disabled="busy || run.freeSkipUsed"
+                        @click="skip('free_skip')"
+                    >
                         skip (free)
                     </button>
                     <button :disabled="busy" @click="unplayable">
@@ -107,10 +110,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onScopeDispose, ref, watch } from 'vue';
-import { useRouter } from 'vue-router';
-import { useRun } from '../composables/useRun';
-import { coverUrl } from '../lib/covers';
+import { computed, onMounted, onScopeDispose, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import { useRun } from '../composables/useRun'
+import { coverUrl } from '../lib/covers'
 
 const POLL_MS = 10000
 const MAX_POLLS = 3

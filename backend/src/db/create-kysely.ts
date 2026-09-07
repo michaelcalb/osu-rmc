@@ -1,7 +1,7 @@
 import 'dotenv/config'
-import { Kysely, PostgresDialect } from "kysely";
-import { Pool } from "pg";
-import type { Database } from "./database";
+import { Kysely, PostgresDialect } from 'kysely'
+import { Pool } from 'pg'
+import type { Database } from './database'
 
 export function createKysely(): Kysely<Database> {
     const connectionString = process.env.DATABASE_URL
