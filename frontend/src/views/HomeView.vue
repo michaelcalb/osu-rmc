@@ -38,7 +38,7 @@
         <h3>your runs</h3>
         <ul>
             <li v-for="r in runs" :key="r.id">
-                <p>run {{ r.id }} — {{ r.status }}</p>
+                <p>run {{ r.id }}: {{ r.status }}</p>
                 <p>
                     declared: {{ r.declared_mode }} / board:
                     {{ r.resolved_board }}

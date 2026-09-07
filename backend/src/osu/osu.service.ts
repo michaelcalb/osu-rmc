@@ -6,6 +6,7 @@ const API = `${OSU_ROOT}/api/v2`
 const API_VERSION = '20220705'
 const TIMEOUT_MS = 15_000
 const TOKEN_MARGIN_SECONDS = 60
+const MIN_REQUESTS_INTERVAL_MS = 1000
 
 export const SCORE_PUBLISH_DELAY_SECONDS = 10
 
@@ -49,6 +50,8 @@ export class OsuHttpError extends Error {
 export class OsuService {
     private token: string | null = null
     private tokenExpiresAt = 0
+    private queue: Promise<unknown> = Promise.resolve()
+    private lastRequestAt = 0
 
     async getRecentScores(osuUserId: number): Promise<OsuScore[]> {
         return this.get<OsuScore[]>(`/users/${osuUserId}/scores/recent`, {
@@ -58,33 +61,53 @@ export class OsuService {
         })
     }
 
-    private async get<T>(
+    private get<T>(
         endpoint: string,
         params: Record<string, string> = {}
     ): Promise<T> {
-        const url = new URL(`${API}${endpoint}`)
+        return this.schedule(async () => {
+            const url = new URL(`${API}${endpoint}`)
+            
+            for (const [key, value] of Object.entries(params)) {
+                url.searchParams.set(key, value)
+            }
 
-        for (const [key, value] of Object.entries(params)) {
-            url.searchParams.set(key, value)
-        }
+            const res = await fetch(url, {
+                headers: {
+                    Authorization: `Bearer ${await this.getToken()}`,
+                    Accept: 'application/json',
+                    'x-api-version': API_VERSION
+                },
+                signal: AbortSignal.timeout(TIMEOUT_MS)
+            })
+            
+            if (!res.ok) {
+                throw new OsuHttpError(
+                    res.status,
+                    `osu! GET ${url.pathname}${url.search} -> ${res.status} ${await res.text()}`
+                )
+            }
+            
+            return (await res.json()) as T
+        })
+    }
 
-        const res = await fetch(url, {
-            headers: {
-                Authorization: `Bearer ${await this.getToken()}`,
-                Accept: 'application/json',
-                'x-api-version': API_VERSION
-            },
-            signal: AbortSignal.timeout(TIMEOUT_MS)
+    private schedule<T>(fn: () => Promise<T>): Promise<T> {
+        const result = this.queue.then(async () => {
+            const wait = this.lastRequestAt + MIN_REQUESTS_INTERVAL_MS - Date.now()
+
+            if (wait > 0) {
+                await new Promise((resolve) => setTimeout(resolve, wait))
+            }
+
+            this.lastRequestAt = Date.now()
+
+            return fn()
         })
 
-        if (!res.ok) {
-            throw new OsuHttpError(
-                res.status,
-                `osu! GET ${url.pathname}${url.search} -> ${res.status} ${await res.text()}`
-            )
-        }
+        this.queue = result.catch(() => undefined)
 
-        return (await res.json()) as T
+        return result
     }
 
     private async getToken(): Promise<string> {

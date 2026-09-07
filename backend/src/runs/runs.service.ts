@@ -493,8 +493,12 @@ export class RunsService {
             .execute()
 
         for (const run of active) {
-            if (await this.expireIfDue(run, now)) {
-                console.log(`run ${run.id} expired by sweep`)
+            try {
+                if (await this.expireIfDue(run, now)) {
+                    console.log(`run ${run.id} expired by sweep`)
+                }
+            } catch (error) {
+                console.error(`expiry failed for run ${run.id}`, error)
             }
         }
     }

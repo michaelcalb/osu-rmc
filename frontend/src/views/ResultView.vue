@@ -1,11 +1,26 @@
 <template>
     <p v-if="loading">loading...</p>
-    <p v-else-if="error">error: {{ error }}</p>
 
-    <template v-else-if="result">
+    <section v-else-if="error">
+        <p>error: {{ error }}</p>
+        <p v-if="needsLogin"><button @click="goToLogin">log in</button></p>
+    </section>
+
+    <template v-if="result">
         <section v-if="waiting">
             <h2>validating</h2>
             <p>status: {{ result.run.status }}</p>
+            <p v-if="slow">this run is taking a big longer to validate. dont worry, we're handling everything ;)</p>
+        </section>
+
+        <section v-else-if="noResult">
+            <h2>run: {{ result.run.id }}</h2>
+            <p>status: {{ result.run.status }}</p>
+            <p v-if="result.run.status === 'void'">
+                this run couldn't be validated,
+                <RouterLink to="/help">but it can still be saved.</RouterLink>
+            </p>
+            <p v-else>this run was abandoned</p>
         </section>
 
         <template v-else>
@@ -56,16 +71,20 @@
 
 <script setup lang="ts">
 import { computed, onMounted, onScopeDispose, ref } from 'vue';
-import { ApiError, get } from '../lib/api';
+import { ApiError, get, goToLogin } from '../lib/api';
 import type { RunResult } from '../lib/types';
 
 const props = defineProps<{ id: string }>()
 
 const POLL_MS = 10000
+const MAX_POLLS = 3
 
 const result = ref<RunResult | null>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)
+const needsLogin = ref(false)
+const permanent = ref(false)
+const polls = ref(0)
 
 const waiting = computed(
     () =>
@@ -73,11 +92,19 @@ const waiting = computed(
         result.value?.run.status === 'validating'
 )
 
+const noResult = computed(
+    () =>
+        result.value?.run.status === 'void' ||
+        result.value?.run.status === 'abandoned'
+)
+
 const unconfirmed = computed(() =>
     result.value
         ? result.value.claimedFcCount - (result.value.run.fc_count ?? 0)
         : 0
 )
+
+const slow = computed(() => waiting.value && polls.value >= MAX_POLLS)
 
 let timer: ReturnType<typeof setTimeout> | null = null
 
@@ -88,15 +115,22 @@ onScopeDispose(() => {
 })
 
 async function fetchResult() {
+    polls.value += 1
+
     try {
         result.value = await get<RunResult>(`/runs/${props.id}/result`)
+        error.value = null
     } catch (e) {
-        error.value = e instanceof ApiError ? e.message : 'could not load result'
+        error.value = e instanceof ApiError ? e.message : 'could not reach the server'
+        needsLogin.value = e instanceof ApiError && e.status === 401
+        permanent.value = e instanceof ApiError && e.status < 500
     } finally {
         loading.value = false
     }
 
-    if (waiting.value) {
+    const retry = !permanent.value && (waiting.value || error.value !== null)
+
+    if (retry && polls.value < MAX_POLLS) {
         timer = setTimeout(fetchResult, POLL_MS)
     }
 }

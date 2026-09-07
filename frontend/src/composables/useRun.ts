@@ -1,6 +1,6 @@
 import { computed, onScopeDispose, ref } from "vue";
 import { ApiError, get, post } from "../lib/api";
-import type { Clock, RevealResponse, RunState, ServedMap } from "../lib/types";
+import type { Clock, RunState, ServedMap } from "../lib/types";
 
 const TICK_MS = 500
 
@@ -97,31 +97,20 @@ export function useRun() {
         }
     }
 
-    async function advance(
-        suffix: string,
-        body?: unknown,
-        claimsFc = false
-    ) {
-        const hadMap = map.value !== null
+    async function advance(suffix: string, body?: unknown) {
+        const state = await call(async () => {
+            await post(path(suffix), body)
 
-        const next = await call(() =>
-            post<RevealResponse>(path(suffix), body)
-        )
+            return get<RunState>(path('/state'))
+        })
 
-        if (!next) {
-            return
+        if (state) {
+            applyState(state)
         }
-
-        if (claimsFc && hadMap) {
-            claimedFc.value += 1
-        }
-
-        map.value = next.map
-        sync(next.clock)
     }
 
     function reveal() {
-        return advance('/reveal', undefined, true)
+        return advance('/reveal')
     }
 
     function skip(kind: 'a_skip' | 'free_skip') {

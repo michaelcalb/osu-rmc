@@ -8,7 +8,9 @@ import { matchScore } from './matching';
 import { judgeRun, RunVerdict, type Position } from './verdict';
 import { Cron } from '@nestjs/schedule';
 import { sql } from 'kysely';
-import { PREP_WINDOW_SECONDS } from '../runs/clock';
+import { PREP_WINDOW_SECONDS, RUN_LIMIT_SECONDS } from '../runs/clock';
+
+const MANUAL_END_GRACE_SECONDS = 60
 
 @Injectable()
 export class ValidationService {
@@ -28,7 +30,7 @@ export class ValidationService {
 
             const positions = await this.gatherPositions(run)
             
-            if (await this.shouldDefer(runId, positions)) {
+            if (await this.shouldDefer(run, positions)) {
                 await this.release(runId)
                 return
             }
@@ -48,7 +50,7 @@ export class ValidationService {
             .set({ status: 'validating', validating_since: new Date() })
             .where('id', '=', runId)
             .where('status', '=', 'pending_final')
-            .returning(['id', 'user_id', 'ended_at'])
+            .returning(['id', 'user_id', 'ended_at', 'active_elapsed'])
             .executeTakeFirst()
     }
 
@@ -114,7 +116,7 @@ export class ValidationService {
     }
 
     private async shouldDefer(
-        runId: number,
+        run: { id: number; ended_at: Date | null; active_elapsed: number },
         positions: Position[]
     ): Promise<boolean> {
         const last = positions[positions.length - 1]
@@ -127,10 +129,17 @@ export class ValidationService {
             return false
         }
 
+        if (run.ended_at && run.active_elapsed < RUN_LIMIT_SECONDS) {
+            return (
+                Date.now() <
+                run.ended_at.getTime() + MANUAL_END_GRACE_SECONDS * 1000
+            )
+        }
+
         const trailing = await this.db
             .selectFrom('run_maps')
             .select(['served_at', 'total_length'])
-            .where('run_id', '=', runId)
+            .where('run_id', '=', run.id)
             .orderBy('seq_index', 'desc')
             .executeTakeFirstOrThrow()
 
@@ -213,11 +222,44 @@ export class ValidationService {
                 await this.validateRun(run.id)
             } catch (error) {
                 console.error(`validation failed for run ${run.id}`, error)
+                await this.voidStaleRun(run.id)
             }
         }
     }
 
+    private async voidStaleRun(runId: number) {
+        const voided = await this.db
+            .updateTable('runs')
+            .set({ status: 'void' })
+            .where('id', '=', runId)
+            .where('status', '=', 'pending_final')
+            .where('ended_at', '<', sql<Date>`now() - interval '10 minutes'`)
+            .returning('id')
+            .execute()
+
+        if (voided.length > 0) {
+            console.error(`gave up validating run ${runId}, marked void`)
+        }
+    }
+
     private async reclaimStuckValidations() {
+        const crashed = await this.db
+            .updateTable('runs')
+            .set({ status: 'void', validating_since: null })
+            .where('status', '=', 'validating')
+            .where(
+                'validating_since',
+                '<',
+                sql<Date>`now() - interval '5 minutes'`
+            )
+            .where('ended_at', '<', sql<Date>`now() - interval '10 minutes'`)
+            .returning('id')
+            .execute()
+
+        for (const run of crashed) {
+            console.error(`run ${run.id} crashed validation repeatedly, marked void`)
+        }
+
         const stuck = await this.db
             .updateTable('runs')
             .set({ status: 'pending_final', validating_since: null })
