@@ -11,7 +11,7 @@ import type { Board, Database, RunPhase, RunStatus } from '../db/database'
 import { KYSELY } from '../db/db.module'
 import { PoolService } from '../pool/pool.service'
 import { generateSeed } from '../pool/seed'
-import { bankedElapsed, readClock, type ClockInput } from './clock'
+import { bankedElapsed, readClock, START_GRACE_SECONDS, type ClockInput } from './clock'
 import { Cron } from '@nestjs/schedule'
 import { ValidationService } from '../validation/validation.service'
 import { SCORE_PUBLISH_DELAY_SECONDS } from '../osu/osu.service'
@@ -224,12 +224,13 @@ export class RunsService {
         runId: number,
         run: ClockInput,
         now: Date,
-        phase: RunPhase
+        phase: RunPhase,
+        phaseSince: Date = now
     ): Promise<ClockInput> {
         const settled: ClockInput = {
             active_elapsed: bankedElapsed(run, now),
             phase,
-            phase_since: now
+            phase_since: phaseSince
         }
 
         await this.db
@@ -393,7 +394,13 @@ export class RunsService {
             return
         }
 
-        await this.settle(runId, run, new Date(), 'running')
+        const now = new Date()
+
+        if (readClock(run, now).prepSecondsLeft <= START_GRACE_SECONDS) {
+            return
+        }
+
+        await this.settle(runId, run, now, 'running', new Date(now.getTime() + START_GRACE_SECONDS * 1000))
     }
 
     async advanceMap(

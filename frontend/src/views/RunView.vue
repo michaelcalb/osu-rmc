@@ -31,10 +31,10 @@
                 <p>main seconds left: {{ Math.floor(mainSecondsLeft) }}</p>
                 <p>prep seconds left: {{ Math.floor(prepSecondsLeft) }}</p>
                 <p>phase: {{ clock?.phase }}</p>
-                <p v-if="signalled">
-                    you may have slightly more time than shown.
+                <p v-if="signalled && prepSecondsLeft > 0">
+                    main clock starts in {{ Math.ceil(prepSecondsLeft) }}
                 </p>
-                <p v-else>you may have less time than shown.</p>
+                <p v-else>you may have slightly less time than shown.</p>
                 <p v-if="timeUp">time over</p>
             </section>
 

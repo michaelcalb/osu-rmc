@@ -3,6 +3,7 @@ import { ApiError, get, post } from '../lib/api'
 import type { Clock, RunState, ServedMap } from '../lib/types'
 
 const TICK_MS = 500
+const START_GRACE_SECONDS = 10
 
 export function useRun() {
     const run = ref<RunState | null>(null)
@@ -44,7 +45,7 @@ export function useRun() {
     const signalled = computed(() => clock.value?.phase === 'running')
 
     const canSignalStart = computed(
-        () => !signalled.value && prepSecondsLeft.value > 0
+        () => !signalled.value && prepSecondsLeft.value > START_GRACE_SECONDS
     )
 
     const timeUp = computed(
