@@ -98,6 +98,7 @@ export interface RunDetailMap {
     mods: APIMod[] | null
     score_max_combo: number | null
     confirmed_score_id: string | null
+    total_score: number | null
     served_at: string
     score_started_at: string | null
     score_ended_at: string | null

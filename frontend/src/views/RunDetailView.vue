@@ -33,6 +33,10 @@
             </p>
             <p>maps served: {{ maps.length }}</p>
             <p>time on confirmed fcs: {{ formatDuration(fcSeconds) }}</p>
+            <p v-if="avgFcScore !== null">
+                average run score:
+                {{ Math.round(avgFcScore).toLocaleString() }}
+            </p>
             <p>pool version: {{ detail.run.pool_version }}</p>
             <p>seed: {{ detail.run.seed }}</p>
             <p>started: {{ detail.run.started_at }}</p>
@@ -138,6 +142,7 @@
                     <p v-if="playSeconds(m) !== null">
                         time on the map: {{ formatDuration(playSeconds(m)!) }}
                     </p>
+                    <p v-if="m.total_score !== null">{{ m.total_score }}</p>
                     <p v-if="m.confirmed_score_id">
                         score id: {{ m.confirmed_score_id }}
                     </p>
@@ -250,6 +255,14 @@ const avgFcBpm = computed(() =>
         fcMaps.value
             .map((m) => m.bpm)
             .filter((bpm): bpm is number => bpm !== null)
+    )
+)
+
+const avgFcScore = computed(() =>
+    average(
+        fcMaps.value
+            .map((m) => m.total_score)
+            .filter((score): score is number => score !== null)
     )
 )
 

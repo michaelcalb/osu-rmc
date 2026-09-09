@@ -30,6 +30,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('maximum_statistics', 'jsonb')
         .addColumn('mods', 'jsonb')
         .addColumn('confirmed_score_id', 'bigint')
+        .addColumn('total_score', 'integer')
         .addColumn('score_max_combo', 'integer')
         .addColumn('score_started_at', 'timestamptz')
         .addColumn('score_ended_at', 'timestamptz')

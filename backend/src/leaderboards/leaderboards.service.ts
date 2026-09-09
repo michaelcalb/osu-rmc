@@ -88,6 +88,7 @@ export class LeaderboardsService {
                 'rm.mods',
                 'rm.score_max_combo',
                 'rm.confirmed_score_id',
+                'rm.total_score',
                 'rm.served_at',
                 'rm.score_started_at',
                 'rm.score_ended_at',

@@ -23,6 +23,7 @@ export interface OsuScore {
     passed: boolean
     ranked: boolean
     max_combo: number
+    total_score: number
     statistics: Record<string, number>
     maximum_statistics: Record<string, number>
     started_at: string

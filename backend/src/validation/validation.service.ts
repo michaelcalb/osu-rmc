@@ -180,6 +180,7 @@ export class ValidationService {
                             : null,
                         mods: score ? JSON.stringify(score.mods) : null,
                         confirmed_score_id: score ? String(score.id) : null,
+                        total_score: score?.total_score ?? null,
                         score_max_combo: score?.max_combo ?? null,
                         score_started_at: score
                             ? new Date(score.started_at)

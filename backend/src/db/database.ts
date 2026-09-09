@@ -118,6 +118,7 @@ export interface RunMapsTable {
     maximum_statistics: NullableJson<Record<string, number>>
     mods: NullableJson<APIMod[]>
     confirmed_score_id: string | null
+    total_score: number | null
     score_max_combo: number | null
     score_started_at: Date | null
     score_ended_at: Date | null
