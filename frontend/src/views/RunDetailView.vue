@@ -118,12 +118,8 @@
                         >
                         <span v-else-if="!m.confirmed">(unconfirmed)</span>
                     </p>
-                    <p
-                        v-if="
-                            m.claimed_outcome && m.claimed_outcome !== m.outcome
-                        "
-                    >
-                        claimed: {{ m.claimed_outcome }}
+                    <p v-if="m.claimed_outcome !== m.outcome">
+                        claimed: {{ m.claimed_outcome ?? 'no claim' }}
                     </p>
                     <p v-if="m.score_max_combo !== null">
                         combo: {{ m.score_max_combo }} /
@@ -199,11 +195,11 @@ const maps = computed(() => detail.value?.maps ?? [])
 const fcMaps = computed(() => maps.value.filter((m) => m.outcome === 'fc'))
 
 const claimedFcCount = computed(
-    () => maps.value.filter((m) => m.claimed_outcome === 'fc').length
+    () => maps.value.filter((m) => m.claimed_outcome === 'fc' || m.outcome === 'fc').length
 )
 
 const unconfirmed = computed(
-    () => claimedFcCount.value - (detail.value?.run.fc_count ?? 0)
+    () => maps.value.filter((m) => m.claimed_outcome === 'fc' && m.outcome !== 'fc').length
 )
 
 const truncatedMap = computed(() => {

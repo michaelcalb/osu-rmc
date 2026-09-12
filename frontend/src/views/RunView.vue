@@ -31,10 +31,12 @@
                 <p>main seconds left: {{ Math.floor(mainSecondsLeft) }}</p>
                 <p>prep seconds left: {{ Math.floor(prepSecondsLeft) }}</p>
                 <p>phase: {{ clock?.phase }}</p>
-                <p v-if="signalled && prepSecondsLeft > 0">
+                <p v-if="!signalled && prepSecondsLeft > 10">
+                    please click on "start map" before hopping into osu!
+                </p>
+                <p v-else>
                     main clock starts in {{ Math.ceil(prepSecondsLeft) }}
                 </p>
-                <p v-else>you may have slightly less time than shown.</p>
                 <p v-if="timeUp">time over</p>
             </section>
 

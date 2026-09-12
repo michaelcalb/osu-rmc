@@ -394,6 +394,10 @@ export class RunsService {
 
         this.assertActive(run)
 
+        if (await this.expireIfDue(run, new Date())) {
+            throw new ConflictException('time expired')
+        }
+
         if (outcome === 'free_skip' && run.free_skip_used) {
             throw new ConflictException('free skip already used')
         }
