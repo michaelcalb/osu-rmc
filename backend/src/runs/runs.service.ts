@@ -354,18 +354,19 @@ export class RunsService {
     }
 
     async getCurrentRun(userId: number) {
-        const active = await this.db
+        const live = await this.db
             .selectFrom('runs')
             .select('id')
             .where('user_id', '=', userId)
-            .where('status', '=', 'active')
+            .where('status', 'in', ['active', 'pending_final', 'validating'])
+            .orderBy('started_at', 'desc')
             .executeTakeFirst()
 
-        if (!active) {
+        if (!live) {
             return null
         }
 
-        return this.getRunState(userId, active.id)
+        return this.getRunState(userId, live.id)
     }
 
     async startPlaying(userId: number, runId: number) {
