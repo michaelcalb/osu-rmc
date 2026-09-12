@@ -64,7 +64,7 @@ export class ProfilesService {
 
         const ahead = await this.db
             .selectFrom('runs')
-            .select((eb) => eb.fn.countAll<number>().as('count'))
+            .select((eb) => eb.fn.count<number>('user_id').distinct().as('count'))
             .where('status', '=', 'complete')
             .where('fc_count', '>', 0)
             .where('resolved_board', '=', board)
