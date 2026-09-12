@@ -38,6 +38,7 @@ export async function up(db: Kysely<any>): Promise<void> {
             col.notNull().defaultTo(false)
         )
         .addColumn('fc_count', 'integer')
+        .addColumn('avg_fc_score', 'double precision')
         .addColumn('resolved_board', 'text')
         .addColumn('truncated_at_index', 'integer')
         .addColumn('truncation_reason', 'text')

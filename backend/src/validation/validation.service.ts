@@ -198,6 +198,7 @@ export class ValidationService {
                     status: 'complete',
                     validating_since: null,
                     fc_count: verdict.fcCount,
+                    avg_fc_score: verdict.avgFcScore,
                     resolved_board: verdict.board,
                     truncated_at_index: verdict.truncatedAt,
                     truncation_reason: verdict.truncationReason

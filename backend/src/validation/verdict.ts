@@ -32,6 +32,7 @@ export interface PositionVerdict {
 export interface RunVerdict {
     positions: PositionVerdict[]
     fcCount: number
+    avgFcScore: number | null
     board: Board
     truncatedAt: number | null
     truncationReason: TruncationReason | null
@@ -40,6 +41,7 @@ export interface RunVerdict {
 export function judgeRun(positions: Position[]): RunVerdict {
     const verdicts: PositionVerdict[] = []
     let fcCount = 0
+    let fcScoreSum = 0
     let truncatedAt: number | null = null
     let truncationReason: TruncationReason | null = null
     let allNoMod = true
@@ -113,6 +115,7 @@ export function judgeRun(positions: Position[]): RunVerdict {
                 score
             })
             fcCount++
+            fcScoreSum += score.total_score
             continue
         }
 
@@ -134,6 +137,7 @@ export function judgeRun(positions: Position[]): RunVerdict {
     return {
         positions: verdicts,
         fcCount,
+        avgFcScore: fcCount > 0 ? fcScoreSum / fcCount : null,
         board: allNoMod ? 'no_mod' : 'free_mod',
         truncatedAt,
         truncationReason

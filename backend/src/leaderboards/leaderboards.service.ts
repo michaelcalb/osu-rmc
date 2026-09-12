@@ -38,6 +38,7 @@ export class LeaderboardsService {
             .where('r.fc_count', '>', 0)
             .where('r.resolved_board', '=', board)
             .orderBy('r.fc_count', 'desc')
+            .orderBy('r.avg_fc_score', 'desc')
             .orderBy('r.ended_at', 'asc')
             .limit(Math.min(Math.max(0, limit), MAX_LIMIT))
             .offset(Math.max(0, offset))

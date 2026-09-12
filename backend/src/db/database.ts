@@ -72,6 +72,7 @@ export interface RunsTable {
     phase_since: Generated<Date>
     free_skip_used: Generated<boolean>
     fc_count: number | null
+    avg_fc_score: number | null
     resolved_board: Board | null
     truncated_at_index: number | null
     truncation_reason: TruncationReason | null
