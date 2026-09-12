@@ -138,17 +138,6 @@ export type TruncationReason =
     | 'rejected_unplayable'
     | 'not_qualifying'
 
-export interface RunSummary {
-    id: number
-    status: RunStatus
-    declared_mode: Board
-    resolved_board: Board | null
-    fc_count: number | null
-    active_elapsed: number
-    started_at: string
-    ended_at: string | null
-}
-
 export interface ProfileBoard {
     board: Board
     best: {
