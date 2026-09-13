@@ -73,6 +73,14 @@ export async function up(db: Kysely<any>): Promise<void> {
         .on('runs')
         .column('user_id')
         .execute()
+
+    await db.schema
+        .createIndex('runs_one_active_per_user_idx')
+        .on('runs')
+        .column('user_id')
+        .unique()
+        .where(sql.ref('status'), '=', 'active')
+        .execute()
 }
 
 export async function down(db: Kysely<any>): Promise<void> {

@@ -47,12 +47,6 @@ export async function up(db: Kysely<any>): Promise<void> {
         .execute()
 
     await db.schema
-        .createIndex('pool_maps_star_rating_idx')
-        .on('pool_maps')
-        .column('star_rating')
-        .execute()
-
-    await db.schema
         .createIndex('pool_maps_open_interval_idx')
         .on('pool_maps')
         .column('map_id')
