@@ -11,7 +11,12 @@ import type { Board, Database, RunPhase, RunStatus } from '../db/database'
 import { KYSELY } from '../db/db.module'
 import { PoolService } from '../pool/pool.service'
 import { generateSeed } from '../pool/seed'
-import { bankedElapsed, readClock, START_GRACE_SECONDS, type ClockInput } from './clock'
+import {
+    bankedElapsed,
+    readClock,
+    START_GRACE_SECONDS,
+    type ClockInput
+} from './clock'
 import { Cron } from '@nestjs/schedule'
 import { ValidationService } from '../validation/validation.service'
 import { SCORE_PUBLISH_DELAY_SECONDS } from '../osu/osu.service'
@@ -88,12 +93,6 @@ export class RunsService {
     }
 
     private async assertUnderStartLimit(userId: number) {
-        await this.db
-            .deleteFrom('runs')
-            .where('status', '=', 'abandoned')
-            .where('started_at', '<', sql<Date>`now() - interval '1 hour'`)
-            .execute()
-
         const row = await this.db
             .selectFrom('runs')
             .select((eb) => eb.fn.countAll<number>().as('count'))
@@ -382,7 +381,13 @@ export class RunsService {
             return
         }
 
-        await this.settle(runId, run, now, 'running', new Date(now.getTime() + START_GRACE_SECONDS * 1000))
+        await this.settle(
+            runId,
+            run,
+            now,
+            'running',
+            new Date(now.getTime() + START_GRACE_SECONDS * 1000)
+        )
     }
 
     async advanceMap(
@@ -440,8 +445,8 @@ export class RunsService {
         await this.finishRun(runId, run, new Date())
     }
 
-    @Cron('*/10 * * * *')
-    async sweepExpiredRuns() {
+    @Cron('0 * * * *')
+    async sweepRuns() {
         const now = new Date()
 
         const active = await this.db
@@ -459,5 +464,11 @@ export class RunsService {
                 console.error(`expiry failed for run ${run.id}`, error)
             }
         }
+
+        await this.db
+            .deleteFrom('runs')
+            .where('status', '=', 'abandoned')
+            .where('started_at', '<', sql<Date>`now() - interval '1 hour'`)
+            .execute()
     }
 }

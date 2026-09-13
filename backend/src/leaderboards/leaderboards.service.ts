@@ -11,21 +11,20 @@ export class LeaderboardsService {
     constructor(@Inject(KYSELY) private readonly db: Kysely<Database>) {}
 
     async getBoard(board: Board, limit = DEFAULT_LIMIT, offset = 0) {
-        return this.db
-            .selectFrom((eb) =>
-                eb
-                    .selectFrom('runs as r')
-                    .selectAll()
-                    .where('r.status', '=', 'complete')
-                    .where('r.fc_count', '>', 0)
-                    .where('r.resolved_board', '=', board)
-                    .distinctOn('user_id')
-                    .orderBy('user_id')
-                    .orderBy('r.fc_count', 'desc')
-                    .orderBy('r.avg_fc_score', 'desc')
-                    .orderBy('r.ended_at', 'asc')
-                    .as('r')
-            )
+        return this.db.selectFrom((eb) =>
+            eb
+                .selectFrom('runs as r')
+                .selectAll()
+                .where('r.status', '=', 'complete')
+                .where('r.fc_count', '>', 0)
+                .where('r.resolved_board', '=', board)
+                .distinctOn('user_id')
+                .orderBy('user_id')
+                .orderBy('r.fc_count', 'desc')
+                .orderBy('r.avg_fc_score', 'desc')
+                .orderBy('r.ended_at', 'asc')
+                .as('r')
+        )
     }
 
     async getRun(runId: number) {

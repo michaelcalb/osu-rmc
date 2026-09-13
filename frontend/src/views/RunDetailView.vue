@@ -195,11 +195,17 @@ const maps = computed(() => detail.value?.maps ?? [])
 const fcMaps = computed(() => maps.value.filter((m) => m.outcome === 'fc'))
 
 const claimedFcCount = computed(
-    () => maps.value.filter((m) => m.claimed_outcome === 'fc' || m.outcome === 'fc').length
+    () =>
+        maps.value.filter(
+            (m) => m.claimed_outcome === 'fc' || m.outcome === 'fc'
+        ).length
 )
 
 const unconfirmed = computed(
-    () => maps.value.filter((m) => m.claimed_outcome === 'fc' && m.outcome !== 'fc').length
+    () =>
+        maps.value.filter(
+            (m) => m.claimed_outcome === 'fc' && m.outcome !== 'fc'
+        ).length
 )
 
 const truncatedMap = computed(() => {

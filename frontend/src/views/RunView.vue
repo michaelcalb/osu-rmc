@@ -6,9 +6,12 @@
             <h2>validating</h2>
             <p>status: {{ run.status }}</p>
             <p v-if="slow">
-                this run is taking a big longer to validate. dont worry, we're
-                handling everything ;)
+                your run is still being validated, but it looks like it's gonna
+                take a while. if you were mid-map when the timer ran out, we're
+                waiting for that score to reach osu!'s servers. come back again
+                soon ;)
             </p>
+            <p v-else>checking your scores with osu!...</p>
         </section>
 
         <section v-else-if="run.status === 'void'">
@@ -32,12 +35,15 @@
                 <p>prep seconds left: {{ Math.floor(prepSecondsLeft) }}</p>
                 <p>phase: {{ clock?.phase }}</p>
                 <p v-if="!signalled && prepSecondsLeft > 10">
-                    please click on "start map" before hopping into osu!
+                    please, click on "start map" before starting the map!
                 </p>
                 <p v-else>
                     main clock starts in {{ Math.ceil(prepSecondsLeft) }}
                 </p>
-                <p v-if="timeUp">time over</p>
+                <p v-if="timeUp">
+                    time over! you should be redirected to the validation screen
+                    soon. if nothing happens, try reloading the page ;)
+                </p>
             </section>
 
             <section v-if="map">
@@ -118,7 +124,7 @@ import { useRun } from '../composables/useRun'
 import { coverUrl } from '../lib/covers'
 
 const POLL_MS = 10000
-const MAX_POLLS = 3
+const MAX_POLLS = 6
 
 const router = useRouter()
 const loading = ref(true)

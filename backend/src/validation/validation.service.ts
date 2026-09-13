@@ -10,8 +10,6 @@ import { Cron } from '@nestjs/schedule'
 import { sql } from 'kysely'
 import { PREP_WINDOW_SECONDS, RUN_LIMIT_SECONDS } from '../runs/clock'
 
-const MANUAL_END_GRACE_SECONDS = 60
-
 @Injectable()
 export class ValidationService {
     constructor(
@@ -115,25 +113,13 @@ export class ValidationService {
     }
 
     private async shouldDefer(
-        run: { id: number; ended_at: Date | null; active_elapsed: number },
+        run: { id: number; active_elapsed: number },
         positions: Position[]
     ): Promise<boolean> {
         const last = positions[positions.length - 1]
 
-        if (
-            !last ||
-            last.score ||
-            last.claimed === 'free_skip' ||
-            last.claimed === 'unplayable'
-        ) {
+        if (!last || last.score || run.active_elapsed < RUN_LIMIT_SECONDS) {
             return false
-        }
-
-        if (run.ended_at && run.active_elapsed < RUN_LIMIT_SECONDS) {
-            return (
-                Date.now() <
-                run.ended_at.getTime() + MANUAL_END_GRACE_SECONDS * 1000
-            )
         }
 
         const trailing = await this.db
@@ -245,25 +231,6 @@ export class ValidationService {
     }
 
     private async reclaimStuckValidations() {
-        const crashed = await this.db
-            .updateTable('runs')
-            .set({ status: 'void', validating_since: null })
-            .where('status', '=', 'validating')
-            .where(
-                'validating_since',
-                '<',
-                sql<Date>`now() - interval '5 minutes'`
-            )
-            .where('ended_at', '<', sql<Date>`now() - interval '10 minutes'`)
-            .returning('id')
-            .execute()
-
-        for (const run of crashed) {
-            console.error(
-                `run ${run.id} crashed validation repeatedly, marked void`
-            )
-        }
-
         const stuck = await this.db
             .updateTable('runs')
             .set({ status: 'pending_final', validating_since: null })

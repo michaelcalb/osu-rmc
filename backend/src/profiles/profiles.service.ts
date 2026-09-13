@@ -43,7 +43,13 @@ export class ProfilesService {
     private async getBest(osuUserId: number, board: Board) {
         const best = await this.db
             .selectFrom('runs')
-            .select(['id', 'fc_count', 'avg_fc_score', 'ended_at', 'pool_version'])
+            .select([
+                'id',
+                'fc_count',
+                'avg_fc_score',
+                'ended_at',
+                'pool_version'
+            ])
             .where('user_id', '=', osuUserId)
             .where('status', '=', 'complete')
             .where('fc_count', '>', 0)
@@ -58,13 +64,20 @@ export class ProfilesService {
         const avgScore = best?.avg_fc_score ?? null
         const endedAt = best?.ended_at ?? null
 
-        if (!best || fcCount === null || avgScore === null || endedAt === null) {
+        if (
+            !best ||
+            fcCount === null ||
+            avgScore === null ||
+            endedAt === null
+        ) {
             return { board, best: null, rank: null }
         }
 
         const ahead = await this.db
             .selectFrom('runs')
-            .select((eb) => eb.fn.count<number>('user_id').distinct().as('count'))
+            .select((eb) =>
+                eb.fn.count<number>('user_id').distinct().as('count')
+            )
             .where('status', '=', 'complete')
             .where('fc_count', '>', 0)
             .where('resolved_board', '=', board)
