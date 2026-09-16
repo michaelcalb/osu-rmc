@@ -103,6 +103,14 @@ export class RunsController {
         return this.runsService.endRun(userId, id)
     }
 
+    @Post(':id/validate')
+    validate(
+        @CurrentUser() userId: number,
+        @Param('id', ParseIntPipe) id: number
+    ) {
+        return this.runsService.requestValidation(userId, id)
+    }
+
     @Get('current')
     current(@CurrentUser() userId: number) {
         return this.runsService.getCurrentRun(userId)

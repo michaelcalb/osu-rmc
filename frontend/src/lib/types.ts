@@ -58,6 +58,7 @@ export interface Clock {
 export interface RunState extends Clock {
     id: number
     status: RunStatus
+    awaitingValidation: boolean
     fcCount: number | null
     freeSkipUsed: boolean
     currentMap: ServedMap | null

@@ -61,15 +61,23 @@ export class RunsService {
     async abandonRun(userId: number, runId: number) {
         const updated = await this.db
             .updateTable('runs')
-            .set({ status: 'abandoned', ended_at: new Date() })
+            .set({ status: 'abandoned', ended_at: sql<Date>`coalesce(ended_at, now())` })
             .where('id', '=', runId)
             .where('user_id', '=', userId)
-            .where('status', '=', 'active')
+            .where((eb) =>
+                eb.or([
+                    eb('status', '=', 'active'),
+                    eb.and([
+                        eb('status', '=', 'pending_final'),
+                        eb('validation_requested_at', 'is', null)
+                    ])
+                ])
+            )
             .returning('id')
             .executeTakeFirst()
 
         if (!updated) {
-            throw new NotFoundException('no active run to abandon')
+            throw new NotFoundException('no run to discard')
         }
     }
 
@@ -81,15 +89,21 @@ export class RunsService {
             .where('status', '=', 'active')
             .executeTakeFirst()
 
-        if (!live) {
-            return
+        if (live && !(await this.expireIfDue(live, new Date()))) {
+            throw new ConflictException(`run ${live.id} is still in progress`)
         }
 
-        if (await this.expireIfDue(live, new Date())) {
-            return
-        }
+        const awaiting = await this.db
+            .selectFrom('runs')
+            .select('id')
+            .where('user_id', '=', userId)
+            .where('status', '=', 'pending_final')
+            .where('validation_requested_at', 'is', null)
+            .executeTakeFirst()
 
-        throw new ConflictException(`run ${live.id} is still in progress`)
+        if (awaiting) {
+            throw new ConflictException(`run ${awaiting.id} is waiting to be validated`)
+        }
     }
 
     private async assertUnderStartLimit(userId: number) {
@@ -138,7 +152,7 @@ export class RunsService {
         }
 
         if (seqIndex >= run.resolved_sequence.length) {
-            await this.finishRun(runId, run, now)
+            await this.finishRun(runId, run, now, 'player')
 
             throw new ConflictException('sequence exhausted')
         }
@@ -260,7 +274,7 @@ export class RunsService {
             return false
         }
 
-        return this.finishRun(run.id, run, now)
+        return this.finishRun(run.id, run, now, 'expiry')
     }
 
     private async loadRun(userId: number, runId: number) {
@@ -275,7 +289,8 @@ export class RunsService {
                 'fc_count',
                 'active_elapsed',
                 'phase',
-                'phase_since'
+                'phase_since',
+                'validation_requested_at'
             ])
             .where('id', '=', runId)
             .where('user_id', '=', userId)
@@ -297,14 +312,16 @@ export class RunsService {
     private async finishRun(
         runId: number,
         run: ClockInput,
-        now: Date
+        now: Date,
+        endedBy: 'player' | 'expiry'
     ): Promise<boolean> {
         const finished = await this.db
             .updateTable('runs')
             .set({
                 status: 'pending_final',
                 active_elapsed: bankedElapsed(run, now),
-                ended_at: now
+                ended_at: now,
+                validation_requested_at: endedBy === 'player' ? now : null
             })
             .where('id', '=', runId)
             .where('status', '=', 'active')
@@ -315,7 +332,9 @@ export class RunsService {
             return false
         }
 
-        this.scheduleValidation(runId)
+        if (endedBy === 'player') {
+            this.scheduleValidation(runId)
+        }
 
         return true
     }
@@ -326,6 +345,34 @@ export class RunsService {
                 console.error(`validation failed for run ${runId}`, error)
             })
         }, SCORE_PUBLISH_DELAY_SECONDS * 1000).unref()
+    }
+
+    async requestValidation(userId: number, runId: number) {
+        const requested = await this.db
+            .updateTable('runs')
+            .set({ validation_requested_at: new Date() })
+            .where('id', '=', runId)
+            .where('user_id', '=', userId)
+            .where('status', '=', 'pending_final')
+            .where('validation_requested_at', 'is', null)
+            .returning('ended_at')
+            .executeTakeFirst()
+
+        if (requested) {
+            const readyAt =
+                (requested.ended_at ?? new Date()).getTime() +
+                SCORE_PUBLISH_DELAY_SECONDS * 1000
+
+            await new Promise((resolve) =>
+                setTimeout(resolve, Math.max(0, readyAt - Date.now()))
+            )
+
+            await this.validation.validateRun(runId).catch((error) => {
+                console.error(`validation failed for run ${runId}`, error)
+            })
+        }
+
+        return this.getRunState(userId, runId)
     }
 
     async getRunState(userId: number, runId: number) {
@@ -341,9 +388,14 @@ export class RunsService {
             .where('claimed_outcome', '=', 'fc')
             .executeTakeFirstOrThrow()
 
+        const status = expired ? 'pending_final' : run.status
+
         return {
             id: run.id,
-            status: expired ? 'pending_final' : run.status,
+            status,
+            awaitingValidation:
+                status === 'pending_final' &&
+                run.validation_requested_at === null,
             fcCount: run.fc_count,
             freeSkipUsed: run.free_skip_used,
             currentMap: await this.getCurrentMap(run.id),
@@ -442,7 +494,7 @@ export class RunsService {
 
         this.assertActive(run)
 
-        await this.finishRun(runId, run, new Date())
+        await this.finishRun(runId, run, new Date(), 'player')
     }
 
     @Cron('0 * * * *')
@@ -469,6 +521,13 @@ export class RunsService {
             .deleteFrom('runs')
             .where('status', '=', 'abandoned')
             .where('started_at', '<', sql<Date>`now() - interval '1 hour'`)
+            .execute()
+
+        await this.db
+            .deleteFrom('runs')
+            .where('status', '=', 'pending_final')
+            .where('validation_requested_at', 'is', null)
+            .where('ended_at', '<', sql<Date>`now() - interval '8 hour'`)
             .execute()
     }
 }

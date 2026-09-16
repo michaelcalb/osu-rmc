@@ -134,6 +134,14 @@ export function useRun() {
         await call(() => post(path('/end')))
     }
 
+    async function requestValidation() {
+        const state = await call(() => post<RunState>(path('/validate')))
+
+        if (state) {
+            applyState(state)
+        }
+    }
+
     async function abandon() {
         await call(() => post(path('/abandon')))
     }
@@ -157,6 +165,7 @@ export function useRun() {
         unplayable,
         startPlaying,
         end,
+        requestValidation,
         abandon
     }
 }

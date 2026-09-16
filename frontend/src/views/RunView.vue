@@ -2,17 +2,27 @@
     <p v-if="loading">loading...</p>
 
     <template v-else-if="run">
+        <section v-if="awaiting">
+            <h2>run {{ run.id }}</h2>
+            <p>time's up, your run is ready to be validated</p>
+            <p>
+                if you are still playing the last map, finish it first before
+                starting validation.
+            </p>
+            <button :disabled="busy" @click="onValidate">
+                start validation
+            </button>
+            <button :disabled="busy" @click="onAbandon">
+                delete run (will be discarded)
+            </button>
+        </section>
+
         <section v-if="validating">
             <h2>validating</h2>
             <p>status: {{ run.status }}</p>
-            <p v-if="slow && timeUp">
-                your run is still being validated, but it looks like it's gonna
-                take a while. if you were mid-map when the timer ran out, we're
-                waiting for that score to reach osu!'s servers. come back again
-                soon ;)
-            </p>
-            <p v-else-if="slow">
-                something is taking longer than usual on our end. your run is safe and we're still validating it. come back again soon ;)
+            <p v-if="slow">
+                something is taking longer than usual on our end. your run is
+                safe and we're still validating it. come back again soon ;)
             </p>
             <p v-else>checking your scores with osu!...</p>
         </section>
@@ -127,7 +137,7 @@ import { useRun } from '../composables/useRun'
 import { coverUrl } from '../lib/covers'
 
 const POLL_MS = 10000
-const MAX_POLLS = 6
+const MAX_POLLS = 3
 
 const router = useRouter()
 const loading = ref(true)
@@ -152,13 +162,17 @@ const {
     unplayable,
     startPlaying,
     end,
+    requestValidation,
     abandon
 } = useRun()
 
+const awaiting = computed(() => run.value?.awaitingValidation === true)
+
 const validating = computed(
     () =>
-        run.value?.status === 'pending_final' ||
-        run.value?.status === 'validating'
+        !awaiting.value &&
+        (run.value?.status === 'pending_final' ||
+            run.value?.status === 'validating')
 )
 
 const slow = computed(() => validating.value && polls.value >= MAX_POLLS)
@@ -215,6 +229,22 @@ async function onEnd() {
 
     await end()
     await refresh()
+}
+
+async function onValidate() {
+    if (
+        !confirm(
+            'if you are still playing the last map, finish it first. start validation?'
+        )
+    ) {
+        return
+    }
+
+    await requestValidation()
+
+    if (validating.value) {
+        armPoll()
+    }
 }
 
 async function onAbandon() {

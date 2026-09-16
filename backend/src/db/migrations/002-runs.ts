@@ -25,6 +25,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         )
         .addColumn('ended_at', 'timestamptz')
         .addColumn('validating_since', 'timestamptz')
+        .addColumn('validation_requested_at', 'timestamptz')
         .addColumn('active_elapsed', 'integer', (col) =>
             col.notNull().defaultTo(0)
         )

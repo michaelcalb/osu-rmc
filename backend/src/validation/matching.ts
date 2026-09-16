@@ -9,6 +9,21 @@ export interface ServedMap {
     served_at: Date
 }
 
+function isBetter(score: OsuScore, best: OsuScore): boolean {
+    const scoreFc = isFullCombo(score.statistics)
+    const bestFc = isFullCombo(best.statistics)
+
+    if (scoreFc !== bestFc) {
+        return scoreFc
+    }
+
+    if (!scoreFc && score.rank !== best.rank) {
+        return RANK_ORDER.indexOf(score.rank) > RANK_ORDER.indexOf(best.rank)
+    }
+
+    return score.total_score > best.total_score
+}
+
 export function matchScore(
     map: ServedMap,
     scores: OsuScore[]
@@ -23,15 +38,7 @@ export function matchScore(
         return null
     }
 
-    const fc = candidates.find((score) => isFullCombo(score.statistics))
-
-    if (fc) {
-        return fc
-    }
-
     return candidates.reduce((best, score) =>
-        RANK_ORDER.indexOf(score.rank) > RANK_ORDER.indexOf(best.rank)
-            ? score
-            : best
+        isBetter(score, best) ? score : best
     )
 }

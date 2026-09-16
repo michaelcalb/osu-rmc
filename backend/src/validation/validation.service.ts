@@ -2,13 +2,13 @@ import { Inject, Injectable } from '@nestjs/common'
 import { Kysely } from 'kysely'
 import type { Database } from '../db/database'
 import { KYSELY } from '../db/db.module'
-import { OsuService, SCORE_PUBLISH_DELAY_SECONDS } from '../osu/osu.service'
+import { OsuService } from '../osu/osu.service'
 import { chargeSequence, type TimedMap } from './charging'
 import { matchScore } from './matching'
+import { unplayableClaimUpheld } from './predicates'
 import { judgeRun, RunVerdict, type Position } from './verdict'
 import { Cron } from '@nestjs/schedule'
 import { sql } from 'kysely'
-import { PREP_WINDOW_SECONDS, RUN_LIMIT_SECONDS } from '../runs/clock'
 
 @Injectable()
 export class ValidationService {
@@ -26,12 +26,6 @@ export class ValidationService {
 
         try {
             const positions = await this.gatherPositions(run)
-
-            if (await this.shouldDefer(run, positions)) {
-                await this.release(runId)
-                return
-            }
-
             const verdict = judgeRun(positions)
 
             await this.applyVerdict(runId, verdict)
@@ -47,7 +41,7 @@ export class ValidationService {
             .set({ status: 'validating', validating_since: new Date() })
             .where('id', '=', runId)
             .where('status', '=', 'pending_final')
-            .returning(['id', 'user_id', 'ended_at', 'active_elapsed'])
+            .returning(['id', 'user_id', 'ended_at'])
             .executeTakeFirst()
     }
 
@@ -94,11 +88,15 @@ export class ValidationService {
         const statuses = new Map<number, string | null>()
 
         for (const { map } of matched) {
-            if (map.claimed_outcome === 'unplayable') {
-                statuses.set(
-                    map.map_id,
-                    await this.osu.getBeatmapStatus(map.map_id)
-                )
+            if (map.claimed_outcome !== 'unplayable') {
+                continue
+            }
+
+            const status = await this.osu.getBeatmapStatus(map.map_id)
+            statuses.set(map.map_id, status)
+
+            if (!unplayableClaimUpheld(status)) {
+                break
             }
         }
 
@@ -110,33 +108,6 @@ export class ValidationService {
             beatmapStatus: statuses.get(map.map_id) ?? null,
             isLast: index === matched.length - 1
         }))
-    }
-
-    private async shouldDefer(
-        run: { id: number; active_elapsed: number },
-        positions: Position[]
-    ): Promise<boolean> {
-        const last = positions[positions.length - 1]
-
-        if (!last || last.score || run.active_elapsed < RUN_LIMIT_SECONDS) {
-            return false
-        }
-
-        const trailing = await this.db
-            .selectFrom('run_maps')
-            .select(['served_at', 'total_length'])
-            .where('run_id', '=', run.id)
-            .orderBy('seq_index', 'desc')
-            .executeTakeFirstOrThrow()
-
-        const expectedEnd =
-            trailing.served_at.getTime() +
-            (PREP_WINDOW_SECONDS +
-                trailing.total_length +
-                SCORE_PUBLISH_DELAY_SECONDS) *
-                1000
-
-        return Date.now() < expectedEnd
     }
 
     private async release(runId: number) {
@@ -202,7 +173,11 @@ export class ValidationService {
             .selectFrom('runs')
             .select('id')
             .where('status', '=', 'pending_final')
-            .where('ended_at', '<', sql<Date>`now() - interval '1 minute'`)
+            .where(
+                'validation_requested_at',
+                '<',
+                sql<Date>`now() - interval '1 minute'`
+            )
             .execute()
 
         for (const run of pending) {
@@ -221,7 +196,11 @@ export class ValidationService {
             .set({ status: 'void' })
             .where('id', '=', runId)
             .where('status', '=', 'pending_final')
-            .where('ended_at', '<', sql<Date>`now() - interval '10 minutes'`)
+            .where(
+                'validation_requested_at',
+                '<',
+                sql<Date>`now() - interval '10 minutes'`
+            )
             .returning('id')
             .execute()
 

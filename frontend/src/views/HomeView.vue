@@ -15,6 +15,9 @@
         <p v-if="current.status === 'active'">
             time left: {{ current.mainSecondsLeft }}
         </p>
+        <p v-else-if="current.awaitingValidation">
+            this run is waiting on your action
+        </p>
         <RouterLink to="/run">resume</RouterLink>
     </section>
 
