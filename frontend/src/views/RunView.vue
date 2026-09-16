@@ -5,11 +5,14 @@
         <section v-if="validating">
             <h2>validating</h2>
             <p>status: {{ run.status }}</p>
-            <p v-if="slow">
+            <p v-if="slow && timeUp">
                 your run is still being validated, but it looks like it's gonna
                 take a while. if you were mid-map when the timer ran out, we're
                 waiting for that score to reach osu!'s servers. come back again
                 soon ;)
+            </p>
+            <p v-else-if="slow">
+                something is taking longer than usual on our end. your run is safe and we're still validating it. come back again soon ;)
             </p>
             <p v-else>checking your scores with osu!...</p>
         </section>
