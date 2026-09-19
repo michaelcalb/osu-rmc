@@ -82,7 +82,7 @@ export interface BoardRow {
     pool_version: number
     active_elapsed: number
     ended_at: string | null
-    avg_fc_star_rating: number | null
+    avg_fc_score: number | null
 }
 
 export interface RunDetailMap {

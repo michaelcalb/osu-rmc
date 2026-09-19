@@ -11,20 +11,39 @@ export class LeaderboardsService {
     constructor(@Inject(KYSELY) private readonly db: Kysely<Database>) {}
 
     async getBoard(board: Board, limit = DEFAULT_LIMIT, offset = 0) {
-        return this.db.selectFrom((eb) =>
-            eb
-                .selectFrom('runs as r')
-                .selectAll()
-                .where('r.status', '=', 'complete')
-                .where('r.fc_count', '>', 0)
-                .where('r.resolved_board', '=', board)
-                .distinctOn('user_id')
-                .orderBy('user_id')
-                .orderBy('r.fc_count', 'desc')
-                .orderBy('r.avg_fc_score', 'desc')
-                .orderBy('r.ended_at', 'asc')
-                .as('r')
-        )
+        return this.db
+            .selectFrom((eb) =>
+                eb
+                    .selectFrom('runs as r')
+                    .innerJoin('users as u', 'u.osu_user_id', 'r.user_id')
+                    .select([
+                        'r.id',
+                        'r.user_id',
+                        'u.username',
+                        'r.fc_count',
+                        'r.resolved_board',
+                        'r.pool_version',
+                        'r.active_elapsed',
+                        'r.ended_at',
+                        'r.avg_fc_score'
+                    ])
+                    .where('r.status', '=', 'complete')
+                    .where('r.fc_count', '>', 0)
+                    .where('r.resolved_board', '=', board)
+                    .distinctOn('r.user_id')
+                    .orderBy('r.user_id')
+                    .orderBy('r.fc_count', 'desc')
+                    .orderBy('r.avg_fc_score', 'desc')
+                    .orderBy('r.ended_at', 'asc')
+                    .as('best')
+            )
+            .selectAll()
+            .orderBy('fc_count', 'desc')
+            .orderBy('avg_fc_score', 'desc')
+            .orderBy('ended_at', 'asc')
+            .limit(limit)
+            .offset(offset)
+            .execute()
     }
 
     async getRun(runId: number) {

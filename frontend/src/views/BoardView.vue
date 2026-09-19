@@ -17,7 +17,7 @@
                 </p>
                 <p>fcs: {{ row.fc_count }}</p>
                 <p>board: {{ row.resolved_board }}</p>
-                <p>avg fc star rating: {{ row.avg_fc_star_rating }}</p>
+                <p>avg fc score: {{ row.avg_fc_score }}</p>
                 <p>active elapsed: {{ row.active_elapsed }}</p>
                 <p>pool version: {{ row.pool_version }}</p>
                 <p>ended at: {{ row.ended_at }}</p>
@@ -28,7 +28,7 @@
 
     <section>
         <button :disabled="loading || offset === 0" @click="prev">prev</button>
-        <button :disabled="loading || rows.length < LIMIT" @click="next">
+        <button :disabled="loading || !hasNext" @click="next">
             next
         </button>
         <RouterLink to="/boards/no_mod">no_mod</RouterLink>
@@ -51,20 +51,39 @@ const rows = ref<BoardRow[]>([])
 const offset = ref(0)
 const loading = ref(true)
 const error = ref<string | null>(null)
+const hasNext = ref(false)
+
+let latest = 0
 
 async function load() {
+    const token = ++latest
+
     loading.value = true
     error.value = null
 
     try {
-        rows.value = await get<BoardRow[]>(
-            `/leaderboards/${board.value}?limit=${LIMIT}&offset=${offset.value}`
+        const page = await get<BoardRow[]>(
+            `/leaderboards/${board.value}?limit=${LIMIT + 1}&offset=${offset.value}`
         )
+
+        if (token !== latest) {
+            return
+        }
+
+        hasNext.value = page.length > LIMIT
+        rows.value = page.slice(0, LIMIT)
     } catch (e) {
+        if (token !== latest) {
+            return
+        }
+
         error.value = e instanceof ApiError ? e.message : 'could not load board'
         rows.value = []
+        hasNext.value = false
     } finally {
-        loading.value = false
+        if (token === latest) {
+            loading.value = false
+        }
     }
 }
 
