@@ -61,7 +61,10 @@ export class RunsService {
     async abandonRun(userId: number, runId: number) {
         const updated = await this.db
             .updateTable('runs')
-            .set({ status: 'abandoned', ended_at: sql<Date>`coalesce(ended_at, now())` })
+            .set({
+                status: 'abandoned',
+                ended_at: sql<Date>`coalesce(ended_at, now())`
+            })
             .where('id', '=', runId)
             .where('user_id', '=', userId)
             .where((eb) =>
@@ -102,7 +105,9 @@ export class RunsService {
             .executeTakeFirst()
 
         if (awaiting) {
-            throw new ConflictException(`run ${awaiting.id} is waiting to be validated`)
+            throw new ConflictException(
+                `run ${awaiting.id} is waiting to be validated`
+            )
         }
     }
 
