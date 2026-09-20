@@ -1,21 +1,6 @@
 <template>
-    <header>
-        <RouterLink to="/">osu!rmc</RouterLink>
 
-        <nav>
-            <RouterLink to="/boards/no_mod">no_mod</RouterLink>
-            <RouterLink to="/boards/free_mod">free_mod</RouterLink>
-
-            <span v-if="loading">loading user...</span>
-            <template v-else-if="user">
-                <RouterLink :to="`/users/${user.id}`">{{
-                    user.username
-                }}</RouterLink>
-                <button @click="signOut">logout</button>
-            </template>
-            <button v-else @click="login">login with osu!</button>
-        </nav>
-    </header>
+    <AppHeader />
 
     <main>
         <RouterView />
@@ -23,14 +8,6 @@
 </template>
 
 <script setup lang="ts">
-import { RouterLink, RouterView, useRouter } from 'vue-router'
-import { useSession } from './composables/useSession'
+import AppHeader from './components/AppHeader.vue';
 
-const router = useRouter()
-const { user, loading, login, logout } = useSession()
-
-async function signOut() {
-    await logout()
-    await router.push({ name: 'home' })
-}
 </script>
