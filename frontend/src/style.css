@@ -1,4 +1,7 @@
 :root {
+    --content-padding: 0 20px;
+    --content-max-width: 1200px;
+
     --h-bg: #17153B;
 
     --bg: #010428;
@@ -6,6 +9,7 @@
     --border: #433D8B;
     --text: #EDE7F6;
     --text-muted: #C8ACD6;
+    --text-muted-2: #AAB9CF;
     --accent: #FF66AA;
     --accent-2: #3454D1;
     --success: #6EE7B7;
@@ -13,7 +17,6 @@
     
     --black: #00010e;
     
-    --old-3: #AAB9CF;
     --old-4: #fff1fe;
     --old-6: #CC4BC2;
     --old-7: #2CDD88;
@@ -38,6 +41,11 @@ img {
 a {
     text-decoration: none;
     color: inherit;
+}
+
+abbr[title] {
+    text-decoration: none;
+    border-bottom: none;
 }
 
 .raw-btn {

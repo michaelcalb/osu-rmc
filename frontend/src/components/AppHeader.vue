@@ -105,9 +105,10 @@ async function signOut() {
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: var(--content-padding);
     background-color: var(--h-bg);
-    padding: 0 5%;
     height: 75px;
+    border-bottom: 2px solid var(--surface);
 }
 
 .h-content {
@@ -115,7 +116,7 @@ async function signOut() {
     justify-content: space-between;
     align-items: center;
     flex: 1;
-    max-width: 1200px;
+    max-width: var(--content-max-width);
 }
 
 .h-group {
