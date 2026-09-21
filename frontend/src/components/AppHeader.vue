@@ -61,6 +61,11 @@
                         <span class="popover-text">profile</span>
                     </RouterLink>
 
+                    <button class="raw-btn option popover-option">
+                        <Asterisk :size="ICON_SIZE" />
+                        <span class="popover-text">useless option</span>
+                    </button>
+
                     <button @click="signOut" class="raw-btn option popover-option logout">
                         <LogOut :size="ICON_SIZE" />
                         <span class="popover-text">logout</span>
@@ -82,7 +87,7 @@
 import { RouterLink, useRouter } from 'vue-router'
 import { useSession } from '../composables/useSession'
 import AppPopover from './AppPopover.vue'
-import { CircleQuestionMark, LoaderCircle, LogIn, LogOut, Trophy, UserRound } from '@lucide/vue'
+import { Asterisk, CircleQuestionMark, LoaderCircle, LogIn, LogOut, Trophy, UserRound } from '@lucide/vue'
 
 const router = useRouter()
 const { user, loading, login, logout } = useSession()
