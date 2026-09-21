@@ -7,6 +7,7 @@
     --text: #EDE7F6;
     --text-muted: #C8ACD6;
     --accent: #FF66AA;
+    --accent-2: #3454D1;
     --success: #6EE7B7;
     --danger: #F87171;
     
@@ -14,7 +15,6 @@
     
     --old-3: #AAB9CF;
     --old-4: #fff1fe;
-    --old-5: #3454D1;
     --old-6: #CC4BC2;
     --old-7: #2CDD88;
 }

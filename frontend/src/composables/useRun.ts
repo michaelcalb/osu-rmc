@@ -1,6 +1,6 @@
 import { computed, onScopeDispose, ref } from 'vue'
 import { ApiError, get, post } from '../lib/api'
-import type { Clock, RunState, ServedMap } from '../lib/types'
+import type { Board, Clock, RunState, ServedMap } from '../lib/types'
 
 const TICK_MS = 500
 const START_GRACE_SECONDS = 10
@@ -52,17 +52,13 @@ export function useRun() {
         () => clock.value !== null && mainSecondsLeft.value <= 0
     )
 
-    function sync(next: Clock) {
-        clock.value = next
+    function applyState(state: RunState | null) {
+        run.value = state
+        map.value = state?.currentMap ?? null
+        claimedFc.value = state?.claimedFcCount ?? 0
+        clock.value = state
         syncedAt.value = Date.now()
         now.value = syncedAt.value
-    }
-
-    function applyState(state: RunState) {
-        run.value = state
-        map.value = state.currentMap
-        claimedFc.value = state.claimedFcCount
-        sync(state)
     }
 
     async function call<T>(fn: () => Promise<T>): Promise<T | null> {
@@ -83,12 +79,18 @@ export function useRun() {
         return `/runs/${run.value?.id}${suffix}`
     }
 
+    async function start(declaredMode: Board) {
+        const started = await call(() => post('/runs', { declaredMode }))
+
+        if (started) {
+            await load()
+        }
+    }
+
     async function load() {
         const state = await call(() => get<RunState | null>('/runs/current'))
 
-        if (state) {
-            applyState(state)
-        }
+        applyState(state)
 
         return state
     }
@@ -158,6 +160,7 @@ export function useRun() {
         signalled,
         canSignalStart,
         timeUp,
+        start,
         load,
         refresh,
         reveal,

@@ -1,7 +1,7 @@
 <template>
     <p v-if="loading">loading...</p>
 
-    <template v-else-if="run">
+    <template v-else-if="run && !validating">
         <section v-if="awaiting">
             <h2>run {{ run.id }}</h2>
             <p>time's up, your run is ready to be validated</p>
@@ -17,17 +17,7 @@
             </button>
         </section>
 
-        <section v-if="validating">
-            <h2>validating</h2>
-            <p>status: {{ run.status }}</p>
-            <p v-if="slow">
-                something is taking longer than usual on our end. your run is
-                safe and we're still validating it. come back again soon ;)
-            </p>
-            <p v-else>checking your scores with osu!...</p>
-        </section>
-
-        <section v-else-if="run.status === 'void'">
+        <section v-if="run.status === 'void'">
             <h2>run {{ run.id }}</h2>
             <p>
                 this run couldn't be validated,
@@ -125,9 +115,32 @@
                 </button>
             </section>
         </template>
-
-        <p v-if="error">error: {{ error }}</p>
     </template>
+
+    <section v-else>
+        <p v-if="slow">
+            run {{ run?.id }} is taking longer than usual to validate. don't worry, we're handling everything. starting a new run won't affect it.
+        </p>
+        <p v-else-if="validating">
+            run {{ run?.id }} is still validating. starting a new run won't affect it.
+        </p>
+
+        <h2>start a run</h2>
+
+        <label>
+            mode
+            <select v-model="declaredMode">
+                <option value="no_mod">no_mod</option>
+                <option value="free_mod">free_mod</option>
+            </select>
+        </label>
+
+        <button :disabled="busy" @click="onStart">
+            {{ starting ? 'starting...' : 'start' }}
+        </button>
+    </section>
+
+    <p v-if="error">error: {{ error }}</p>
 </template>
 
 <script setup lang="ts">
@@ -135,13 +148,16 @@ import { computed, onMounted, onScopeDispose, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useRun } from '../composables/useRun'
 import { coverUrl } from '../lib/covers'
+import type { Board } from '../lib/types'
 
 const POLL_MS = 10000
 const MAX_POLLS = 3
 
 const router = useRouter()
 const loading = ref(true)
+const starting = ref(false)
 const polls = ref(0)
+const declaredMode = ref<Board>('no_mod')
 
 const {
     run,
@@ -155,6 +171,7 @@ const {
     signalled,
     canSignalStart,
     timeUp,
+    start,
     load,
     refresh,
     reveal,
@@ -205,14 +222,18 @@ async function poll() {
 }
 
 onMounted(async () => {
-    const state = await load()
+    await load()
 
     loading.value = false
-
-    if (!state) {
-        await router.push({ name: 'home' })
-    }
 })
+
+async function onStart() {
+    starting.value = true
+
+    await start(declaredMode.value)
+
+    starting.value = false
+}
 
 async function onReveal() {
     await reveal()
@@ -253,7 +274,7 @@ async function onAbandon() {
     }
 
     await abandon()
-    await refresh()
+    await load()
 }
 
 watch(timeUp, async (over) => {
@@ -276,12 +297,6 @@ watch(
                 name: 'run-detail',
                 params: { id: current.id }
             })
-
-            return
-        }
-
-        if (status === 'abandoned') {
-            await router.replace({ name: 'home' })
 
             return
         }

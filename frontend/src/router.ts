@@ -51,11 +51,17 @@ router.beforeEach(async (to) => {
         return true
     }
 
-    const { user, ready } = useSession()
+    const { user, ready, login } = useSession()
 
     await ready
 
-    return user.value ? true : { name: 'home' }
+    if (user.value) {
+        return true
+    }
+
+    login()
+
+    return false
 })
 
 export default router
