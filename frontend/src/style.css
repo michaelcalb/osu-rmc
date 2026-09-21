@@ -1,5 +1,6 @@
 :root {
-    --content-padding: 0 20px;
+    --content-padding: 20px;
+    --content-spacing: 2rem;
     --content-max-width: 1200px;
 
     --h-bg: #17153B;
@@ -14,12 +15,17 @@
     --accent-2: #3454D1;
     --success: #6EE7B7;
     --danger: #F87171;
+
+    --a: #ffa4dc;
     
     --black: #00010e;
     
     --old-4: #fff1fe;
     --old-6: #CC4BC2;
     --old-7: #2CDD88;
+
+    --logo-osu: #405b8b;
+    --logo-rmc: #d5d5ff;
 }
 
 * {
@@ -27,6 +33,7 @@
     padding: 0;
     box-sizing: border-box;
     font-family: "Fredoka", sans-serif;
+
 }
 
 body {
@@ -54,4 +61,13 @@ abbr[title] {
     background-color: initial;
     color: inherit;
     cursor: pointer;
+}
+
+::selection {
+  background: rgba(255, 102, 170, 0.35);
+
+}
+
+::-moz-selection {
+  background: rgba(255, 102, 170, 0.35);
 }

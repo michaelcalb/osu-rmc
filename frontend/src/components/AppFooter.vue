@@ -4,13 +4,27 @@
             <span class="version">
                 v{{ version }}
             </span>
-            <span class="f-text">made with <abbr title="love, passion &amp; coffee" class="ily">&#9825;</abbr> by <a href="http://michas.dev" target="_blank" rel="noopener noreferrer" class="michas">michas</a></span>
+            <span class="f-text">made with <abbr title="love, passion &amp; coffee" class="ily" @mousedown="doYouLoveMeLoveMeLoveMe = true" @mouseup="doYouLoveMeLoveMeLoveMe = false"><Heart :size="16" /></abbr> by <a href="http://michas.dev" target="_blank" rel="noopener noreferrer" class="michas">michas</a></span>
         </div>
     </footer>
 </template>
 
 <script setup lang="ts">
+import { Heart } from '@lucide/vue';
 import { version } from '../../package.json'
+import { ref, watch } from 'vue';
+
+const doYouLoveMeLoveMeLoveMe = ref(false)
+let previousTitle = ''
+
+watch(doYouLoveMeLoveMeLoveMe, (love) => {
+  if (love) {
+    previousTitle = document.title
+    document.title = 'do you love me love me love me'
+  } else {
+    document.title = previousTitle
+  }
+})
 </script>
 
 <style scoped>
@@ -18,7 +32,7 @@ import { version } from '../../package.json'
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: var(--content-padding);
+    padding: calc(var(--content-padding) / 2) var(--content-padding);
     color: var(--text-muted-2);
 }
 
@@ -31,9 +45,18 @@ import { version } from '../../package.json'
 }
 
 .ily {
-    text-align: center;
-    display: inline-block;
     color: var(--accent);
+    cursor: pointer;
+}
+
+.ily svg {
+    vertical-align: middle;
+    fill: transparent;
+    transition: fill .2s;
+}
+
+.ily:hover svg {
+    fill: var(--accent);
 }
 
 .michas {

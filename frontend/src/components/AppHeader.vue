@@ -2,7 +2,7 @@
     <header class="header">
         <div class="h-content">
             <nav class="h-group">
-                <RouterLink to="/" class="rmc-logo"><img src="../assets/rmc-text.png" alt="osu!rmc" :height="ICON_SIZE"></RouterLink>
+                <RouterLink to="/" class="rmc-logo"><img src="../assets/rmc-logo-256x.png" alt="osu!rmc" :height="48"></RouterLink>
             
                 <AppPopover>
                     <template #trigger>
@@ -105,10 +105,11 @@ async function signOut() {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: var(--content-padding);
+    padding: 0 var(--content-padding);
     background-color: var(--h-bg);
     height: 75px;
-    border-bottom: 2px solid var(--surface);
+    border-bottom: 2px solid transparent;
+    border-image: linear-gradient(to right, var(--h-bg), var(--surface), var(--h-bg)) 1;
 }
 
 .h-content {
@@ -130,7 +131,7 @@ async function signOut() {
 }
 
 .rmc-logo:hover {
-    transform: scale(1.05) rotate(-0.5deg);
+    transform: scale(1.05);
 }
 
 .option {
@@ -140,7 +141,7 @@ async function signOut() {
 }
 
 .nav-option:hover .nav-icon {
-    transform: scale(1.1) rotate(-5deg);
+    transform: scale(1.1) rotate(-2deg);
 }
 
 .h-text {
