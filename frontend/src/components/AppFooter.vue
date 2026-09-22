@@ -4,7 +4,7 @@
             <span class="version">
                 v{{ version }}
             </span>
-            <span class="f-text">made with <abbr title="love, passion &amp; coffee" class="ily" @mousedown="doYouLoveMeLoveMeLoveMe = true" @mouseup="doYouLoveMeLoveMeLoveMe = false"><Heart :size="16" /></abbr> by <a href="http://michas.dev" target="_blank" rel="noopener noreferrer" class="michas">michas</a></span>
+            <span class="f-text">made with <abbr title="love, passion &amp; coffee" class="ily" @mousedown="doYouLoveMeLoveMeLoveMe = true" @mouseup="doYouLoveMeLoveMeLoveMe = false"><Heart :size="16" /></abbr> by <a href="https://osu.ppy.sh/users/13955247" target="_blank" rel="noopener noreferrer" class="michas">michas</a></span>
         </div>
     </footer>
 </template>

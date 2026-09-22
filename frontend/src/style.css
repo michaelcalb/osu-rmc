@@ -16,7 +16,7 @@
     --success: #6EE7B7;
     --danger: #F87171;
 
-    --a: #ffa4dc;
+    --text-color-a: #ffa4dc;
     
     --black: #00010e;
     
@@ -61,6 +61,10 @@ abbr[title] {
     background-color: initial;
     color: inherit;
     cursor: pointer;
+}
+
+.mono {
+    font-family: monospace;
 }
 
 ::selection {
