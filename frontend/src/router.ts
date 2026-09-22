@@ -43,7 +43,14 @@ const router = createRouter({
             component: () => import('./views/ProfileView.vue'),
             props: true
         }
-    ]
+    ],
+    scrollBehavior(to) {
+        if (to.hash) {
+            return { el: to.hash }
+        }
+
+        return { top: 0 }
+    }
 })
 
 router.beforeEach(async (to) => {

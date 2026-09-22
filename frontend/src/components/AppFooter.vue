@@ -32,7 +32,7 @@ watch(doYouLoveMeLoveMeLoveMe, (love) => {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: calc(var(--content-padding) / 2) var(--content-padding);
+    padding: 0 var(--default-spacing);
     color: var(--text-muted-2);
 }
 

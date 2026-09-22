@@ -105,11 +105,14 @@ async function signOut() {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 var(--content-padding);
+    padding: 0 var(--default-spacing);
     background-color: var(--h-bg);
-    height: 75px;
+    height: var(--h-height);
     border-bottom: 2px solid transparent;
     border-image: linear-gradient(to right, var(--h-bg), var(--surface), var(--h-bg)) 1;
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
 
 .h-content {
@@ -182,8 +185,8 @@ async function signOut() {
 }
 
 .start-run:not(.login-blocked):hover .char {
-    animation: hop .5s;
-    animation-delay: calc(var(--i) * .05s);
+    animation: hop .4s;
+    animation-delay: calc(var(--i) * .02s);
 }
 
 .login-blocked {

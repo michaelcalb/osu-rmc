@@ -23,7 +23,7 @@ import AppHeader from './components/AppHeader.vue';
     width: 100%;
     max-width: var(--content-max-width);
     border-radius: 0 0 1rem 1rem;
-    background: linear-gradient(to bottom, var(--h-bg), var(--surface)) border-box;
-    padding: var(--content-padding);
+    background: linear-gradient(to bottom, var(--h-bg), var(--surface)) fixed border-box;
+    padding: calc(var(--default-spacing) / 2) var(--default-spacing);
 }
 </style>
