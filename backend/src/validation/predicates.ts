@@ -1,3 +1,5 @@
+import { BeatmapAvailability } from "src/osu/osu.service"
+
 const BANNED_MODS: readonly string[] = ['AT', 'CN', 'RX', 'AP']
 const NO_MOD_EQUIVALENT: readonly string[] = ['CL']
 const SKIP_RANKS: readonly string[] = ['A', 'S', 'SH', 'X', 'XH']
@@ -58,6 +60,10 @@ export function isSubmittable(status: string | null): boolean {
     return status !== null && SUBMITTABLE_STATUSES.includes(status)
 }
 
-export function unplayableClaimUpheld(status: string | null): boolean {
-    return !isSubmittable(status)
+export function unplayableClaimUpheld(availability: BeatmapAvailability): boolean {
+    return (
+        availability.deleted ||
+        availability.downloadDisabled ||
+        !isSubmittable(availability.status)
+    )
 }

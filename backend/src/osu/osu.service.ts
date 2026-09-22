@@ -36,6 +36,18 @@ export interface OsuBeatmap {
     status: string
     total_length: number
     hit_length: number
+    deleted_at: string | null
+    beatmapset?: {
+        availability?: {
+            download_disabled: boolean
+        }
+    }
+}
+
+export interface BeatmapAvailability {
+    status: string | null
+    deleted: boolean
+    downloadDisabled: boolean
 }
 
 export class OsuHttpError extends Error {
@@ -148,6 +160,27 @@ export class OsuService {
             Date.now() + (body.expires_in - TOKEN_MARGIN_SECONDS) * 1000
 
         return this.token
+    }
+
+    async getBeatmapAvailability(
+        beatmapId: number
+    ): Promise<BeatmapAvailability> {
+        try {
+            const beatmap = await this.get<OsuBeatmap>(`/beatmaps${beatmapId}`)
+
+            return {
+                status: beatmap.status,
+                deleted: Boolean(beatmap.deleted_at),
+                downloadDisabled:
+                    beatmap.beatmapset?.availability?.download_disabled ?? false
+            }
+        } catch (error) {
+            if (error instanceof OsuHttpError && error.status === 404) {
+                return { status: null, deleted: true, downloadDisabled: false }
+            }
+
+            throw error
+        }
     }
 
     async getBeatmapStatus(beatmapId: number): Promise<string | null> {
