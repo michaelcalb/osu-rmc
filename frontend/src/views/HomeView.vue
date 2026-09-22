@@ -17,7 +17,7 @@
             you can also compete on the <RouterLink to="/boards/no_mod">leaderboards</RouterLink>! that's possible thanks to a server-side run-validation process (basically an anti-cheat) that compares your claimed scores during the run to the scores published in your osu! account.
         </p>
         <p>
-            for more information about the validation process and how it works, you can check out this <a href="#">documentation</a>.
+            for more information about the validation process and how it works, you can check out this <a href="#">documentation</a>. you don't need to understand it to play, but feel free to read it if you're curious, just keep in mind the language there is somewhat technical.
         </p>
         <p>
             this project is still a work in progress, so expect a lot of changes, design-wise mostly. the core mechanics will most likely remain the same.
