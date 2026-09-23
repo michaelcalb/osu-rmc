@@ -18,7 +18,7 @@
                 this project is still a work in progress, so expect a lot of changes, design-wise mostly. the core mechanics will most likely remain the same.
             </p>
             <p>
-                if you're having trouble, have any questions or just want to share your thoughts on this project, feel free to contact me through <a href="https://osu.ppy.sh/users/13955247" target="_blank" rel="noopener noreferrer" class="link-1">osu!</a> or <a href="https://discordapp.com/users/316699326581702657" target="_blank" rel="noopener noreferrer" class="link-1">Discord</a>. thanks for playing <span class="mono">;&rpar;</span>
+                if you're having trouble, have any questions or just want to share your thoughts on this project, feel free to contact me through <a href="https://osu.ppy.sh/users/13955247" target="_blank" rel="noopener noreferrer" class="link-1">osu!</a> or <a href="https://discord.com/users/316699326581702657" target="_blank" rel="noopener noreferrer" class="link-1">Discord</a>. thanks for playing <span class="mono">;&rpar;</span>
             </p>
             <p>glhf! <span class="mono">&lt;3</span></p>
         </section>
