@@ -1,4 +1,4 @@
-import { BeatmapAvailability } from "src/osu/osu.service"
+import { BeatmapAvailability } from "../osu/osu.service"
 
 const BANNED_MODS: readonly string[] = ['AT', 'CN', 'RX', 'AP']
 const NO_MOD_EQUIVALENT: readonly string[] = ['CL']

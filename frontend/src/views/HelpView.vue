@@ -61,7 +61,7 @@
             <section id="void" class="content-section">
                 <h2 class="section-title">the void</h2>
                 <p>
-                    under very rare and specific circumstances your run can receive the "void" status. voided runs do not show up on your profile or the leaderboards' page. the most common causes for this comes from certain errors that can happen in the validation process. if you ever see the message that your run has been voided or if it seemingly vanished after validating, don't worry, your run can still be recovered.
+                    under very rare and specific circumstances your run can receive the "void" status. voided runs do not show up on your profile or the leaderboards' page. the most common causes for this comes from certain errors that can happen in the validation process. if you ever see the message that your run has been voided or if it seemingly vanished after validating, don't worry, it can still be recovered.
                 </p>
                 <p>
                     if you want to recover a voided run, feel free to contact me through <a href="https://osu.ppy.sh/users/13955247" target="_blank" rel="noopener noreferrer" class="link-1">osu!</a> or <a href="https://discordapp.com/users/316699326581702657" target="_blank" rel="noopener noreferrer" class="link-1">Discord</a>.

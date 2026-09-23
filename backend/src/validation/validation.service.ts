@@ -85,17 +85,18 @@ export class ValidationService {
 
         const charges = chargeSequence(timings)
 
-        const statuses = new Map<number, string | null>()
+        const upheld = new Map<number, boolean>()
 
         for (const { map } of matched) {
             if (map.claimed_outcome !== 'unplayable') {
                 continue
             }
 
-            const status = await this.osu.getBeatmapStatus(map.map_id)
-            statuses.set(map.map_id, status)
+            const availability = await this.osu.getBeatmapAvailability(map.map_id)
 
-            if (!unplayableClaimUpheld(status)) {
+            upheld.set(map.map_id, unplayableClaimUpheld(availability))
+
+            if (!upheld.get(map.map_id)) {
                 break
             }
         }
@@ -105,7 +106,7 @@ export class ValidationService {
             claimed: map.claimed_outcome,
             score,
             withinLimit: charges[index].withinLimit,
-            beatmapStatus: statuses.get(map.map_id) ?? null,
+            unplayableUpheld: upheld.get(map.map_id) ?? true,
             isLast: index === matched.length - 1
         }))
     }

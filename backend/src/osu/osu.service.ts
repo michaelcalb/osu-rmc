@@ -182,18 +182,4 @@ export class OsuService {
             throw error
         }
     }
-
-    async getBeatmapStatus(beatmapId: number): Promise<string | null> {
-        try {
-            const beatmap = await this.get<OsuBeatmap>(`/beatmaps/${beatmapId}`)
-
-            return beatmap.status
-        } catch (error) {
-            if (error instanceof OsuHttpError && error.status === 404) {
-                return null
-            }
-
-            throw error
-        }
-    }
 }

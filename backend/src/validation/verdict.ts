@@ -10,7 +10,6 @@ import {
     isFullCombo,
     isNoModEquivalent,
     isSkipWorthy,
-    unplayableClaimUpheld
 } from './predicates'
 
 export interface Position {
@@ -18,7 +17,7 @@ export interface Position {
     claimed: ClaimedOutcome | null
     score: OsuScore | null
     withinLimit: boolean
-    beatmapStatus: string | null
+    unplayableUpheld: boolean
     isLast: boolean
 }
 
@@ -66,7 +65,7 @@ export function judgeRun(positions: Position[]): RunVerdict {
         }
 
         if (position.claimed === 'unplayable') {
-            if (!unplayableClaimUpheld(position.beatmapStatus)) {
+            if (!position.unplayableUpheld) {
                 truncatedAt = seq_index
                 truncationReason = 'rejected_unplayable'
                 break
