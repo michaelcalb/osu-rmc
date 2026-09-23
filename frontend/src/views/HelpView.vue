@@ -33,6 +33,9 @@
                     <p>
                         when the hour runs out, you can still finish the map you're on, and an FC on it counts. then click <span class="strong">start validation</span>.
                     </p>
+                    <p>
+                        heads up: the clock on screen is an <span class="strong">estimate</span>. your real time is worked out during <a href="#validation" class="link-1">validation</a>. that's why properly using the <span class="strong">start map</span> button is recommended.
+                    </p>
                 </template>
 
                 <template v-else>
@@ -44,6 +47,9 @@
                     </p>
                     <p>
                         you can retry the maps for as long as you like, and after you manage to successfully FC each one, just hit the <span class="strong">next map</span> button and repeat the process until the hour is over. if time runs out while you're mid-map, finish it anyway, because an FC on it still counts. after that, click on the <span class="strong">start validation</span> button to begin the <a href="#validation" class="link-1">validation</a> process of your run.
+                    </p>
+                    <p>
+                        one thing to keep in mind: the hour you see on screen is an <span class="strong">estimate</span>, not the real clock. your real time is only worked out during <a href="#validation" class="link-1">validation</a>. the two can drift apart, so you may have a bit less time than shown. clicking <span class="strong">start map</span> on every map keeps the estimate close to the real thing.
                     </p>
                 </template>
             </section>
@@ -230,8 +236,13 @@ const tldr = ref(true)
     gap: var(--default-spacing);
 }
 
+.content-section {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--default-spacing) / 2);
+}
+
 .content-section > * {
-    margin-bottom: calc(var(--default-spacing) / 2);
     text-align: justify;
     font-size: 1.2rem;
     color: var(--text-muted-3);
