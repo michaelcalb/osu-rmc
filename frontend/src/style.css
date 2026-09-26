@@ -93,6 +93,24 @@ abbr[title] {
     color: var(--danger);
 }
 
+.pfp-box {
+    display: inline-block;
+    position: relative;
+    corner-shape: squircle;
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
+.pfp {
+    width: 48px;
+    aspect-ratio: 1 / 1;
+    transition: .2s;
+}
+
+.pfp-box:hover .pfp {
+    transform: scale(1.1);
+}
+
 ::selection {
   background: rgba(255, 102, 170, 0.35);
 

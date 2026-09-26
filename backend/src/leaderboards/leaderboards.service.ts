@@ -3,15 +3,14 @@ import { Kysely } from 'kysely'
 import type { Board, Database } from '../db/database'
 import { KYSELY } from '../db/db.module'
 
-export const DEFAULT_LIMIT = 50
-const MAX_LIMIT = 100
+export const MAX_LIMIT = 10
 
 @Injectable()
 export class LeaderboardsService {
     constructor(@Inject(KYSELY) private readonly db: Kysely<Database>) {}
 
-    async getBoard(board: Board, limit = DEFAULT_LIMIT, offset = 0) {
-        return this.db
+    async getBoard(board: Board, limit = MAX_LIMIT, offset = 0) {
+        const rows = await this.db
             .selectFrom((eb) =>
                 eb
                     .selectFrom('runs as r')
@@ -44,6 +43,18 @@ export class LeaderboardsService {
             .limit(limit)
             .offset(offset)
             .execute()
+
+        const players = await this.db
+            .selectFrom('runs')
+            .select((eb) =>
+                eb.fn.count<number>('user_id').distinct().as('count')
+            )
+            .where('status', '=', 'complete')
+            .where('fc_count', '>', 0)
+            .where('resolved_board', '=', board)
+            .executeTakeFirstOrThrow()
+
+        return { rows, total: Number(players.count) }
     }
 
     async getRun(runId: number) {

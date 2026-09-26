@@ -49,10 +49,8 @@
                 
                 <AppPopover v-else-if="user">
                     <template #trigger>
-                        <RouterLink :to="`/users/${user.id}`">
-                            <div class="pfp-box">
-                                <img :src="`https://a.ppy.sh/${user.id}`" :alt="user.username" class="pfp" />
-                            </div>
+                        <RouterLink class="pfp-box" :to="`/users/${user.id}`">
+                            <img :src="`https://a.ppy.sh/${user.id}`" :alt="user.username" class="pfp" />
                         </RouterLink>
                     </template>
                 
@@ -208,23 +206,6 @@ async function signOut() {
 
 .login-blocked:hover .login-blocked-msg {
     opacity: 1;
-}
-
-.pfp-box {
-    position: relative;
-    corner-shape: squircle;
-    border-radius: 1rem;
-    overflow: hidden;
-}
-
-.pfp {
-    width: 48px;
-    aspect-ratio: 1 / 1;
-    transition: .2s;
-}
-
-.pfp-box:hover .pfp {
-    transform: scale(1.1);
 }
 
 .logout {

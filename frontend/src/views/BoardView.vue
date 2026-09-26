@@ -8,17 +8,16 @@
 
         <ol v-else :start="offset + 1">
             <li v-for="row in rows" :key="row.id">
-                <p>run id: {{ row.id }}</p>
-                <p>
-                    user:
-                    <RouterLink :to="`/users/${row.user_id}`">{{
-                        row.username
-                    }}</RouterLink>
-                </p>
-                <p>fcs: {{ row.fc_count }}</p>
-                <p>board: {{ row.resolved_board }}</p>
-                <p>avg fc score: {{ row.avg_fc_score }}</p>
-                <p>active elapsed: {{ row.active_elapsed }}</p>
+                <!-- <p>run id: {{ row.id }}</p> -->
+                <RouterLink class="pfp-box" :to="`/users/${row.user_id}`">
+                    <img :src="`https://a.ppy.sh/${row.user_id}`" :alt="row.username" class="pfp" />
+                </RouterLink>
+                <span>
+                        {{ row.username }}
+                </span>
+                <span>{{ row.fc_count }}</span>
+                <span>{{ row.avg_fc_score }}</span>
+                <p>{{ row.active_elapsed }}</p>
                 <p>pool version: {{ row.pool_version }}</p>
                 <p>ended at: {{ row.ended_at }}</p>
                 <RouterLink :to="`/runs/${row.id}`">view run</RouterLink>
@@ -27,10 +26,40 @@
     </section>
 
     <section>
-        <button :disabled="loading || offset === 0" @click="prev">prev</button>
-        <button :disabled="loading || !hasNext" @click="next">
-            next
-        </button>
+        <PaginationRoot
+            :page="page"
+            :total="total"
+            :items-per-page="LIMIT"
+            :sibling-count="2"
+            :disabled="loading"
+            @update:page="goTo"
+        >
+            <PaginationList v-slot="{ items }">
+                <PaginationFirst>
+                    <ChevronsLeft />
+                </PaginationFirst>
+
+                <PaginationPrev>
+                    <ChevronLeft />
+                </PaginationPrev>
+
+                <template v-for="(item, index) in items" :key="index">
+                    <PaginationListItem
+                        v-if="item.type === 'page'"
+                        :value="item.value"
+                    />
+                    <PaginationEllipsis v-else />
+                </template>
+
+                <PaginationNext>
+                    <ChevronRight />
+                </PaginationNext>
+
+                <PaginationLast>
+                    <ChevronsRight />
+                </PaginationLast>
+            </PaginationList>
+        </PaginationRoot>
         <RouterLink to="/boards/no_mod">no_mod</RouterLink>
         <RouterLink to="/boards/free_mod">free_mod</RouterLink>
     </section>
@@ -39,19 +68,31 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
+import { ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight } from '@lucide/vue'
+import {
+    PaginationEllipsis,
+    PaginationFirst,
+    PaginationLast,
+    PaginationList,
+    PaginationListItem,
+    PaginationNext,
+    PaginationPrev,
+    PaginationRoot
+} from 'reka-ui'
 import { ApiError, get } from '../lib/api'
-import type { BoardRow } from '../lib/types'
+import type { BoardPage, BoardRow } from '../lib/types'
 
-const LIMIT = 25
+const LIMIT = 10
 
 const route = useRoute()
 const board = computed(() => String(route.params.board))
 
 const rows = ref<BoardRow[]>([])
-const offset = ref(0)
+const page = ref(1)
+const offset = computed(() => (page.value - 1) * LIMIT)
 const loading = ref(true)
 const error = ref<string | null>(null)
-const hasNext = ref(false)
+const total = ref(0)
 
 let latest = 0
 
@@ -62,16 +103,16 @@ async function load() {
     error.value = null
 
     try {
-        const page = await get<BoardRow[]>(
-            `/leaderboards/${board.value}?limit=${LIMIT + 1}&offset=${offset.value}`
+        const result = await get<BoardPage>(
+            `/leaderboards/${board.value}?limit=${LIMIT}&offset=${offset.value}`
         )
 
         if (token !== latest) {
             return
         }
 
-        hasNext.value = page.length > LIMIT
-        rows.value = page.slice(0, LIMIT)
+        rows.value = result.rows
+        total.value = result.total
     } catch (e) {
         if (token !== latest) {
             return
@@ -79,7 +120,7 @@ async function load() {
 
         error.value = e instanceof ApiError ? e.message : 'could not load board'
         rows.value = []
-        hasNext.value = false
+        total.value = 0
     } finally {
         if (token === latest) {
             loading.value = false
@@ -87,20 +128,15 @@ async function load() {
     }
 }
 
-function next() {
-    offset.value += LIMIT
-    void load()
-}
-
-function prev() {
-    offset.value = Math.max(0, offset.value - LIMIT)
+function goTo(value: number) {
+    page.value = value
     void load()
 }
 
 watch(
     board,
     () => {
-        offset.value = 0
+        page.value = 1
         void load()
     },
     { immediate: true }

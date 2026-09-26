@@ -85,6 +85,11 @@ export interface BoardRow {
     avg_fc_score: number | null
 }
 
+export interface BoardPage {
+    rows: BoardRow[]
+    total: number
+}
+
 export interface RunDetailMap {
     seq_index: number
     map_id: number
