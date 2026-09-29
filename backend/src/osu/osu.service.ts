@@ -24,6 +24,7 @@ export interface OsuScore {
     ranked: boolean
     max_combo: number
     total_score: number
+    accuracy: number
     statistics: Record<string, number>
     maximum_statistics: Record<string, number>
     started_at: string
@@ -166,7 +167,7 @@ export class OsuService {
         beatmapId: number
     ): Promise<BeatmapAvailability> {
         try {
-            const beatmap = await this.get<OsuBeatmap>(`/beatmaps${beatmapId}`)
+            const beatmap = await this.get<OsuBeatmap>(`/beatmaps/${beatmapId}`)
 
             return {
                 status: beatmap.status,

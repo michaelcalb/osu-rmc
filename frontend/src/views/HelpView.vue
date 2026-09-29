@@ -189,7 +189,7 @@ const tldr = ref(true)
     font-size: 1.2rem;
     color: var(--text-muted);
     border: 2px solid var(--border);
-    border-radius: 1rem;
+    border-radius: .5rem;
     padding: 0.25rem 1rem;
     transition: .2s;
 }

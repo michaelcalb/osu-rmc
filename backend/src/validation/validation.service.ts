@@ -139,6 +139,7 @@ export class ValidationService {
                         mods: score ? JSON.stringify(score.mods) : null,
                         confirmed_score_id: score ? String(score.id) : null,
                         total_score: score?.total_score ?? null,
+                        accuracy: score?.accuracy ?? null,
                         score_max_combo: score?.max_combo ?? null,
                         score_started_at: score
                             ? new Date(score.started_at)
@@ -157,6 +158,7 @@ export class ValidationService {
                     validating_since: null,
                     fc_count: verdict.fcCount,
                     avg_fc_score: verdict.avgFcScore,
+                    avg_fc_accuracy: verdict.avgFcAccuracy,
                     resolved_board: verdict.board,
                     truncated_at_index: verdict.truncatedAt,
                     truncation_reason: verdict.truncationReason

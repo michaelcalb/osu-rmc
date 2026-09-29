@@ -37,6 +37,9 @@
                 average run score:
                 {{ Math.round(avgFcScore).toLocaleString() }}
             </p>
+            <p v-if="avgFcAccuracy !== null">
+                average run accuracy: {{ accuracy.format(avgFcAccuracy) }}
+            </p>
             <p>pool version: {{ detail.run.pool_version }}</p>
             <p>seed: {{ detail.run.seed }}</p>
             <p>started: {{ detail.run.started_at }}</p>
@@ -139,6 +142,9 @@
                         time on the map: {{ formatDuration(playSeconds(m)!) }}
                     </p>
                     <p v-if="m.total_score !== null">{{ m.total_score }}</p>
+                    <p v-if="m.accuracy !== null">
+                        accuracy: {{ accuracy.format(m.accuracy) }}
+                    </p>
                     <p v-if="m.confirmed_score_id">
                         score id: {{ m.confirmed_score_id }}
                     </p>
@@ -185,6 +191,12 @@ const TRUNCATION_LABELS: Record<TruncationReason, string> = {
         'it was full-comboed, but the score landed outside the time limit',
     not_qualifying: 'the score was neither a full combo nor good enough to skip'
 }
+
+const accuracy = new Intl.NumberFormat('en', {
+    style: 'percent',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+})
 
 const detail = ref<RunDetail | null>(null)
 const loading = ref(true)
@@ -265,6 +277,14 @@ const avgFcScore = computed(() =>
         fcMaps.value
             .map((m) => m.total_score)
             .filter((score): score is number => score !== null)
+    )
+)
+
+const avgFcAccuracy = computed(() =>
+    average(
+        fcMaps.value
+            .map((m) => m.accuracy)
+            .filter((value): value is number => value !== null)
     )
 )
 

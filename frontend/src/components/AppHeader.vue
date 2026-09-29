@@ -239,6 +239,10 @@ async function signOut() {
     animation: spin 1s infinite;
 }
 
+.pfp {
+    height: 48px;
+}
+
 @keyframes hop {
     0%, 100% {
         transform: translateY(0);

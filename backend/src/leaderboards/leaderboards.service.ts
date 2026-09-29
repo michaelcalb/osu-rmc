@@ -24,7 +24,8 @@ export class LeaderboardsService {
                         'r.pool_version',
                         'r.active_elapsed',
                         'r.ended_at',
-                        'r.avg_fc_score'
+                        'r.avg_fc_score',
+                        'r.avg_fc_accuracy'
                     ])
                     .where('r.status', '=', 'complete')
                     .where('r.fc_count', '>', 0)
@@ -102,6 +103,7 @@ export class LeaderboardsService {
                 'rm.score_max_combo',
                 'rm.confirmed_score_id',
                 'rm.total_score',
+                'rm.accuracy',
                 'rm.served_at',
                 'rm.score_started_at',
                 'rm.score_ended_at',

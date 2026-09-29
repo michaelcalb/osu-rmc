@@ -83,6 +83,7 @@ export interface BoardRow {
     active_elapsed: number
     ended_at: string | null
     avg_fc_score: number | null
+    avg_fc_accuracy: number | null
 }
 
 export interface BoardPage {
@@ -105,6 +106,7 @@ export interface RunDetailMap {
     score_max_combo: number | null
     confirmed_score_id: string | null
     total_score: number | null
+    accuracy: number | null
     served_at: string
     score_started_at: string | null
     score_ended_at: string | null
