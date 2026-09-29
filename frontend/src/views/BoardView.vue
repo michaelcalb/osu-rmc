@@ -71,7 +71,7 @@
                     >
                         <td>
                             <RouterLink :to="`/runs/${row.id}`" @click.stop>
-                                {{ offset + index + 1 }}
+                                #{{ offset + index + 1 }}
                             </RouterLink>
                         </td>
                         <td>
@@ -307,6 +307,7 @@ watch(
 .lb-table {
     width: 100%;
     border-spacing: 0 .25rem;
+    color: var(--text-muted-2);
 }
 
 .lb-table :is(th, td) {
@@ -315,7 +316,8 @@ watch(
 }
 
 .lb-table :is(th, td):first-child {
-    width: 3rem;
+    width: 1px;
+    padding: 0 .5rem;
     text-align: center;
 }
 
@@ -337,26 +339,20 @@ watch(
 }
 
 .i-1 {
-    background-image: linear-gradient(to right, #d4af37, var(--bg) 15%);
-    color: #d4af37;
+    color: #e4bd40;
 }
 
 .i-2 {
-    background-image: linear-gradient(to right, #c0c0c0, var(--bg) 15%);
-    color: #c0c0c0;
+    color: #e0e0e0;
 }
+
 .i-3 {
-    background-image: linear-gradient(to right, #cd7f32, var(--bg) 15%);
-    color: #cd7f32;
+    color: #e99848;
 }
 
 .lb-row {
     cursor: pointer;
     background-color: var(--bg);
-}
-
-.lb-row > :first-child {
-    color: var(--text);
 }
 
 .user {
