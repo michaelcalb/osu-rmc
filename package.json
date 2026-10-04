@@ -2,6 +2,9 @@
     "name": "osu-rmc",
     "private": true,
     "scripts": {
+        "dev": "pnpm run \"/^dev:/\"",
+        "dev:frontend": "pnpm --dir frontend dev",
+        "dev:backend": "pnpm --dir backend start:dev",
         "format": "prettier --write --ignore-unknown \"{backend,frontend}/src/**\" \"backend/test/**\"",
         "format:check": "prettier --check --ignore-unknown \"{backend,frontend}/src/**\" \"backend/test/**\""
     },

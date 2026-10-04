@@ -6,6 +6,7 @@
     --h-bg: #17153B;
 
     --bg: #010428;
+    --bg-2: #12103E;
     --surface: #2E236C;
     --border: #433D8B;
     --text: #EDE7F6;
@@ -24,8 +25,6 @@
     --old-4: #fff1fe;
     --old-6: #CC4BC2;
     --old-7: #2CDD88;
-
-    --logo-osu: #405b8b;
 
     scroll-padding-top: calc(var(--h-height) + 1rem);
 }
@@ -77,6 +76,23 @@ abbr[title] {
     font-size: 2.5rem;
 }
 
+.separator {
+    width: 100%;
+    border: none;
+    height: 2px;
+    border-radius: 1rem;
+    background-color: var(--border);
+    margin: 5px 0;
+}
+
+.v-separator {
+    border: none;
+    width: 2px;
+    border-radius: 1rem;
+    background-color: var(--border);
+    margin: 0 5px;
+}
+
 .raw-btn {
     border: initial;
     font-size: initial;
@@ -94,7 +110,7 @@ abbr[title] {
 }
 
 .pfp-box {
-    display: inline-block;
+    display: flex;
     position: relative;
     corner-shape: squircle;
     border-radius: 1rem;
@@ -108,6 +124,32 @@ abbr[title] {
 
 .pfp-box:hover .pfp {
     transform: scale(1.1);
+}
+
+.rank-1,
+.rank-2,
+.rank-3 {
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.rank-1 {
+    background-image: linear-gradient(180deg, #fff3b0 0%, #e4bd40 50%, #a8791a 100%);
+}
+
+.rank-2 {
+    background-image: linear-gradient(180deg, #ffffff 0%, #c9d1d9 50%, #7d8894 100%);
+}
+
+.rank-3 {
+    background-image: linear-gradient(180deg, #ffd3a3 0%, #e99848 50%, #9c5a24 100%);
+}
+
+.rank-1::selection,
+.rank-2::selection,
+.rank-3::selection {
+    color: #fff;
 }
 
 ::selection {

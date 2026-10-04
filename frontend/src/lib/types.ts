@@ -164,5 +164,8 @@ export interface Profile {
     }
     completedRuns: number
     totalFcs: number
+    totalElapsed: number
+    runsByBoard: Record<Board, number>
+    accuracy: number | null
     boards: ProfileBoard[]
 }

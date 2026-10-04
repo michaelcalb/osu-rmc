@@ -1,5 +1,5 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
-import { Kysely } from 'kysely'
+import { Kysely, sql } from 'kysely'
 import { BOARDS, type Board, type Database } from '../db/database'
 import { KYSELY } from '../db/db.module'
 
@@ -22,7 +22,17 @@ export class ProfilesService {
             .selectFrom('runs')
             .select((eb) => [
                 eb.fn.countAll<number>().as('runs'),
-                eb.fn.sum<number>('fc_count').as('fcs')
+                eb.fn.sum<number>('fc_count').as('fcs'),
+                eb.fn.sum<number>('active_elapsed').as('elapsed'),
+                eb.fn
+                    .countAll<number>()
+                    .filterWhere('resolved_board', '=', 'no_mod')
+                    .as('noModRuns'),
+                eb.fn
+                    .countAll<number>()
+                    .filterWhere('resolved_board', '=', 'free_mod')
+                    .as('freeModRuns'),
+                sql<number | null>`sum(avg_fc_accuracy * fc_count) / nullif(sum(fc_count), 0)`.as('accuracy')
             ])
             .where('user_id', '=', osuUserId)
             .where('status', '=', 'complete')
@@ -36,6 +46,12 @@ export class ProfilesService {
             user,
             completedRuns: Number(totals.runs),
             totalFcs: Number(totals.fcs),
+            totalElapsed: Number(totals.elapsed),
+            runsByBoard: {
+                no_mod: Number(totals.noModRuns),
+                free_mod: Number(totals.freeModRuns)
+            },
+            accuracy: totals.accuracy,
             boards
         }
     }

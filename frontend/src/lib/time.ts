@@ -46,6 +46,17 @@ export function exactTime(iso: string) {
     }
 }
 
+export function formatDuration(seconds: number) {
+    return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`
+}
+
+export function formatHours(seconds: number) {
+    const hours = Math.floor(seconds / 3600)
+    const minutes = Math.floor((seconds % 3600) / 60)
+
+    return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`
+}
+
 function startOfDay(d: Date) {
     return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime()
 }

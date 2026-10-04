@@ -17,6 +17,7 @@ import AppHeader from './components/AppHeader.vue';
 
 <style scoped>
 .main {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-self: center;

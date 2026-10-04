@@ -66,11 +66,11 @@
                     <tr
                         v-for="(row, index) in rows"
                         :key="row.id"
-                        :class="`lb-row i-${offset + index + 1}`"
+                        class="lb-row"
                         @click="router.push(`/runs/${row.id}`)"
                     >
                         <td>
-                            <RouterLink :to="`/runs/${row.id}`" @click.stop>
+                            <RouterLink :to="`/runs/${row.id}`" :class="`rank-${offset + index + 1}`" @click.stop>
                                 #{{ offset + index + 1 }}
                             </RouterLink>
                         </td>
@@ -211,15 +211,6 @@ watch(
     margin-bottom: var(--default-spacing);
 }
 
-.separator {
-    width: 100%;
-    border: none;
-    height: 2px;
-    border-radius: 1rem;
-    background-color: var(--border);
-    margin: 5px 0;
-}
-
 .content-container {
     display: flex;
     flex-direction: column;
@@ -307,7 +298,6 @@ watch(
 .lb-table {
     width: 100%;
     border-spacing: 0 .25rem;
-    color: var(--text-muted-2);
 }
 
 .lb-table :is(th, td) {
@@ -335,24 +325,12 @@ watch(
 
 .lb-h-row > * {
     font-weight: 400;
-    color: var(--text-muted-2);
-}
-
-.i-1 {
-    color: #e4bd40;
-}
-
-.i-2 {
-    color: #e0e0e0;
-}
-
-.i-3 {
-    color: #e99848;
 }
 
 .lb-row {
     cursor: pointer;
-    background-color: var(--bg);
+    background-color: var(--bg-2);
+    color: var(--text-muted-2);
 }
 
 .user {

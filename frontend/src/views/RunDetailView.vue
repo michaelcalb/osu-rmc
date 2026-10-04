@@ -170,6 +170,7 @@ import type {
     RunDetailMap,
     TruncationReason
 } from '../lib/types'
+import { formatDuration } from '../lib/time'
 
 const props = defineProps<{ id: string }>()
 
@@ -346,10 +347,6 @@ function best(
 
 function mapName(m: RunDetailMap): string {
     return `${m.artist} - ${m.title} [${m.difficulty_name}]`
-}
-
-function formatDuration(seconds: number): string {
-    return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`
 }
 
 function comboPercent(m: RunDetailMap): number | null {

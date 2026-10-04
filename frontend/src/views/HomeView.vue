@@ -50,15 +50,6 @@ import { RouterLink } from 'vue-router';
     color: var(--accent);
 }
 
-.separator {
-    width: 100%;
-    border: none;
-    height: 2px;
-    border-radius: 1rem;
-    background-color: var(--border);
-    margin: 5px 0;
-}
-
 .subtitle {
     font-size: 1.5rem;
 }
