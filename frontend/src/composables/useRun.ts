@@ -1,6 +1,6 @@
 import { computed, onScopeDispose, ref } from 'vue'
 import { ApiError, get, post } from '../lib/api'
-import type { Board, Clock, RunState, ServedMap } from '../lib/types'
+import type { Board, Clock, RunState, ServedMap, SkipKind } from '../lib/types'
 
 const TICK_MS = 500
 const START_GRACE_SECONDS = 10
@@ -9,7 +9,6 @@ export function useRun() {
     const run = ref<RunState | null>(null)
     const map = ref<ServedMap | null>(null)
     const clock = ref<Clock | null>(null)
-    const claimedFc = ref(0)
     const error = ref<string | null>(null)
     const busy = ref(false)
 
@@ -55,7 +54,6 @@ export function useRun() {
     function applyState(state: RunState | null) {
         run.value = state
         map.value = state?.currentMap ?? null
-        claimedFc.value = state?.claimedFcCount ?? 0
         clock.value = state
         syncedAt.value = Date.now()
         now.value = syncedAt.value
@@ -119,7 +117,7 @@ export function useRun() {
         return advance('/reveal')
     }
 
-    function skip(kind: 'a_skip' | 'free_skip') {
+    function skip(kind: SkipKind) {
         return advance('/skip', { kind })
     }
 
@@ -151,13 +149,10 @@ export function useRun() {
     return {
         run,
         map,
-        clock,
-        claimedFc,
         error,
         busy,
         prepSecondsLeft,
         mainSecondsLeft,
-        signalled,
         canSignalStart,
         timeUp,
         start,

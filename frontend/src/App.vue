@@ -1,5 +1,4 @@
 <template>
-
     <AppHeader />
 
     <main class="main">
@@ -10,9 +9,8 @@
 </template>
 
 <script setup lang="ts">
-import AppFooter from './components/AppFooter.vue';
-import AppHeader from './components/AppHeader.vue';
-
+import AppFooter from './components/AppFooter.vue'
+import AppHeader from './components/AppHeader.vue'
 </script>
 
 <style scoped>
@@ -24,7 +22,8 @@ import AppHeader from './components/AppHeader.vue';
     width: 100%;
     max-width: var(--content-max-width);
     border-radius: 0 0 1rem 1rem;
-    background: linear-gradient(to bottom, var(--h-bg), var(--surface)) fixed border-box;
+    background: linear-gradient(to bottom, var(--h-bg), var(--surface)) fixed
+        border-box;
     padding: calc(var(--default-spacing) / 2) var(--default-spacing);
 }
 </style>

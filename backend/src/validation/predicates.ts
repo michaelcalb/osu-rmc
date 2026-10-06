@@ -1,4 +1,4 @@
-import { BeatmapAvailability } from "../osu/osu.service"
+import { BeatmapAvailability } from '../osu/osu.service'
 
 const BANNED_MODS: readonly string[] = ['AT', 'CN', 'RX', 'AP']
 const NO_MOD_EQUIVALENT: readonly string[] = ['CL']
@@ -60,7 +60,9 @@ export function isSubmittable(status: string | null): boolean {
     return status !== null && SUBMITTABLE_STATUSES.includes(status)
 }
 
-export function unplayableClaimUpheld(availability: BeatmapAvailability): boolean {
+export function unplayableClaimUpheld(
+    availability: BeatmapAvailability
+): boolean {
     return (
         availability.deleted ||
         availability.downloadDisabled ||

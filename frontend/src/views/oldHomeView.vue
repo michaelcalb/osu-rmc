@@ -48,7 +48,8 @@ onMounted(async () => {
     try {
         current.value = await get<RunState | null>('/runs/current')
     } catch (e) {
-        error.value = e instanceof ApiError ? e.message : 'could not load your runs'
+        error.value =
+            e instanceof ApiError ? e.message : 'could not load your runs'
     } finally {
         loading.value = false
     }

@@ -1,17 +1,27 @@
 <template>
     <section class="title-section">
         <h1 class="title">leaderboards</h1>
-        <hr class="separator">
+        <hr class="separator" />
     </section>
 
     <div class="content-container">
         <nav class="lb-nav">
             <div class="lb-group">
                 <div class="lb-toggle-group">
-                    <RouterLink to="/boards/no_mod" :class="`lb-toggle ${board === 'no_mod' ? 'active' : ''}`">no mod</RouterLink>
-                    <RouterLink to="/boards/free_mod" :class="`lb-toggle ${board === 'free_mod' ? 'active' : ''}`">free mod</RouterLink>
+                    <RouterLink
+                        to="/boards/no_mod"
+                        :class="`lb-toggle ${board === 'no_mod' ? 'active' : ''}`"
+                        >no mod</RouterLink
+                    >
+                    <RouterLink
+                        to="/boards/free_mod"
+                        :class="`lb-toggle ${board === 'free_mod' ? 'active' : ''}`"
+                        >free mod</RouterLink
+                    >
                 </div>
-                <span class="total-runs">{{ total }} run{{ total === 1 ? '' : 's' }}</span>
+                <span class="total-runs"
+                    >{{ total }} run{{ total === 1 ? '' : 's' }}</span
+                >
             </div>
 
             <PaginationRoot
@@ -36,7 +46,10 @@
                                 v-if="item.type === 'page'"
                                 :value="item.value"
                             />
-                            <PaginationEllipsis v-else class="pagination-ellipsis" />
+                            <PaginationEllipsis
+                                v-else
+                                class="pagination-ellipsis"
+                            />
                         </template>
                     </div>
 
@@ -70,16 +83,32 @@
                         @click="router.push(`/runs/${row.id}`)"
                     >
                         <td>
-                            <RouterLink :to="`/runs/${row.id}`" :class="`rank-${offset + index + 1}`" @click.stop>
+                            <RouterLink
+                                :to="`/runs/${row.id}`"
+                                :class="`rank-${offset + index + 1}`"
+                                @click.stop
+                            >
                                 #{{ offset + index + 1 }}
                             </RouterLink>
                         </td>
                         <td>
                             <div class="user">
-                                <RouterLink class="pfp-box" :to="`/users/${row.user_id}`" @click.stop>
-                                        <img :src="`https://a.ppy.sh/${row.user_id}`" :alt="row.username" class="pfp" />
+                                <RouterLink
+                                    class="pfp-box"
+                                    :to="`/users/${row.user_id}`"
+                                    @click.stop
+                                >
+                                    <img
+                                        :src="`https://a.ppy.sh/${row.user_id}`"
+                                        :alt="row.username"
+                                        class="pfp"
+                                    />
                                 </RouterLink>
-                                <RouterLink class="username" :to="`/users/${row.user_id}`" @click.stop>
+                                <RouterLink
+                                    class="username"
+                                    :to="`/users/${row.user_id}`"
+                                    @click.stop
+                                >
                                     {{ row.username }}
                                 </RouterLink>
                             </div>
@@ -88,22 +117,38 @@
                             {{ row.fc_count }}
                         </td>
                         <td>
-                            {{ row.avg_fc_score === null ? '' : score.format(row.avg_fc_score) }}
+                            {{
+                                row.avg_fc_score === null
+                                    ? ''
+                                    : score.format(row.avg_fc_score)
+                            }}
                         </td>
                         <td>
-                            {{ row.avg_fc_accuracy === null ? '' : accuracy.format(row.avg_fc_accuracy) }}
+                            {{
+                                row.avg_fc_accuracy === null
+                                    ? ''
+                                    : accuracy.format(row.avg_fc_accuracy)
+                            }}
                         </td>
                         <td>
                             <TooltipRoot v-if="row.ended_at">
-                                <TooltipTrigger as="time" :datetime="row.ended_at">
+                                <TooltipTrigger
+                                    as="time"
+                                    :datetime="row.ended_at"
+                                >
                                     {{ timeAgo(row.ended_at) }}
                                 </TooltipTrigger>
                                 <TooltipPortal>
-                                    <TooltipContent class="tooltip" :side-offset="4">
+                                    <TooltipContent
+                                        class="tooltip"
+                                        :side-offset="4"
+                                    >
                                         <p>
                                             {{ exactTime(row.ended_at).date }}
-                                            <span class="tooltip-time">{{ exactTime(row.ended_at).time }}</span>
-                                        </p> 
+                                            <span class="tooltip-time">{{
+                                                exactTime(row.ended_at).time
+                                            }}</span>
+                                        </p>
                                     </TooltipContent>
                                 </TooltipPortal>
                             </TooltipRoot>
@@ -141,7 +186,7 @@ const score = new Intl.NumberFormat('en', { maximumFractionDigits: 0 })
 const accuracy = new Intl.NumberFormat('en', {
     style: 'percent',
     minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+    maximumFractionDigits: 2
 })
 
 const router = useRouter()
@@ -226,22 +271,22 @@ watch(
 .lb-group {
     display: flex;
     flex-direction: column;
-    gap: .1rem;
+    gap: 0.1rem;
     align-self: flex-start;
 }
 
 .lb-toggle-group {
     width: fit-content;
     display: flex;
-    gap: .25rem;
+    gap: 0.25rem;
     background-color: var(--bg);
-    padding: .25rem .25rem;
-    border-radius: .5rem;
+    padding: 0.25rem 0.25rem;
+    border-radius: 0.5rem;
 }
 
 .lb-toggle {
-    padding: .4rem .8rem;
-    border-radius: .25rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.25rem;
 }
 
 .active {
@@ -256,22 +301,22 @@ watch(
 .pagination-list {
     display: flex;
     align-items: center;
-    gap: .25rem;
+    gap: 0.25rem;
 }
 
 .pagination-jump {
     background-color: var(--bg);
-    border-radius: .5rem;
+    border-radius: 0.5rem;
     display: flex;
     align-items: center;
-    padding: 0 .5rem;
+    padding: 0 0.5rem;
     height: 2rem;
 }
 
 .pagination-page-group {
     display: flex;
     align-items: center;
-    gap: .25rem;
+    gap: 0.25rem;
 }
 
 .pagination-page-group > * {
@@ -282,7 +327,7 @@ watch(
 .pagination-page {
     background-color: var(--bg);
     border: 2px solid var(--bg);
-    border-radius: .5rem;
+    border-radius: 0.5rem;
 }
 
 .pagination-page[data-selected] {
@@ -297,7 +342,7 @@ watch(
 
 .lb-table {
     width: 100%;
-    border-spacing: 0 .25rem;
+    border-spacing: 0 0.25rem;
 }
 
 .lb-table :is(th, td) {
@@ -307,7 +352,7 @@ watch(
 
 .lb-table :is(th, td):first-child {
     width: 1px;
-    padding: 0 .5rem;
+    padding: 0 0.5rem;
     text-align: center;
 }
 
@@ -316,11 +361,11 @@ watch(
 }
 
 .lb-table td:first-child {
-    border-radius: .5rem 0 0 .5rem;
+    border-radius: 0.5rem 0 0 0.5rem;
 }
 
 .lb-table td:last-child {
-    border-radius: 0 .5rem .5rem 0;
+    border-radius: 0 0.5rem 0.5rem 0;
 }
 
 .lb-h-row > * {
@@ -336,7 +381,7 @@ watch(
 .user {
     display: flex;
     align-items: center;
-    gap: .5rem;
+    gap: 0.5rem;
 }
 
 .username {
@@ -349,7 +394,7 @@ watch(
 }
 
 .username:hover {
- text-decoration: underline;
+    text-decoration: underline;
 }
 
 .tooltip-time {
@@ -357,32 +402,32 @@ watch(
 }
 
 .pfp {
-    height: calc(48px * .8);
+    height: calc(48px * 0.8);
 }
 
 :deep(.tooltip) {
     background-color: var(--bg);
     border: 1px solid var(--surface);
-    border-radius: .5rem;
-    padding: .25rem .5rem;
+    border-radius: 0.5rem;
+    padding: 0.25rem 0.5rem;
     font-size: 1rem;
-    animation: fade-in .1s;
+    animation: fade-in 0.1s;
 }
 
 :deep(.tooltip[data-state='closed']) {
-    animation: fade-out .1s;
+    animation: fade-out 0.1s;
 }
 
 @keyframes fade-in {
     from {
-        scale: .9;
+        scale: 0.9;
         opacity: 0;
     }
 }
 
 @keyframes fade-out {
     to {
-        scale: .9;
+        scale: 0.9;
         opacity: 0;
     }
 }

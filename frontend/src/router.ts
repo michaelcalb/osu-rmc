@@ -46,7 +46,10 @@ const router = createRouter({
     ],
     scrollBehavior(to) {
         if (to.hash) {
-            const offset = parseInt(getComputedStyle(document.documentElement).scrollPaddingTop) || 0
+            const offset =
+                parseInt(
+                    getComputedStyle(document.documentElement).scrollPaddingTop
+                ) || 0
 
             return { el: to.hash, top: offset }
         }

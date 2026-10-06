@@ -9,7 +9,7 @@ import {
     hasBannedMod,
     isFullCombo,
     isNoModEquivalent,
-    isSkipWorthy,
+    isSkipWorthy
 } from './predicates'
 
 export interface Position {

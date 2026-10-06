@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-import { Info } from '@lucide/vue';
+import { Info } from '@lucide/vue'
 </script>
 
 <style scoped>
@@ -17,8 +17,8 @@ import { Info } from '@lucide/vue';
     background-color: #354561;
     display: flex;
     align-items: center;
-    gap: .5rem;
-    padding: .5rem 1rem;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
     border-radius: 100px;
 }
 </style>

@@ -1,6 +1,7 @@
 export type Board = 'no_mod' | 'free_mod'
 export type RunPhase = 'download' | 'running'
 export type ClaimedOutcome = 'fc' | 'a_skip' | 'free_skip' | 'unplayable'
+export type SkipKind = 'a_skip' | 'free_skip'
 
 export type RunStatus =
     | 'active'

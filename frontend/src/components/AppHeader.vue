@@ -2,25 +2,39 @@
     <header class="header">
         <div class="h-content">
             <nav class="h-group">
-                <RouterLink to="/" class="rmc-logo"><img src="../assets/rmc-logo-256x.png" alt="osu!rmc" :height="48"></RouterLink>
-            
+                <RouterLink to="/" class="rmc-logo"
+                    ><img
+                        src="../assets/rmc-logo-256x.png"
+                        alt="osu!rmc"
+                        :height="48"
+                /></RouterLink>
+
                 <AppPopover>
                     <template #trigger>
-                        <RouterLink to="/boards/no_mod" class="option nav-option">
+                        <RouterLink
+                            to="/boards/no_mod"
+                            class="option nav-option"
+                        >
                             <Trophy :size="ICON_SIZE" class="nav-icon" />
                             <span class="h-text">leaderboards</span>
                         </RouterLink>
                     </template>
 
-                    <RouterLink to="/boards/no_mod" class="option popover-option">
+                    <RouterLink
+                        to="/boards/no_mod"
+                        class="option popover-option"
+                    >
                         <span class="popover-text">no mod</span>
                     </RouterLink>
 
-                    <RouterLink to="/boards/free_mod" class="option popover-option">
+                    <RouterLink
+                        to="/boards/free_mod"
+                        class="option popover-option"
+                    >
                         <span class="popover-text">free mod</span>
                     </RouterLink>
                 </AppPopover>
-            
+
                 <RouterLink to="/help" class="option nav-option">
                     <CircleQuestionMark :size="ICON_SIZE" class="nav-icon" />
                     <span class="h-text">how to play</span>
@@ -28,7 +42,10 @@
             </nav>
 
             <section class="h-group">
-                <RouterLink to="/run" :class="`start-run ${!user ? 'login-blocked' : null}`">
+                <RouterLink
+                    to="/run"
+                    :class="`start-run ${!user ? 'login-blocked' : null}`"
+                >
                     <div v-if="!user" class="option login-blocked-msg">
                         <LogIn :size="ICON_SIZE" />
                         <span class="h-text">login</span>
@@ -46,15 +63,22 @@
                 </RouterLink>
 
                 <LoaderCircle v-if="loading" class="loading" :size="48" />
-                
+
                 <AppPopover v-else-if="user">
                     <template #trigger>
                         <RouterLink class="pfp-box" :to="`/users/${user.id}`">
-                            <img :src="`https://a.ppy.sh/${user.id}`" :alt="user.username" class="pfp" />
+                            <img
+                                :src="`https://a.ppy.sh/${user.id}`"
+                                :alt="user.username"
+                                class="pfp"
+                            />
                         </RouterLink>
                     </template>
-                
-                    <RouterLink :to="`/users/${user.id}`" class="option popover-option">
+
+                    <RouterLink
+                        :to="`/users/${user.id}`"
+                        class="option popover-option"
+                    >
                         <UserRound :size="ICON_SIZE" />
                         <span class="popover-text">profile</span>
                     </RouterLink>
@@ -64,16 +88,23 @@
                         <span class="popover-text">useless option</span>
                     </button>
 
-                    <button @click="signOut" class="raw-btn option popover-option logout">
+                    <button
+                        @click="signOut"
+                        class="raw-btn option popover-option logout"
+                    >
                         <LogOut :size="ICON_SIZE" />
                         <span class="popover-text">logout</span>
                     </button>
                 </AppPopover>
 
-                <button v-else @click="login" class="raw-btn option login"> 
+                <button v-else @click="login" class="raw-btn option login">
                     <div class="pfp-box">
                         <LogIn :size="ICON_SIZE * 1.2" class="login-icon" />
-                        <img src="https://osu.ppy.sh/images/layout/avatar-guest.png" alt="guest avatar" class="pfp">
+                        <img
+                            src="https://osu.ppy.sh/images/layout/avatar-guest.png"
+                            alt="guest avatar"
+                            class="pfp"
+                        />
                     </div>
                 </button>
             </section>
@@ -85,7 +116,15 @@
 import { RouterLink, useRouter } from 'vue-router'
 import { useSession } from '../composables/useSession'
 import AppPopover from './AppPopover.vue'
-import { Asterisk, CircleQuestionMark, LoaderCircle, LogIn, LogOut, Trophy, UserRound } from '@lucide/vue'
+import {
+    Asterisk,
+    CircleQuestionMark,
+    LoaderCircle,
+    LogIn,
+    LogOut,
+    Trophy,
+    UserRound
+} from '@lucide/vue'
 
 const router = useRouter()
 const { user, loading, login, logout } = useSession()
@@ -107,7 +146,13 @@ async function signOut() {
     background-color: var(--h-bg);
     height: var(--h-height);
     border-bottom: 2px solid transparent;
-    border-image: linear-gradient(to right, var(--h-bg), var(--surface), var(--h-bg)) 1;
+    border-image: linear-gradient(
+            to right,
+            var(--h-bg),
+            var(--surface),
+            var(--h-bg)
+        )
+        1;
     position: sticky;
     top: 0;
     z-index: 1;
@@ -127,8 +172,9 @@ async function signOut() {
     gap: 2rem;
 }
 
-.rmc-logo, .nav-icon {
-    transition: .2s;
+.rmc-logo,
+.nav-icon {
+    transition: 0.2s;
 }
 
 .rmc-logo:hover {
@@ -138,7 +184,7 @@ async function signOut() {
 .option {
     display: flex;
     align-items: center;
-    gap: .5rem;
+    gap: 0.5rem;
 }
 
 .nav-option:hover .nav-icon {
@@ -150,7 +196,7 @@ async function signOut() {
 }
 
 .popover-option > span {
-    transition: transform .3s;
+    transition: transform 0.3s;
 }
 
 .popover-option:hover > span {
@@ -161,16 +207,17 @@ async function signOut() {
     font-size: 1rem;
 }
 
-.start-run, .start-run * {
-    transition: .2s;
+.start-run,
+.start-run * {
+    transition: 0.2s;
 }
 
 .start-run {
-    padding: .5rem 1rem;
+    padding: 0.5rem 1rem;
     background-color: var(--accent-2);
     corner-shape: squircle;
     border-radius: 1rem;
-    transition: .2s;
+    transition: 0.2s;
 }
 
 .char {
@@ -183,8 +230,8 @@ async function signOut() {
 }
 
 .start-run:not(.login-blocked):hover .char {
-    animation: hop .4s;
-    animation-delay: calc(var(--i) * .02s);
+    animation: hop 0.4s;
+    animation-delay: calc(var(--i) * 0.02s);
 }
 
 .login-blocked {
@@ -223,7 +270,7 @@ async function signOut() {
     transform: translate(-50%, -50%);
     z-index: 1;
     opacity: 0;
-    transition: .2s;
+    transition: 0.2s;
 }
 
 .login:hover .login-icon {
@@ -244,7 +291,8 @@ async function signOut() {
 }
 
 @keyframes hop {
-    0%, 100% {
+    0%,
+    100% {
         transform: translateY(0);
     }
     50% {

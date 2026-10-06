@@ -67,8 +67,14 @@
                     <dd>{{ profile.completedRuns }}</dd>
 
                     <dt>weighted accuracy</dt>
-                    <dd>{{ profile.accuracy === null ? '-' : accuracy.format(profile.accuracy) }}</dd>
-                    
+                    <dd>
+                        {{
+                            profile.accuracy === null
+                                ? '-'
+                                : accuracy.format(profile.accuracy)
+                        }}
+                    </dd>
+
                     <dt>total FCs</dt>
                     <dd>{{ profile.totalFcs }}</dd>
 
@@ -218,7 +224,7 @@ watch(
 .stats-box {
     display: grid;
     grid-template-columns: max-content 1fr;
-    gap: .5rem 2rem;
+    gap: 0.5rem 2rem;
     align-content: start;
     font-size: 1.2rem;
 }

@@ -32,7 +32,11 @@ export class ProfilesService {
                     .countAll<number>()
                     .filterWhere('resolved_board', '=', 'free_mod')
                     .as('freeModRuns'),
-                sql<number | null>`sum(avg_fc_accuracy * fc_count) / nullif(sum(fc_count), 0)`.as('accuracy')
+                sql<
+                    number | null
+                >`sum(avg_fc_accuracy * fc_count) / nullif(sum(fc_count), 0)`.as(
+                    'accuracy'
+                )
             ])
             .where('user_id', '=', osuUserId)
             .where('status', '=', 'complete')

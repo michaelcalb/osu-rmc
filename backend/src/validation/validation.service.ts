@@ -92,7 +92,9 @@ export class ValidationService {
                 continue
             }
 
-            const availability = await this.osu.getBeatmapAvailability(map.map_id)
+            const availability = await this.osu.getBeatmapAvailability(
+                map.map_id
+            )
 
             upheld.set(map.map_id, unplayableClaimUpheld(availability))
 

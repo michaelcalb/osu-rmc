@@ -5,7 +5,12 @@
                 <slot name="trigger" />
             </HoverCardTrigger>
 
-            <HoverCardContent class="content-container" align="start" :side-offset="8" @pointer-down-outside="keepOpenOnTriggerClick">
+            <HoverCardContent
+                class="content-container"
+                align="start"
+                :side-offset="8"
+                @pointer-down-outside="keepOpenOnTriggerClick"
+            >
                 <slot />
             </HoverCardContent>
         </HoverCardRoot>
@@ -13,13 +18,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { HoverCardContent, HoverCardRoot, HoverCardTrigger, type PointerDownOutsideEvent } from 'reka-ui';
+import { ref } from 'vue'
+import {
+    HoverCardContent,
+    HoverCardRoot,
+    HoverCardTrigger,
+    type PointerDownOutsideEvent
+} from 'reka-ui'
 
 const root = ref<HTMLElement>()
 
 function keepOpenOnTriggerClick(event: PointerDownOutsideEvent) {
-    if (root.value?.contains(event.detail.originalEvent.target as Node)) event.preventDefault()
+    if (root.value?.contains(event.detail.originalEvent.target as Node))
+        event.preventDefault()
 }
 </script>
 
@@ -39,7 +50,7 @@ function keepOpenOnTriggerClick(event: PointerDownOutsideEvent) {
 }
 
 @keyframes fade-out {
-     to {
+    to {
         opacity: 0;
     }
 }
@@ -55,7 +66,7 @@ function keepOpenOnTriggerClick(event: PointerDownOutsideEvent) {
 }
 
 :deep(.content-container) > * {
-    padding: .5rem;
+    padding: 0.5rem;
     padding-right: 4rem;
     cursor: pointer;
     user-select: none;
