@@ -1,7 +1,17 @@
 import { BeatmapAvailability } from '../osu/osu.service'
 
-const BANNED_MODS: readonly string[] = ['AT', 'CN', 'RX', 'AP']
-const NO_MOD_EQUIVALENT: readonly string[] = ['CL']
+const BANNED_MODS: readonly string[] = ['AT', 'CN', 'RX', 'AP', 'SO']
+const NO_MOD_EQUIVALENT: readonly string[] = [
+    'NF',
+    'AC',
+    'PF',
+    'SD',
+    'ST',
+    'CL',
+    'MR',
+    'AL',
+    'SG',
+]
 const SKIP_RANKS: readonly string[] = ['A', 'S', 'SH', 'X', 'XH']
 
 const LEGACY_KEYS: readonly string[] = [
