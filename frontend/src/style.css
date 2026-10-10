@@ -66,9 +66,19 @@ a {
     color: var(--accent);
 }
 
+.strong {
+    color: var(--accent);
+    font-weight: 500;
+}
+
 abbr[title] {
     text-decoration: none;
     border-bottom: none;
+}
+
+.title-section {
+    width: fit-content;
+    margin-bottom: var(--default-spacing);
 }
 
 .title {
@@ -99,6 +109,37 @@ abbr[title] {
     background-color: initial;
     color: inherit;
     cursor: pointer;
+}
+
+.toggle-group {
+    width: fit-content;
+    display: flex;
+    gap: 0.25rem;
+    background-color: var(--bg);
+    padding: 0.25rem 0.25rem;
+    border-radius: 0.5rem;
+}
+
+.toggle {
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.25rem;
+}
+
+.toggle.active {
+    background-color: var(--surface);
+}
+
+.tooltip {
+    background-color: var(--bg);
+    border: 1px solid var(--surface);
+    border-radius: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 1rem;
+    animation: tooltip-in 0.1s;
+}
+
+.tooltip[data-state='closed'] {
+    animation: tooltip-out 0.1s;
 }
 
 .mono {
@@ -167,10 +208,53 @@ abbr[title] {
     color: #fff;
 }
 
+.error {
+    color: var(--danger);
+    font-family: monospace;
+    background-color: var(--bg-2);
+    font-size: 1rem;
+    border: 1px solid var(--border);
+    border-radius: .5rem;
+    padding: .25rem .5rem;
+    width: fit-content;
+    position: absolute;
+    top: calc(var(--default-spacing) / 2);
+    right: var(--default-spacing);
+    animation: slide-from-top .5s cubic-bezier(0.32, 0.08, 0.00, 1.00);
+}
+
 ::selection {
     background: rgba(255, 102, 170, 0.35);
 }
 
 ::-moz-selection {
     background: rgba(255, 102, 170, 0.35);
+}
+
+@keyframes tooltip-in {
+    from {
+        scale: 0.9;
+        opacity: 0;
+    }
+}
+
+@keyframes tooltip-out {
+    to {
+        scale: 0.9;
+        opacity: 0;
+    }
+}
+
+@keyframes slide-from-top {
+    0% {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    50% {
+        transform: translateY(10%);
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }

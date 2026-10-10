@@ -70,11 +70,6 @@ import { RouterLink } from 'vue-router'
 </script>
 
 <style scoped>
-.title-section {
-    width: fit-content;
-    margin-bottom: var(--default-spacing);
-}
-
 .osu-rmc {
     cursor: default;
 }

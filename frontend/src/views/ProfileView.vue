@@ -131,11 +131,6 @@ watch(
 </script>
 
 <style scoped>
-.title-section {
-    width: fit-content;
-    margin-bottom: var(--default-spacing);
-}
-
 .user-info {
     display: flex;
     flex-direction: column;

@@ -35,7 +35,7 @@
         <RunStart :busy="busy" :starting="starting" @start="onStart" />
     </template>
 
-    <p v-if="error">error: {{ error }}</p>
+    <p v-if="error" class="error">error: {{ error }}</p>
 </template>
 
 <script setup lang="ts">

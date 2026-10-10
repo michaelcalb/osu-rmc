@@ -442,9 +442,4 @@ const tldr = ref(true)
     font-size: 2rem;
     color: inherit;
 }
-
-.strong {
-    color: var(--accent);
-    font-weight: 500;
-}
 </style>

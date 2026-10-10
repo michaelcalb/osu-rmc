@@ -7,15 +7,15 @@
     <div class="content-container">
         <nav class="lb-nav">
             <div class="lb-group">
-                <div class="lb-toggle-group">
+                <div class="toggle-group">
                     <RouterLink
                         to="/boards/no_mod"
-                        :class="`lb-toggle ${board === 'no_mod' ? 'active' : ''}`"
+                        :class="`toggle ${board === 'no_mod' ? 'active' : ''}`"
                         >no mod</RouterLink
                     >
                     <RouterLink
                         to="/boards/free_mod"
-                        :class="`lb-toggle ${board === 'free_mod' ? 'active' : ''}`"
+                        :class="`toggle ${board === 'free_mod' ? 'active' : ''}`"
                         >free mod</RouterLink
                     >
                 </div>
@@ -251,11 +251,6 @@ watch(
 </script>
 
 <style scoped>
-.title-section {
-    width: fit-content;
-    margin-bottom: var(--default-spacing);
-}
-
 .content-container {
     display: flex;
     flex-direction: column;
@@ -273,20 +268,6 @@ watch(
     flex-direction: column;
     gap: 0.1rem;
     align-self: flex-start;
-}
-
-.lb-toggle-group {
-    width: fit-content;
-    display: flex;
-    gap: 0.25rem;
-    background-color: var(--bg);
-    padding: 0.25rem 0.25rem;
-    border-radius: 0.5rem;
-}
-
-.lb-toggle {
-    padding: 0.4rem 0.8rem;
-    border-radius: 0.25rem;
 }
 
 .active {
@@ -403,32 +384,5 @@ watch(
 
 .pfp {
     height: calc(48px * 0.8);
-}
-
-:deep(.tooltip) {
-    background-color: var(--bg);
-    border: 1px solid var(--surface);
-    border-radius: 0.5rem;
-    padding: 0.25rem 0.5rem;
-    font-size: 1rem;
-    animation: fade-in 0.1s;
-}
-
-:deep(.tooltip[data-state='closed']) {
-    animation: fade-out 0.1s;
-}
-
-@keyframes fade-in {
-    from {
-        scale: 0.9;
-        opacity: 0;
-    }
-}
-
-@keyframes fade-out {
-    to {
-        scale: 0.9;
-        opacity: 0;
-    }
 }
 </style>
