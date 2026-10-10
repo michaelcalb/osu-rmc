@@ -112,6 +112,10 @@ export class RunsService {
     }
 
     private async assertUnderStartLimit(userId: number) {
+        if (process.env.DISABLE_LIMITS === 'true') {
+            return
+        }
+
         const row = await this.db
             .selectFrom('runs')
             .select((eb) => eb.fn.countAll<number>().as('count'))

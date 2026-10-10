@@ -92,7 +92,7 @@
     </TooltipProvider>
 
     <button :disabled="busy" @click="emit('start', declaredMode)" :class="`raw-btn start-btn ${busy && 'busy'}`">
-        {{ starting ? 'starting...' : 'start' }}
+        {{ starting ? 'starting run...' : 'start run' }}
     </button>
 </template>
 

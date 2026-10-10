@@ -52,7 +52,7 @@
                     </div>
                     <span class="h-text">
                         <span
-                            v-for="(char, i) in [...'start run']"
+                            v-for="(char, i) in [...'play']"
                             :key="i"
                             class="char"
                             :style="{ '--i': i }"
