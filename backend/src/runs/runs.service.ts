@@ -39,7 +39,7 @@ export class RunsService {
         const seed = generateSeed()
         const mapIds = await this.pool.resolveRunSequence(poolVersion, seed)
 
-        return this.db
+        const created = await this.db
             .insertInto('runs')
             .values({
                 user_id: userId,
@@ -56,6 +56,10 @@ export class RunsService {
                 'started_at'
             ])
             .executeTakeFirstOrThrow()
+
+        await this.revealNext(userId, created.id)
+
+        return created
     }
 
     async abandonRun(userId: number, runId: number) {

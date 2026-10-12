@@ -47,7 +47,9 @@ export function exactTime(iso: string) {
 }
 
 export function formatDuration(seconds: number) {
-    return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`
+    const whole = Math.floor(seconds)
+
+    return `${Math.floor(whole / 60)}:${String(whole % 60).padStart(2, '0')}`
 }
 
 export function formatHours(seconds: number) {

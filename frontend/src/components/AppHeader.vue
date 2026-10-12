@@ -48,7 +48,6 @@
                 >
                     <div v-if="!user" class="option login-blocked-msg">
                         <LogIn :size="ICON_SIZE" />
-                        <span class="h-text">login</span>
                     </div>
                     <span class="h-text">
                         <span
@@ -83,21 +82,21 @@
                         <span class="popover-text">profile</span>
                     </RouterLink>
 
-                    <button class="raw-btn option popover-option">
+                    <button class="option popover-option">
                         <Asterisk :size="ICON_SIZE" />
                         <span class="popover-text">useless option</span>
                     </button>
 
                     <button
                         @click="signOut"
-                        class="raw-btn option popover-option logout"
+                        class="option popover-option logout"
                     >
                         <LogOut :size="ICON_SIZE" />
                         <span class="popover-text">logout</span>
                     </button>
                 </AppPopover>
 
-                <button v-else @click="login" class="raw-btn option login">
+                <button v-else @click="login" class="option login">
                     <div class="pfp-box">
                         <LogIn :size="ICON_SIZE * 1.2" class="login-icon" />
                         <img

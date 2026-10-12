@@ -35,7 +35,7 @@
         <RunStart :busy="busy" :starting="starting" @start="onStart" />
     </template>
 
-    <p v-if="error" class="error">error: {{ error }}</p>
+    <p v-if="error" class="error mono">error: {{ error }}</p>
 </template>
 
 <script setup lang="ts">
@@ -139,7 +139,7 @@ async function onReveal() {
 }
 
 async function onEnd() {
-    if (!confirm('end run?')) {
+    if (!confirm('end run?\nvalidation will start instantly.')) {
         return
     }
 
@@ -164,7 +164,7 @@ async function onValidate() {
 }
 
 async function onAbandon() {
-    if (!confirm('abandon run?')) {
+    if (!confirm('abandon run?\nit will not be validated and will be discarded. this action cannot be undone.')) {
         return
     }
 

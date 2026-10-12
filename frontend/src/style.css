@@ -15,7 +15,7 @@
     --text-muted-3: #d5d5ff;
     --accent: #ff66aa;
     --accent-2: #3454d1;
-    --success: #6ee7b7;
+    --success: #0f9b61;
     --danger: #f87171;
 
     --text-color-a: #ffa4dc;
@@ -103,7 +103,7 @@ abbr[title] {
     margin: 0 5px;
 }
 
-.raw-btn {
+button {
     border: initial;
     font-size: initial;
     background-color: initial;
@@ -143,7 +143,7 @@ abbr[title] {
 }
 
 .mono {
-    font-family: monospace;
+    font-family: "Sono", monospace;
 }
 
 .firetruck {
@@ -210,7 +210,6 @@ abbr[title] {
 
 .error {
     color: var(--danger);
-    font-family: monospace;
     background-color: var(--bg-2);
     font-size: 1rem;
     border: 1px solid var(--border);

@@ -27,7 +27,7 @@ export function useRun() {
 
     const prepSecondsLeft = computed(() =>
         clock.value
-            ? Math.max(0, clock.value.prepSecondsLeft - sinceSync.value)
+            ? Math.ceil(Math.max(0, clock.value.prepSecondsLeft - sinceSync.value))
             : 0
     )
 
@@ -38,7 +38,7 @@ export function useRun() {
 
         const spent = Math.max(0, sinceSync.value - clock.value.prepSecondsLeft)
 
-        return Math.max(0, clock.value.mainSecondsLeft - spent)
+        return Math.ceil(Math.max(0, clock.value.mainSecondsLeft - spent))
     })
 
     const signalled = computed(() => clock.value?.phase === 'running')

@@ -35,14 +35,14 @@
                 class="pagination"
             >
                 <PaginationList v-slot="{ items }" class="pagination-list">
-                    <PaginationPrev class="pagination-jump raw-btn">
+                    <PaginationPrev class="pagination-jump">
                         <ChevronLeft />
                     </PaginationPrev>
 
                     <div class="pagination-page-group">
                         <template v-for="(item, index) in items" :key="index">
                             <PaginationListItem
-                                class="pagination-page raw-btn"
+                                class="pagination-page"
                                 v-if="item.type === 'page'"
                                 :value="item.value"
                             />
@@ -53,7 +53,7 @@
                         </template>
                     </div>
 
-                    <PaginationNext class="pagination-jump raw-btn">
+                    <PaginationNext class="pagination-jump">
                         <ChevronRight />
                     </PaginationNext>
                 </PaginationList>

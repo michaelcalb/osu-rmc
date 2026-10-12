@@ -2,7 +2,7 @@
     <div class="title-row">
         <h1 class="title">how to play</h1>
         <button
-            class="raw-btn tldr-btn"
+            class="tldr-btn"
             :aria-pressed="tldr"
             @click="tldr = !tldr"
         >
@@ -189,17 +189,13 @@
                 <h2 class="section-title">using mods</h2>
                 <template v-if="tldr">
                     <p>
-                        any mod is allowed
-                        <span class="strong"
-                            >except relax, autopilot, autoplay and cinema.</span
-                        >
-                        you can switch mods between maps.
+                        you can mix and match mods during your run.
                     </p>
                     <p>there are two leaderboards:</p>
                     <ul>
                         <li>
                             <span class="strong">no mod</span>: no mods on any
-                            map. classic (CL) is fine.
+                            map, with a few exceptions.
                         </li>
                         <li>
                             <span class="strong">free mod</span>: at least one
@@ -210,10 +206,7 @@
 
                 <template v-else>
                     <p>
-                        you are free to use any mod combination during your run,
-                        <span class="strong"
-                            >except relax, autopilot, autoplay and cinema</span
-                        >. you can also freely change mod combinations for
+                        you are free to use any mod combination during your run. you can also freely change mod combinations for
                         different maps. depending on which mods you use, there
                         are 2 leaderboard categories your run can fall into,
                         either <span class="strong">no mod</span> or
@@ -221,10 +214,8 @@
                     </p>
                     <p>
                         <span class="strong">no mod</span> runs are those where
-                        every map has been cleared without any mods. the only
-                        exception is Classic, so using Classic still results in
-                        a no mod run, but using Hidden results in a free mod
-                        run, for example.
+                        every map has been cleared without any mods. there are
+                        some exceptions.
                     </p>
                     <p>
                         <span class="strong">free mod</span> runs are those that

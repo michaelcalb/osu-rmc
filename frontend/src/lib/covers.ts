@@ -7,6 +7,7 @@ export type CoverVariant =
     | 'list@2x'
     | 'slimcover'
     | 'slimcover@2x'
+    | 'fullsize'
 
 export function coverUrl(
     setId: number,

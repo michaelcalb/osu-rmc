@@ -6,13 +6,13 @@
 
     <div class="toggle-group">
         <button
-            :class="`toggle raw-btn ${declaredMode === 'no_mod' ? 'active' : ''}`"
+            :class="`toggle ${declaredMode === 'no_mod' ? 'active' : ''}`"
             @click="declaredMode = 'no_mod'"
         >
             no mod
         </button>
         <button
-            :class="`toggle raw-btn ${declaredMode === 'free_mod' ? 'active' : ''}`"
+            :class="`toggle ${declaredMode === 'free_mod' ? 'active' : ''}`"
             @click="declaredMode = 'free_mod'"
         >
             free mod
@@ -91,7 +91,7 @@
         </div>
     </TooltipProvider>
 
-    <button :disabled="busy" @click="emit('start', declaredMode)" :class="`raw-btn start-btn ${busy && 'busy'}`">
+    <button :disabled="busy" @click="emit('start', declaredMode)" :class="`start-btn ${busy && 'busy'}`">
         {{ starting ? 'starting run...' : 'start run' }}
     </button>
 </template>
