@@ -131,17 +131,34 @@
     </section>
 
     <section class="controls-container">
-        <button :disabled="busy || prepSecondsLeft > 0" @click="emit('skip', 'a_skip')">
+        <button
+            :disabled="busy || prepSecondsLeft > 0"
+            :class="{ 'holding': holding === 'a_skip' }"
+            @pointerdown="startHold('a_skip', () => emit('skip', 'a_skip'))"
+            @pointerup="cancelHold"
+            @pointerleave="cancelHold"
+            @pointercancel="cancelHold"    
+        >
             skip (A rank)
         </button>
         <button
             :disabled="busy || run.freeSkipUsed"
-            @click="emit('skip', 'free_skip')"
-            :class="run.freeSkipUsed && 'skip-used'"
+            :class="{ 'skip-used': run.freeSkipUsed, 'holding': holding === 'free_skip' }"
+            @pointerdown="startHold('free_skip', () => emit('skip', 'free_skip'))"
+            @pointerup="cancelHold"
+            @pointerleave="cancelHold"
+            @pointercancel="cancelHold"   
         >
             skip (free)
         </button>
-        <button :disabled="busy" @click="emit('unplayable')">
+        <button
+            :disabled="busy"
+            :class="{ 'holding': holding === 'unplayable' }"
+            @pointerdown="startHold('unplayable', () => emit('unplayable'))"
+            @pointerup="cancelHold"
+            @pointerleave="cancelHold"
+            @pointercancel="cancelHold"   
+        >
             unplayable
         </button>
     </section>
@@ -173,6 +190,7 @@ import { starColor, starTextColor } from '../../../lib/stars.ts'
 import type { RunState, ServedMap, SkipKind } from '../../../lib/types'
 import { Clock, FastForward, Metronome, Play, Star } from '@lucide/vue'
 import defaultBg from '../../../assets/default-map-bg.jpg'
+import { ref } from 'vue'
 
 defineProps<{
     run: RunState
@@ -193,6 +211,24 @@ const emit = defineEmits<{
     abandon: []
 }>()
 
+const HOLD_MS = 500
+const holding = ref<string | null>(null)
+let holdTimer: ReturnType<typeof setTimeout> | undefined
+
+function startHold(key: string, action: () => void) {
+    clearTimeout(holdTimer)
+    holding.value = key
+    holdTimer = setTimeout(() => {
+        holding.value = null
+        action()
+    }, HOLD_MS)
+}
+
+function cancelHold() {
+    clearTimeout(holdTimer)
+    holding.value = null
+}
+
 function useDefaultBg(event: Event) {
     ;(event.target as HTMLImageElement).src = defaultBg
 }
@@ -202,6 +238,7 @@ function useDefaultBg(event: Event) {
 button:disabled {
     opacity: 0.33;
     cursor: not-allowed;
+    pointer-events: none;
 }
 
 .timer-container {
@@ -392,8 +429,16 @@ button:disabled {
     flex: 1;
     padding: 1rem;
     font-size: 1.2rem;
-    background-color: var(--border);
+    background: linear-gradient(var(--surface), var(--surface)) left / 0% 100% no-repeat var(--border);
+    transition: background-size .1s;
     border-radius: .5rem;
+    user-select: none;
+    -webkit-touch-callout: none;
+}
+
+.controls-container > .holding {
+    background-size: 100% 100%;
+    transition: background-size .5s linear;
 }
 
 .skip-used {
