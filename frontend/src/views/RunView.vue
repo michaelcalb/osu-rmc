@@ -164,7 +164,7 @@ async function onValidate() {
 }
 
 async function onAbandon() {
-    if (!confirm('abandon run?\nit will not be validated and will be discarded. this action cannot be undone.')) {
+    if (!confirm('the run will NOT be validated and will be discarded. this action cannot be undone.')) {
         return
     }
 
