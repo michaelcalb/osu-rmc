@@ -4,7 +4,7 @@
             <nav class="h-group">
                 <RouterLink to="/" class="rmc-logo"
                     ><img
-                        src="../assets/rmc-logo-256x.png"
+                        src="../assets/rmc-logo.png"
                         alt="osu!rmc"
                         :height="48"
                 /></RouterLink>

@@ -2,6 +2,15 @@
     <p v-if="loading">loading...</p>
     <p v-else-if="error">error: {{ error }}</p>
 
+    <template v-else-if="pending">
+        <RunValidating v-if="validating" :run-id="pending.id" :slow="slow" />
+        <RunVoid v-else-if="pending.status === 'void'" :run-id="pending.id" />
+        <p v-else-if="pending.status === 'active'">
+            run {{ pending.id }} is still in progress
+        </p>
+        <p v-else>run {{ pending.id }} was abandoned</p>
+    </template>
+
     <template v-else-if="detail">
         <section>
             <h2>{{ detail.run.fc_count }} confirmed fcs</h2>
@@ -162,15 +171,19 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, onScopeDispose, ref, watch } from 'vue'
 import { ApiError, get } from '../lib/api'
 import type {
     MapOutcome,
     RunDetail,
     RunDetailMap,
-    TruncationReason
+    RunLookup,
+    TruncationReason,
+    UnfinishedRun,
 } from '../lib/types'
 import { formatDuration } from '../lib/time'
+import RunValidating from '../components/run/validating/RunValidating.vue'
+import RunVoid from '../components/run/void/RunVoid.vue'
 
 const props = defineProps<{ id: string }>()
 
@@ -199,9 +212,24 @@ const accuracy = new Intl.NumberFormat('en', {
     maximumFractionDigits: 2
 })
 
+const POLL_MS = 10000
+const MAX_POLLS = 6
+
 const detail = ref<RunDetail | null>(null)
+const pending = ref<UnfinishedRun | null>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)
+const polls = ref(0)
+
+let timer: ReturnType<typeof setTimeout> | null = null
+
+const validating = computed(
+    () =>
+        pending.value?.status === 'pending_final' ||
+        pending.value?.status === 'validating'
+)
+
+const slow = computed(() => validating.value && polls.value >= MAX_POLLS)
 
 const maps = computed(() => detail.value?.maps ?? [])
 
@@ -376,22 +404,56 @@ function prepSeconds(m: RunDetailMap): number | null {
         : null
 }
 
+async function fetchRun(id: string) {
+    try {
+        const lookup = await get<RunLookup>(`/leaderboards/runs/${id}`)
+
+        error.value = null
+        detail.value = lookup.status === 'complete' ? lookup : null
+        pending.value = lookup.status === 'complete' ? null : lookup
+    } catch (e) {
+        error.value = e instanceof ApiError ? e.message : 'could not load run'
+        detail.value = null
+        pending.value = null
+    }
+}
+
+function stopPolling() {
+    if (timer) {
+        clearTimeout(timer)
+        timer = null
+    }
+}
+
+function armPoll(id: string) {
+    if (timer || polls.value >= MAX_POLLS || !validating.value) {
+        return
+    }
+
+    timer = setTimeout(async () => {
+        timer = null
+        polls.value += 1
+
+        await fetchRun(id)
+
+        armPoll(id)
+    }, POLL_MS)
+}
+
 watch(
     () => props.id,
     async (id) => {
+        stopPolling()
+        polls.value = 0
         loading.value = true
-        error.value = null
 
-        try {
-            detail.value = await get<RunDetail>(`/leaderboards/runs/${id}`)
-        } catch (e) {
-            error.value =
-                e instanceof ApiError ? e.message : 'could not load run'
-            detail.value = null
-        } finally {
-            loading.value = false
-        }
+        await fetchRun(id)
+
+        loading.value = false
+        armPoll(id)
     },
     { immediate: true }
 )
+
+onScopeDispose(stopPolling)
 </script>

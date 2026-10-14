@@ -64,6 +64,7 @@ export class LeaderboardsService {
             .innerJoin('users as u', 'u.osu_user_id', 'r.user_id')
             .select([
                 'r.id',
+                'r.status',
                 'r.user_id',
                 'u.username',
                 'r.seed',
@@ -78,11 +79,14 @@ export class LeaderboardsService {
                 'r.truncation_reason'
             ])
             .where('r.id', '=', runId)
-            .where('r.status', '=', 'complete')
             .executeTakeFirst()
 
         if (!run) {
             throw new NotFoundException('run not found')
+        }
+
+        if (run.status !== 'complete') {
+            return { status: run.status, id: run.id }
         }
 
         const maps = await this.db
@@ -120,6 +124,6 @@ export class LeaderboardsService {
             .orderBy('rm.seq_index')
             .execute()
 
-        return { run, maps }
+        return { status: run.status, run, maps }
     }
 }

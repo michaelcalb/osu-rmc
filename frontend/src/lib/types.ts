@@ -122,6 +122,7 @@ export interface RunDetailMap {
 }
 
 export interface RunDetail {
+    status: 'complete'
     run: {
         id: number
         user_id: number
@@ -139,6 +140,13 @@ export interface RunDetail {
     }
     maps: RunDetailMap[]
 }
+
+export interface UnfinishedRun {
+    status: Exclude<RunStatus, 'complete'>
+    id: number
+}
+
+export type RunLookup = RunDetail | UnfinishedRun
 
 export type TruncationReason =
     | 'banned_mod'

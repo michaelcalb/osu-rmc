@@ -31,7 +31,10 @@
     </template>
 
     <template v-else>
-        <RunValidating v-if="validating && run" :run-id="run.id" :slow="slow" />
+        <p v-if="validating && run">
+            <RouterLink :to="`/runs/${run.id}`">run {{ run.id }}</RouterLink>
+             is still validating.
+        </p>
         <RunStart :busy="busy" :starting="starting" @start="onStart" />
     </template>
 
@@ -39,23 +42,18 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onScopeDispose, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useRun } from '../composables/useRun'
 import RunActive from '../components/run/active/RunActive.vue'
 import RunAwaiting from '../components/run/awaiting/RunAwaiting.vue'
 import RunStart from '../components/run/start/RunStart.vue'
-import RunValidating from '../components/run/validating/RunValidating.vue'
 import RunVoid from '../components/run/void/RunVoid.vue'
 import type { Board } from '../lib/types'
-
-const POLL_MS = 10000
-const MAX_POLLS = 3
 
 const router = useRouter()
 const loading = ref(true)
 const starting = ref(false)
-const polls = ref(0)
 
 const {
     run,
@@ -87,35 +85,6 @@ const validating = computed(
             run.value?.status === 'validating')
 )
 
-const slow = computed(() => validating.value && polls.value >= MAX_POLLS)
-
-let timer: ReturnType<typeof setTimeout> | null = null
-
-onScopeDispose(() => {
-    if (timer) {
-        clearTimeout(timer)
-    }
-})
-
-function armPoll() {
-    if (timer || polls.value >= MAX_POLLS) {
-        return
-    }
-
-    timer = setTimeout(poll, POLL_MS)
-}
-
-async function poll() {
-    timer = null
-    polls.value += 1
-
-    await refresh()
-
-    if (validating.value && polls.value < MAX_POLLS) {
-        armPoll()
-    }
-}
-
 onMounted(async () => {
     await load()
 
@@ -144,7 +113,13 @@ async function onEnd() {
     }
 
     await end()
-    await refresh()
+
+    if (error.value) {
+        await refresh()
+        return
+    }
+
+    await showRun()
 }
 
 async function onValidate() {
@@ -158,8 +133,8 @@ async function onValidate() {
 
     await requestValidation()
 
-    if (validating.value) {
-        armPoll()
+    if (!error.value) {
+        await showRun()
     }
 }
 
@@ -178,27 +153,12 @@ watch(timeUp, async (over) => {
     }
 })
 
-watch(
-    () => run.value?.status,
-    async (status) => {
-        const current = run.value
-
-        if (!current || !status || status === 'active') {
-            return
-        }
-
-        if (status === 'complete') {
-            await router.replace({
-                name: 'run-detail',
-                params: { id: current.id }
-            })
-
-            return
-        }
-
-        if (validating.value) {
-            armPoll()
-        }
+async function showRun() {
+    if (run.value) {
+        await router.push({
+            name: 'run-detail',
+            params: { id: run.value.id }
+        })
     }
-)
+}
 </script>
