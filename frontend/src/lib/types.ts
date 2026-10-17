@@ -144,6 +144,7 @@ export interface RunDetail {
 export interface UnfinishedRun {
     status: Exclude<RunStatus, 'complete'>
     id: number
+    delayed: boolean
 }
 
 export type RunLookup = RunDetail | UnfinishedRun

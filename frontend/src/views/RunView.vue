@@ -10,8 +10,6 @@
             @abandon="onAbandon"
         />
 
-        <RunVoid v-if="run.status === 'void'" :run-id="run.id" />
-
         <RunActive
             v-else-if="run.status === 'active'"
             :run="run"
@@ -31,10 +29,6 @@
     </template>
 
     <template v-else>
-        <p v-if="validating && run">
-            <RouterLink :to="`/runs/${run.id}`">run {{ run.id }}</RouterLink>
-             is still validating.
-        </p>
         <RunStart :busy="busy" :starting="starting" @start="onStart" />
     </template>
 
@@ -48,7 +42,6 @@ import { useRun } from '../composables/useRun'
 import RunActive from '../components/run/active/RunActive.vue'
 import RunAwaiting from '../components/run/awaiting/RunAwaiting.vue'
 import RunStart from '../components/run/start/RunStart.vue'
-import RunVoid from '../components/run/void/RunVoid.vue'
 import type { Board } from '../lib/types'
 
 const router = useRouter()
@@ -139,7 +132,11 @@ async function onValidate() {
 }
 
 async function onAbandon() {
-    if (!confirm('the run will NOT be validated and will be discarded. this action cannot be undone.')) {
+    if (
+        !confirm(
+            'the run will NOT be validated and will be discarded. this action cannot be undone.'
+        )
+    ) {
         return
     }
 

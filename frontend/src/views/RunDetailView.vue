@@ -3,7 +3,7 @@
     <p v-else-if="error">error: {{ error }}</p>
 
     <template v-else-if="pending">
-        <RunValidating v-if="validating" :run-id="pending.id" :slow="slow" />
+        <RunValidating v-if="validating" :run-id="pending.id" :slow="slow" :delayed="pending.delayed" />
         <RunVoid v-else-if="pending.status === 'void'" :run-id="pending.id" />
         <p v-else-if="pending.status === 'active'">
             run {{ pending.id }} is still in progress

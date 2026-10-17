@@ -364,7 +364,8 @@ button:disabled {
 .map-stats {
     display: flex;
     flex-direction: column;
-    background-color: rgba(0, 0, 0, 0.63);
+    background-color: rgba(0, 0, 0, 0.50);
+    backdrop-filter: blur(10px);
     border-radius: 0.5rem;
     height: fit-content;
     padding: 0.5rem 0.5rem;

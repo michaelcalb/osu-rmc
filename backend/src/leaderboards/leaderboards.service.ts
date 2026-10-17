@@ -76,7 +76,8 @@ export class LeaderboardsService {
                 'r.started_at',
                 'r.ended_at',
                 'r.truncated_at_index',
-                'r.truncation_reason'
+                'r.truncation_reason',
+                'r.validation_requested_at'
             ])
             .where('r.id', '=', runId)
             .executeTakeFirst()
@@ -86,7 +87,13 @@ export class LeaderboardsService {
         }
 
         if (run.status !== 'complete') {
-            return { status: run.status, id: run.id }
+            const delayed =
+                run.validation_requested_at !== null &&
+                Date.now() - run.validation_requested_at.getTime() >
+                    10 * 60_000
+
+
+            return { status: run.status, id: run.id, delayed }
         }
 
         const maps = await this.db

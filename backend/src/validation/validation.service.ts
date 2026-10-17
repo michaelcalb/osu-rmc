@@ -183,15 +183,45 @@ export class ValidationService {
                 '<',
                 sql<Date>`now() - interval '1 minute'`
             )
+            .where(
+                'validation_requested_at',
+                '>=',
+                sql<Date>`now() - interval '10 minutes'`
+            )
             .execute()
 
         for (const run of pending) {
-            try {
-                await this.validateRun(run.id)
-            } catch (error) {
-                console.error(`validation failed for run ${run.id}`, error)
+            await this.retry(run.id)
+        }
+    }
+
+    @Cron('0 * * * *')
+    async sweepDelayedValidation() {
+        const delayed = await this.db
+            .selectFrom('runs')
+            .select('id')
+            .where('status', '=', 'pending_final')
+            .where(
+                'validation_requested_at',
+                '<',
+                sql<Date>`now() - interval '10 minutes'`
+            )
+            .execute()
+
+        for (const run of delayed) {
+            if (!(await this.retry(run.id))) {
                 await this.voidStaleRun(run.id)
             }
+        }
+    }
+
+    private async retry(runId: number) {
+        try {
+            await this.validateRun(runId)
+            return true
+        } catch (error) {
+            console.error(`validation failed for run ${runId}`, error)
+            return false
         }
     }
 
@@ -204,7 +234,7 @@ export class ValidationService {
             .where(
                 'validation_requested_at',
                 '<',
-                sql<Date>`now() - interval '10 minutes'`
+                sql<Date>`now() - interval '6 hours'`
             )
             .returning('id')
             .execute()
