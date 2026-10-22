@@ -145,6 +145,7 @@ export interface UnfinishedRun {
     status: Exclude<RunStatus, 'complete'>
     id: number
     delayed: boolean
+    awaitingValidation: boolean
 }
 
 export type RunLookup = RunDetail | UnfinishedRun

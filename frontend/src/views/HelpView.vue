@@ -328,23 +328,15 @@
                 </template>
 
                 <p>
-                    if you want to recover a voided run, feel free to contact me
-                    through
+                    if your run got voided, send
                     <a
                         href="https://osu.ppy.sh/users/13955247"
                         target="_blank"
                         rel="noopener noreferrer"
                         class="link-1"
-                        >osu!</a
+                        >me</a
                     >
-                    or
-                    <a
-                        href="https://discord.com/users/316699326581702657"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="link-1"
-                        >Discord</a
-                    >.
+                    a dm in osu! with the run id (the number at the top of the run page) and a message so i know what you're talking about <span class="mono">&semi;&rpar;</span>
                 </p>
             </section>
         </div>

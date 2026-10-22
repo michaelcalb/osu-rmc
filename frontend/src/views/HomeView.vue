@@ -82,10 +82,6 @@ import { RouterLink } from 'vue-router'
     color: var(--accent);
 }
 
-.subtitle {
-    font-size: 1.5rem;
-}
-
 .content-container {
     display: grid;
     grid-template-columns: 1fr 1fr;

@@ -10,6 +10,8 @@ import { judgeRun, RunVerdict, type Position } from './verdict'
 import { Cron } from '@nestjs/schedule'
 import { sql } from 'kysely'
 
+export const FAST_RETRY_MINUTES = 10
+
 @Injectable()
 export class ValidationService {
     constructor(
@@ -186,7 +188,7 @@ export class ValidationService {
             .where(
                 'validation_requested_at',
                 '>=',
-                sql<Date>`now() - interval '10 minutes'`
+                sql<Date>`now() - make_interval(mins => ${FAST_RETRY_MINUTES})`
             )
             .execute()
 
@@ -204,7 +206,7 @@ export class ValidationService {
             .where(
                 'validation_requested_at',
                 '<',
-                sql<Date>`now() - interval '10 minutes'`
+                sql<Date>`now() - make_interval(mins => ${FAST_RETRY_MINUTES})`
             )
             .execute()
 

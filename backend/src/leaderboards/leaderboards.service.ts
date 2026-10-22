@@ -2,6 +2,7 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { Kysely } from 'kysely'
 import type { Board, Database } from '../db/database'
 import { KYSELY } from '../db/db.module'
+import { FAST_RETRY_MINUTES } from '../validation/validation.service'
 
 export const MAX_LIMIT = 10
 
@@ -89,11 +90,16 @@ export class LeaderboardsService {
         if (run.status !== 'complete') {
             const delayed =
                 run.validation_requested_at !== null &&
-                Date.now() - run.validation_requested_at.getTime() >
-                    10 * 60_000
+                Date.now() - run.validation_requested_at.getTime() > FAST_RETRY_MINUTES * 60_000
 
-
-            return { status: run.status, id: run.id, delayed }
+            return {
+                status: run.status,
+                id: run.id,
+                delayed,
+                awaitingValidation:
+                    run.status === 'pending_final' &&
+                    run.validation_requested_at === null
+            }
         }
 
         const maps = await this.db
