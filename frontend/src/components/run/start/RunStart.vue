@@ -24,8 +24,8 @@
             <template v-if="declaredMode == 'no_mod'">
                 <ul class="mode-rules">
                     <li>
-                        you are <span class="strong">not</span> allowed to use mods during your run, with a few
-                        exceptions.
+                        you are <span class="strong">not</span> allowed to use
+                        mods during your run, with a few exceptions.
                     </li>
                     <li>
                         using (unallowed) mods will result in your run being
@@ -34,7 +34,8 @@
                 </ul>
                 <div class="mod-list-box">
                     <p>
-                        the following mods are <span class="strong">allowed</span> in no mod runs:
+                        the following mods are
+                        <span class="strong">allowed</span> in no mod runs:
                     </p>
                     <div class="mod-list">
                         <TooltipRoot v-for="mod in ALLOWED_MODS" :key="mod">
@@ -45,17 +46,20 @@
                                 class="mod-icon"
                             />
                             <TooltipPortal>
-                                <TooltipContent class="tooltip" :side-offset="4">
+                                <TooltipContent
+                                    class="tooltip"
+                                    :side-offset="4"
+                                >
                                     {{ mod }}
                                 </TooltipContent>
                             </TooltipPortal>
                         </TooltipRoot>
                     </div>
                     <p class="advice">
-                        keep in mind: average run score is used as tie-breaker for
-                        runs with the same FC amount, so using Classic (CL) can give
-                        you an unwanted disadvantage since it lowers your score
-                        multiplier.
+                        keep in mind: average run score is used as tie-breaker
+                        for runs with the same FC amount, so using Classic (CL)
+                        can give you an unwanted disadvantage since it lowers
+                        your score multiplier.
                     </p>
                 </div>
             </template>
@@ -69,8 +73,8 @@
             <div class="mod-list-box">
                 <p>
                     the following mods are
-                    <span class="strong">strictly banned</span> from all runs and
-                    leaderboards:
+                    <span class="strong">strictly banned</span> from all runs
+                    and leaderboards:
                 </p>
                 <div class="mod-list">
                     <TooltipRoot v-for="mod in BANNED_MODS" :key="mod">
@@ -91,7 +95,11 @@
         </div>
     </TooltipProvider>
 
-    <button :disabled="busy" @click="emit('start', declaredMode)" :class="`start-btn ${busy && 'busy'}`">
+    <button
+        :disabled="busy"
+        @click="emit('start', declaredMode)"
+        :class="`start-btn ${busy && 'busy'}`"
+    >
         {{ starting ? 'starting run...' : 'start run' }}
     </button>
 </template>
@@ -162,7 +170,7 @@ function modIcon(name: string) {
 .mod-list {
     display: flex;
     flex-wrap: wrap;
-    gap: .5rem;
+    gap: 0.5rem;
 }
 
 .mod-icon {
@@ -182,6 +190,6 @@ function modIcon(name: string) {
 }
 
 .busy {
-    opacity: .5;
+    opacity: 0.5;
 }
 </style>

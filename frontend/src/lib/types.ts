@@ -137,6 +137,8 @@ export interface RunDetail {
         ended_at: string | null
         truncated_at_index: number | null
         truncation_reason: TruncationReason | null
+        avg_fc_score: number | null
+        avg_fc_accuracy: number | null
     }
     maps: RunDetailMap[]
 }
@@ -144,6 +146,8 @@ export interface RunDetail {
 export interface UnfinishedRun {
     status: Exclude<RunStatus, 'complete'>
     id: number
+    user_id: number
+    username: string
     delayed: boolean
     awaitingValidation: boolean
 }

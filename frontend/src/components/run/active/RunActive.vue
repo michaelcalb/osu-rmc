@@ -44,11 +44,7 @@
                                         starTextColor(map.original_star_rating)
                                     "
                                 />
-                                {{
-                                    map.original_star_rating
-                                        .toFixed(5)
-                                        .slice(0, -3)
-                                }}
+                                {{ formatStars(map.original_star_rating) }}
                             </span>
                             <span class="difficulty-label">
                                 {{ map.difficulty_name }}
@@ -118,31 +114,36 @@
     <section class="controls-container">
         <button
             :disabled="busy || prepSecondsLeft > 0"
-            :class="{ 'holding': holding === 'a_skip' }"
+            :class="{ holding: holding === 'a_skip' }"
             @pointerdown="startHold('a_skip', () => emit('skip', 'a_skip'))"
             @pointerup="cancelHold"
             @pointerleave="cancelHold"
-            @pointercancel="cancelHold"    
+            @pointercancel="cancelHold"
         >
             skip (A rank)
         </button>
         <button
             :disabled="busy || run.freeSkipUsed"
-            :class="{ 'skip-used': run.freeSkipUsed, 'holding': holding === 'free_skip' }"
-            @pointerdown="startHold('free_skip', () => emit('skip', 'free_skip'))"
+            :class="{
+                'skip-used': run.freeSkipUsed,
+                holding: holding === 'free_skip'
+            }"
+            @pointerdown="
+                startHold('free_skip', () => emit('skip', 'free_skip'))
+            "
             @pointerup="cancelHold"
             @pointerleave="cancelHold"
-            @pointercancel="cancelHold"   
+            @pointercancel="cancelHold"
         >
             skip (free)
         </button>
         <button
             :disabled="busy"
-            :class="{ 'holding': holding === 'unplayable' }"
+            :class="{ holding: holding === 'unplayable' }"
             @pointerdown="startHold('unplayable', () => emit('unplayable'))"
             @pointerup="cancelHold"
             @pointerleave="cancelHold"
-            @pointercancel="cancelHold"   
+            @pointercancel="cancelHold"
         >
             unplayable
         </button>
@@ -158,11 +159,7 @@
         >
             abandon run
         </button>
-        <button
-            :disabled="busy"
-            @click="emit('end')"
-            class="end-run-btn"
-        >
+        <button :disabled="busy" @click="emit('end')" class="end-run-btn">
             end run
         </button>
     </div>
@@ -170,6 +167,7 @@
 
 <script setup lang="ts">
 import { coverUrl } from '../../../lib/covers.ts'
+import { formatStars } from '../../../lib/format.ts'
 import { formatDuration } from '../../../lib/time.ts'
 import { starColor, starTextColor } from '../../../lib/stars.ts'
 import type { RunState, ServedMap, SkipKind } from '../../../lib/types'
@@ -364,7 +362,7 @@ button:disabled {
 .map-stats {
     display: flex;
     flex-direction: column;
-    background-color: rgba(0, 0, 0, 0.50);
+    background-color: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(10px);
     border-radius: 0.5rem;
     height: fit-content;
@@ -415,16 +413,17 @@ button:disabled {
     flex: 1;
     padding: 1rem;
     font-size: 1.2rem;
-    background: linear-gradient(var(--surface), var(--surface)) left / 0% 100% no-repeat var(--border);
-    transition: background-size .1s;
-    border-radius: .5rem;
+    background: linear-gradient(var(--surface), var(--surface)) left / 0% 100%
+        no-repeat var(--border);
+    transition: background-size 0.1s;
+    border-radius: 0.5rem;
     user-select: none;
     -webkit-touch-callout: none;
 }
 
 .controls-container > .holding {
     background-size: 100% 100%;
-    transition: background-size .5s linear;
+    transition: background-size 0.5s linear;
 }
 
 .skip-used {

@@ -68,11 +68,7 @@
 
                     <dt>weighted accuracy</dt>
                     <dd>
-                        {{
-                            profile.accuracy === null
-                                ? '-'
-                                : accuracy.format(profile.accuracy)
-                        }}
+                        {{ formatAccuracy(profile.accuracy) }}
                     </dd>
 
                     <dt>total FCs</dt>
@@ -91,6 +87,7 @@ import { ref, watch } from 'vue'
 import { ApiError, get } from '../lib/api'
 import type { Board, Profile } from '../lib/types'
 import { formatHours } from '../lib/time'
+import { formatAccuracy } from '../lib/format.ts'
 import { ExternalLink } from '@lucide/vue'
 import Note from '../components/Note.vue'
 
@@ -99,12 +96,6 @@ const props = defineProps<{ id: string }>()
 const profile = ref<Profile | null>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)
-
-const accuracy = new Intl.NumberFormat('en', {
-    style: 'percent',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-})
 
 const boardName = (board: Board) => {
     return board === 'no_mod' ? 'no mod' : 'free mod'

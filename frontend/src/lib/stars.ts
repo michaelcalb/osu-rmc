@@ -9,9 +9,9 @@ const BACKGROUND: Stops = [
     [4.2, '#ff8068'],
     [4.9, '#ff4e6f'],
     [5.8, '#c645b8'],
-    [6.7, '#6563de'], /* lmao */
+    [6.7, '#6563de'] /* lmao */,
     [7.7, '#18158e'],
-    [9, '#000000'],
+    [9, '#000000']
 ]
 
 const TEXT: Stops = [
@@ -19,7 +19,7 @@ const TEXT: Stops = [
     [9.9, '#ff8068'],
     [10.6, '#ff4e6f'],
     [11.5, '#c645b8'],
-    [12.4, '#6563de'],
+    [12.4, '#6563de']
 ]
 
 const GAMMA = 2.2
@@ -36,7 +36,7 @@ function spectrum(stops: Stops, rating: number) {
     }
 
     if (upper === -1) {
-        return stops[stops.length -1][1]
+        return stops[stops.length - 1][1]
     }
 
     const [fromSr, fromHex] = stops[upper - 1]
@@ -45,14 +45,16 @@ function spectrum(stops: Stops, rating: number) {
     const to = channels(toHex)
 
     const mixed = channels(fromHex).map((a, i) =>
-        Math.round((a ** GAMMA + t * (to[i] ** GAMMA - a ** GAMMA)) ** (1 / GAMMA))
+        Math.round(
+            (a ** GAMMA + t * (to[i] ** GAMMA - a ** GAMMA)) ** (1 / GAMMA)
+        )
     )
 
     return `rgb(${mixed.join(', ')})`
 }
 
 export function starColor(rating: number) {
-    if (rating < .1) {
+    if (rating < 0.1) {
         return '#aaaaaa'
     }
 

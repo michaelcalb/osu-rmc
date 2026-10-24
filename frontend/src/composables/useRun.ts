@@ -27,7 +27,9 @@ export function useRun() {
 
     const prepSecondsLeft = computed(() =>
         clock.value
-            ? Math.ceil(Math.max(0, clock.value.prepSecondsLeft - sinceSync.value))
+            ? Math.ceil(
+                  Math.max(0, clock.value.prepSecondsLeft - sinceSync.value)
+              )
             : 0
     )
 

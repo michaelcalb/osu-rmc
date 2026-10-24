@@ -1,16 +1,20 @@
 <template>
-    <section>
-        <h2>{{ detail.run.fc_count }} confirmed fcs</h2>
-        <p>run {{ detail.run.id }} by {{ detail.run.username }}</p>
-        <p>claimed: {{ claimedFcCount }}</p>
-        <p v-if="unconfirmed > 0">not confirmed: {{ unconfirmed }}</p>
-        <p v-if="truncationText">
+    <section class="main-stats">
+        <div class="stat-box">
+            <dt class="stat-label">FC</dt>
+            <dd class="stat-value">
+                {{ detail.run.fc_count }}
+            </dd>
+        </div>
+        <!-- <p>claimed: {{ claimedFcCount }}</p> -->
+        <!-- <p v-if="unconfirmed > 0">not confirmed: {{ unconfirmed }}</p> -->
+        <!-- <p v-if="truncationText">
             counting stopped at map
             {{ (detail.run.truncated_at_index ?? 0) + 1
             }}<span v-if="truncatedMap"> ({{ mapName(truncatedMap) }})</span>:
             {{ truncationText }}
-        </p>
-        <p v-else>every map played was judged</p>
+        </p> -->
+        <!-- <p v-else>every map played was judged</p> -->
     </section>
     <section>
         <h3>run</h3>
@@ -27,12 +31,13 @@
         </p>
         <p>maps served: {{ maps.length }}</p>
         <p>time on confirmed fcs: {{ formatDuration(fcSeconds) }}</p>
-        <p v-if="avgFcScore !== null">
+        <p v-if="detail.run.avg_fc_score !== null">
             average run score:
-            {{ Math.round(avgFcScore).toLocaleString() }}
+            {{ formatScore(detail.run.avg_fc_score) }}
         </p>
-        <p v-if="avgFcAccuracy !== null">
-            average run accuracy: {{ accuracy.format(avgFcAccuracy) }}
+        <p v-if="detail.run.avg_fc_accuracy !== null">
+            average run accuracy:
+            {{ formatAccuracy(detail.run.avg_fc_accuracy) }}
         </p>
         <p>pool version: {{ detail.run.pool_version }}</p>
         <p>seed: {{ detail.run.seed }}</p>
@@ -51,17 +56,17 @@
         <h3>difficulty</h3>
         <p v-if="avgFcStars !== null">
             average star rating of confirmed fcs:
-            {{ avgFcStars.toFixed(2) }}
+            {{ formatStars(avgFcStars) }}
         </p>
         <p v-if="avgServedStars !== null">
-            average star rating served: {{ avgServedStars.toFixed(2) }}
+            average star rating served: {{ formatStars(avgServedStars) }}
         </p>
         <p v-if="avgFcBpm !== null">
             average bpm of confirmed fcs: {{ Math.round(avgFcBpm) }}
         </p>
         <p v-if="hardestFc">
             hardest fc:
-            {{ hardestFc.original_star_rating.toFixed(2) }}&#9733; -
+            {{ formatStars(hardestFc.original_star_rating) }}&#9733; -
             {{ mapName(hardestFc) }}
         </p>
         <p v-if="fastestFc?.bpm">
@@ -99,7 +104,7 @@
             <li v-for="m in maps" :key="m.seq_index">
                 <p>{{ mapName(m) }} ({{ m.creator }})</p>
                 <p>
-                    {{ m.original_star_rating.toFixed(2) }}&#9733; -
+                    {{ formatStars(m.original_star_rating) }}&#9733; -
                     {{ formatDuration(m.total_length) }}
                     <span v-if="m.bpm"> - {{ Math.round(m.bpm) }} bpm</span>
                 </p>
@@ -130,9 +135,11 @@
                 <p v-if="playSeconds(m) !== null">
                     time on the map: {{ formatDuration(playSeconds(m)!) }}
                 </p>
-                <p v-if="m.total_score !== null">{{ m.total_score }}</p>
+                <p v-if="m.total_score !== null">
+                    {{ formatScore(m.total_score) }}
+                </p>
                 <p v-if="m.accuracy !== null">
-                    accuracy: {{ accuracy.format(m.accuracy) }}
+                    accuracy: {{ formatAccuracy(m.accuracy) }}
                 </p>
                 <p v-if="m.confirmed_score_id">
                     score id: {{ m.confirmed_score_id }}
@@ -154,10 +161,11 @@ import { computed } from 'vue'
 import type {
     MapOutcome,
     RunDetail,
-    RunDetailMap,
-    TruncationReason
+    RunDetailMap
+    /* TruncationReason */
 } from '../../lib/types'
 import { formatDuration } from '../../lib/time'
+import { formatAccuracy, formatScore, formatStars } from '../../lib/format'
 
 const props = defineProps<{ detail: RunDetail }>()
 
@@ -170,7 +178,7 @@ const OUTCOME_LABELS: Record<MapOutcome, string> = {
     incomplete_final: 'unfinished, time ran out'
 }
 
-const TRUNCATION_LABELS: Record<TruncationReason, string> = {
+/* const TRUNCATION_LABELS: Record<TruncationReason, string> = {
     banned_mod: 'the score on it used a banned mod',
     rejected_unplayable:
         'it was marked unplayable, but its status did not justify that',
@@ -178,67 +186,39 @@ const TRUNCATION_LABELS: Record<TruncationReason, string> = {
     over_limit:
         'it was full-comboed, but the score landed outside the time limit',
     not_qualifying: 'the score was neither a full combo nor good enough to skip'
-}
-
-const accuracy = new Intl.NumberFormat('en', {
-    style: 'percent',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-})
+} */
 
 const maps = computed(() => props.detail.maps)
 
 const fcMaps = computed(() => maps.value.filter((m) => m.outcome === 'fc'))
 
-const claimedFcCount = computed(
-    () =>
-        maps.value.filter(
-            (m) => m.claimed_outcome === 'fc' || m.outcome === 'fc'
-        ).length
-)
-
-const unconfirmed = computed(
+/* const unconfirmed = computed(
     () =>
         maps.value.filter(
             (m) => m.claimed_outcome === 'fc' && m.outcome !== 'fc'
         ).length
-)
+) */
 
-const truncatedMap = computed(() => {
-    const index = props.detail.run.truncated_at_index
+/* const claimedFcCount = computed(() => fcMaps.value.length + unconfirmed.value) */
 
-    return index === null || index === undefined
-        ? null
-        : (maps.value.find((m) => m.seq_index === index) ?? null)
-})
+/* const truncatedMap = computed(
+    () =>
+        maps.value.find(
+            (m) => m.seq_index === props.detail.run.truncated_at_index
+        ) ?? null
+) */
 
-const truncationText = computed(() => {
+/* const truncationText = computed(() => {
     const reason = props.detail.run.truncation_reason
 
     return reason ? TRUNCATION_LABELS[reason] : null
-})
+}) */
 
-const outcomeCounts = computed<[MapOutcome, number][]>(() => {
-    const counts = new Map<MapOutcome, number>()
+const outcomeCounts = computed(() => tally(maps.value.map((m) => m.outcome)))
 
-    for (const m of maps.value) {
-        counts.set(m.outcome, (counts.get(m.outcome) ?? 0) + 1)
-    }
-
-    return [...counts.entries()].sort((a, b) => b[1] - a[1])
-})
-
-const modCounts = computed<[string, number][]>(() => {
-    const counts = new Map<string, number>()
-
-    for (const m of maps.value) {
-        for (const mod of m.mods ?? []) {
-            counts.set(mod.acronym, (counts.get(mod.acronym) ?? 0) + 1)
-        }
-    }
-
-    return [...counts.entries()].sort((a, b) => b[1] - a[1])
-})
+const modCounts = computed(() =>
+    tally(maps.value.flatMap((m) => (m.mods ?? []).map((mod) => mod.acronym)))
+)
 
 const avgFcStars = computed(() =>
     average(fcMaps.value.map((m) => m.original_star_rating))
@@ -248,29 +228,7 @@ const avgServedStars = computed(() =>
     average(maps.value.map((m) => m.original_star_rating))
 )
 
-const avgFcBpm = computed(() =>
-    average(
-        fcMaps.value
-            .map((m) => m.bpm)
-            .filter((bpm): bpm is number => bpm !== null)
-    )
-)
-
-const avgFcScore = computed(() =>
-    average(
-        fcMaps.value
-            .map((m) => m.total_score)
-            .filter((score): score is number => score !== null)
-    )
-)
-
-const avgFcAccuracy = computed(() =>
-    average(
-        fcMaps.value
-            .map((m) => m.accuracy)
-            .filter((value): value is number => value !== null)
-    )
-)
+const avgFcBpm = computed(() => average(fcMaps.value.map((m) => m.bpm)))
 
 const hardestFc = computed(() =>
     best(fcMaps.value, (m) => m.original_star_rating)
@@ -287,20 +245,13 @@ const fcSeconds = computed(() =>
 const wallSeconds = computed(() => {
     const run = props.detail.run
 
-    return run.ended_at
-        ? Math.round(
-              (Date.parse(run.ended_at) - Date.parse(run.started_at)) / 1000
-          )
-        : null
+    return run.ended_at ? secondsBetween(run.started_at, run.ended_at) : null
 })
 
 const pausedSeconds = computed(() =>
     wallSeconds.value === null
         ? null
-        : Math.max(
-              0,
-              wallSeconds.value - props.detail.run.active_elapsed
-          )
+        : Math.max(0, wallSeconds.value - props.detail.run.active_elapsed)
 )
 
 const disagreements = computed(() =>
@@ -312,9 +263,11 @@ const disagreements = computed(() =>
     )
 )
 
-function average(values: number[]): number | null {
-    return values.length
-        ? values.reduce((total, value) => total + value, 0) / values.length
+function average(values: (number | null)[]): number | null {
+    const present = values.filter((value) => value !== null)
+
+    return present.length
+        ? present.reduce((total, value) => total + value, 0) / present.length
         : null
 }
 
@@ -340,22 +293,27 @@ function comboPercent(m: RunDetailMap): number | null {
 
 function playSeconds(m: RunDetailMap): number | null {
     return m.score_started_at && m.score_ended_at
-        ? Math.round(
-              (Date.parse(m.score_ended_at) - Date.parse(m.score_started_at)) /
-                  1000
-          )
+        ? secondsBetween(m.score_started_at, m.score_ended_at)
         : null
 }
 
 function prepSeconds(m: RunDetailMap): number | null {
     return m.score_started_at
-        ? Math.max(
-              0,
-              Math.round(
-                  (Date.parse(m.score_started_at) - Date.parse(m.served_at)) /
-                      1000
-              )
-          )
+        ? Math.max(0, secondsBetween(m.served_at, m.score_started_at))
         : null
+}
+
+function secondsBetween(from: string, to: string): number {
+    return Math.round((Date.parse(to) - Date.parse(from)) / 1000)
+}
+
+function tally<T>(keys: T[]): [T, number][] {
+    const counts = new Map<T, number>()
+
+    for (const key of keys) {
+        counts.set(key, (counts.get(key) ?? 0) + 1)
+    }
+
+    return [...counts.entries()].sort((a, b) => b[1] - a[1])
 }
 </script>

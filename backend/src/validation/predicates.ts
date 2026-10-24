@@ -10,7 +10,7 @@ const NO_MOD_EQUIVALENT: readonly string[] = [
     'CL',
     'MR',
     'AL',
-    'SG',
+    'SG'
 ]
 const SKIP_RANKS: readonly string[] = ['A', 'S', 'SH', 'X', 'XH']
 

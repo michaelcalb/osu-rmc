@@ -78,6 +78,8 @@ export class LeaderboardsService {
                 'r.ended_at',
                 'r.truncated_at_index',
                 'r.truncation_reason',
+                'r.avg_fc_score',
+                'r.avg_fc_accuracy',
                 'r.validation_requested_at'
             ])
             .where('r.id', '=', runId)
@@ -90,11 +92,14 @@ export class LeaderboardsService {
         if (run.status !== 'complete') {
             const delayed =
                 run.validation_requested_at !== null &&
-                Date.now() - run.validation_requested_at.getTime() > FAST_RETRY_MINUTES * 60_000
+                Date.now() - run.validation_requested_at.getTime() >
+                    FAST_RETRY_MINUTES * 60_000
 
             return {
                 status: run.status,
                 id: run.id,
+                user_id: run.user_id,
+                username: run.username,
                 delayed,
                 awaitingValidation:
                     run.status === 'pending_final' &&

@@ -117,18 +117,10 @@
                             {{ row.fc_count }}
                         </td>
                         <td>
-                            {{
-                                row.avg_fc_score === null
-                                    ? ''
-                                    : score.format(row.avg_fc_score)
-                            }}
+                            {{ formatScore(row.avg_fc_score) }}
                         </td>
                         <td>
-                            {{
-                                row.avg_fc_accuracy === null
-                                    ? ''
-                                    : accuracy.format(row.avg_fc_accuracy)
-                            }}
+                            {{ formatAccuracy(row.avg_fc_accuracy) }}
                         </td>
                         <td>
                             <TooltipRoot v-if="row.ended_at">
@@ -180,14 +172,9 @@ import {
 import { ApiError, get } from '../lib/api'
 import type { BoardPage, BoardRow } from '../lib/types'
 import { exactTime, timeAgo } from '../lib/time'
+import { formatAccuracy, formatScore } from '../lib/format'
 
 const LIMIT = 10
-const score = new Intl.NumberFormat('en', { maximumFractionDigits: 0 })
-const accuracy = new Intl.NumberFormat('en', {
-    style: 'percent',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-})
 
 const router = useRouter()
 

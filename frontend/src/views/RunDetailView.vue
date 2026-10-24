@@ -2,7 +2,12 @@
     <section class="title-section">
         <h1 class="title">run {{ id }}</h1>
         <hr class="separator" />
-        <p v-if="statusLabel" class="subtitle">{{ statusLabel }}</p>
+        <p v-if="player" class="subtitle">
+            {{ statusLabel }} by
+            <RouterLink :to="`/users/${player.user_id}`" class="link-1">{{
+                player.username
+            }}</RouterLink>
+        </p>
     </section>
 
     <div class="detail-container">
@@ -86,6 +91,8 @@ const statusLabel = computed(() => {
 
     return STATUS_LABELS[pending.value.status]
 })
+
+const player = computed(() => detail.value?.run ?? pending.value)
 
 async function fetchRun(id: string) {
     try {

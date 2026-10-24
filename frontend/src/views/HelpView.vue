@@ -1,11 +1,7 @@
 <template>
     <div class="title-row">
         <h1 class="title">how to play</h1>
-        <button
-            class="tldr-btn"
-            :aria-pressed="tldr"
-            @click="tldr = !tldr"
-        >
+        <button class="tldr-btn" :aria-pressed="tldr" @click="tldr = !tldr">
             tl;dr
         </button>
     </div>
@@ -188,9 +184,7 @@
             <section id="mods" class="content-section">
                 <h2 class="section-title">using mods</h2>
                 <template v-if="tldr">
-                    <p>
-                        you can mix and match mods during your run.
-                    </p>
+                    <p>you can mix and match mods during your run.</p>
                     <p>there are two leaderboards:</p>
                     <ul>
                         <li>
@@ -206,7 +200,8 @@
 
                 <template v-else>
                     <p>
-                        you are free to use any mod combination during your run. you can also freely change mod combinations for
+                        you are free to use any mod combination during your run.
+                        you can also freely change mod combinations for
                         different maps. depending on which mods you use, there
                         are 2 leaderboard categories your run can fall into,
                         either <span class="strong">no mod</span> or
@@ -336,7 +331,9 @@
                         class="link-1"
                         >me</a
                     >
-                    a dm in osu! with the run id (the number at the top of the run page) and a message so i know what you're talking about <span class="mono">&semi;&rpar;</span>
+                    a dm in osu! with the run id (the number at the top of the
+                    run page) and a message so i know what you're talking about
+                    <span class="mono">&semi;&rpar;</span>
                 </p>
             </section>
         </div>
