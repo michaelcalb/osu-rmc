@@ -347,12 +347,6 @@ const tldr = ref(true)
 </script>
 
 <style scoped>
-.title-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-}
-
 .tldr-btn {
     font-size: 1.2rem;
     color: var(--text-muted);

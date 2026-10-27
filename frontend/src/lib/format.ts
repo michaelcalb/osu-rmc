@@ -1,3 +1,5 @@
+import type { Board } from "./types"
+
 const score = new Intl.NumberFormat('en', { maximumFractionDigits: 0 })
 
 const accuracy = new Intl.NumberFormat('en', {
@@ -16,4 +18,8 @@ export function formatAccuracy(value: number | null) {
 
 export function formatStars(value: number) {
     return value.toFixed(5).slice(0, -3)
+}
+
+export function formatBoard(board: Board | null) {
+    return board === null ? '-' : board === 'no_mod' ? 'no mod' : 'free mod'
 }

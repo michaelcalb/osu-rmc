@@ -1,14 +1,23 @@
 <template>
-    <section class="title-section">
+    <div class="title-section shared-section">
         <h1 class="title">run {{ id }}</h1>
         <hr class="separator" />
+    </div>
+
+    <div class="run-info">
         <p v-if="player" class="subtitle">
             {{ statusLabel }} by
-            <RouterLink :to="`/users/${player.user_id}`" class="link-1">{{
-                player.username
-            }}</RouterLink>
+            <RouterLink :to="`/users/${player.user_id}`" class="link-1">
+                {{ player.username }}
+            </RouterLink>
         </p>
-    </section>
+        <p v-if="endedAt" class="ended-at">
+            <time :datetime="endedAt">
+                {{ exactTime(endedAt).date }}
+                <span class="ended-time">{{ exactTime(endedAt).time }}</span>
+            </time>
+        </p>
+    </div>
 
     <div class="detail-container">
         <p v-if="loading">loading...</p>
@@ -25,7 +34,10 @@
             <DetailActive v-else-if="pending.status === 'active'" />
             <DetailAbandoned v-else />
         </template>
-        <DetailComplete v-else-if="detail" :detail="detail" />
+        <DetailComplete
+            v-else-if="detail"
+            :detail="detail"
+        />
     </div>
 </template>
 
@@ -44,6 +56,7 @@ import DetailAwaiting from '../components/run-detail/DetailAwaiting.vue'
 import DetailActive from '../components/run-detail/DetailActive.vue'
 import DetailAbandoned from '../components/run-detail/DetailAbandoned.vue'
 import DetailComplete from '../components/run-detail/DetailComplete.vue'
+import { exactTime } from '../lib/time.ts'
 
 const props = defineProps<{ id: string }>()
 
@@ -93,6 +106,8 @@ const statusLabel = computed(() => {
 })
 
 const player = computed(() => detail.value?.run ?? pending.value)
+
+const endedAt = computed(() => detail.value?.run.ended_at ?? null)
 
 async function fetchRun(id: string) {
     try {
@@ -149,6 +164,14 @@ onScopeDispose(stopPolling)
 </script>
 
 <style scoped>
+.run-info {
+
+}
+
+.ended-at {
+    color: var(--text-muted-2);
+}
+
 .detail-container {
     font-size: 1.2rem;
 }

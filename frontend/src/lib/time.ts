@@ -52,6 +52,10 @@ export function formatDuration(seconds: number) {
     return `${Math.floor(whole / 60)}:${String(whole % 60).padStart(2, '0')}`
 }
 
+export function formatClock(seconds: number) {
+    return formatDuration(seconds).padStart(5, '0')
+}
+
 export function formatHours(seconds: number) {
     const hours = Math.floor(seconds / 3600)
     const minutes = Math.floor((seconds % 3600) / 60)

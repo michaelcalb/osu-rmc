@@ -114,6 +114,7 @@ import {
     TooltipTrigger
 } from 'reka-ui'
 import type { Board } from '../../../lib/types'
+import { modIcon } from '../../../lib/mods'
 
 defineProps<{
     busy: boolean
@@ -135,18 +136,10 @@ const ALLOWED_MODS = [
     'classic',
     'mirror',
     'alternate',
-    'single tap'
+    'single tap',
+    'touch device'
 ]
 const BANNED_MODS = ['autoplay', 'cinema', 'relax', 'autopilot', 'spun out']
-
-const icons = import.meta.glob<string>('../../../assets/mods/*.png', {
-    eager: true,
-    import: 'default'
-})
-
-function modIcon(name: string) {
-    return icons[`../../../assets/mods/mod-${name.replaceAll(' ', '-')}.png`]
-}
 </script>
 
 <style scoped>

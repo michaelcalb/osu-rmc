@@ -1,158 +1,206 @@
 <template>
-    <section class="main-stats">
+    <div v-if="advanced">
+        <section v-if="advanced">
+            <h3>run</h3>
+            <p>run time: {{ formatDuration(detail.run.active_elapsed) }}</p>
+            <p v-if="pausedSeconds !== null">
+                prep time: {{ formatDuration(pausedSeconds) }}
+            </p>
+            <p v-if="wallSeconds !== null">
+                total time: {{ formatDuration(wallSeconds) }}
+            </p>
+        </section>
+        <p>claimed: {{ claimedFcCount }}</p>
+        <p v-if="unconfirmed > 0">not confirmed: {{ unconfirmed }}</p>
+        <p v-else>every map played was judged</p>
+        <hr />
+        <p v-if="advanced">pool version: {{ detail.run.pool_version }}</p>
+        <p v-if="advanced">seed: {{ detail.run.seed }}</p>
+        <hr />
+        <section v-if="advanced">
+            <h3>difficulty</h3>
+            <p v-if="avgFcStars !== null">
+                average star rating of confirmed fcs:
+                {{ formatStars(avgFcStars) }}
+            </p>
+            <p v-if="avgServedStars !== null">
+                average star rating served: {{ formatStars(avgServedStars) }}
+            </p>
+            <p v-if="avgFcBpm !== null">
+                average bpm of confirmed fcs: {{ Math.round(avgFcBpm) }}
+            </p>
+        </section>
+        <section v-if="advanced">
+            <h3>mods used</h3>
+            <p v-if="modCounts.length === 0">none</p>
+            <ul v-else>
+                <li v-for="[acronym, count] in modCounts" :key="acronym">
+                    {{ acronym }}: {{ count }}
+                </li>
+            </ul>
+        </section>
+        <section v-if="disagreements.length > 0 && advanced">
+            <h3>invalid claims</h3>
+            <ul>
+                <li v-for="m in disagreements" :key="m.seq_index">
+                    map {{ m.seq_index + 1 }}: claimed {{ m.claimed_outcome }},
+                    judged
+                    {{ OUTCOME_LABELS[m.outcome] }}
+                </li>
+            </ul>
+        </section>
+        <hr />
+        <section v-if="advanced">
+            <h3>outcomes</h3>
+            <ul>
+                <li v-for="[outcome, count] in outcomeCounts" :key="outcome">
+                    {{ OUTCOME_LABELS[outcome] }}: {{ count }}
+                </li>
+            </ul>
+        </section>
+        <hr />
+    </div>
+    <dl class="stat-board">
+        <dt class="stat-label">board</dt>
+        <dd class="stat-value">
+            {{ formatBoard(detail.run.resolved_board) }}
+            {{
+                detail.run.declared_mode !== detail.run.resolved_board
+                    ? '(converted)'
+                    : null
+            }}
+        </dd>
+    </dl>
+    <dl class="main-stats">
         <div class="stat-box">
-            <dt class="stat-label">FC</dt>
+            <dt class="stat-label">FCs</dt>
             <dd class="stat-value">
                 {{ detail.run.fc_count }}
             </dd>
         </div>
-        <!-- <p>claimed: {{ claimedFcCount }}</p> -->
-        <!-- <p v-if="unconfirmed > 0">not confirmed: {{ unconfirmed }}</p> -->
-        <!-- <p v-if="truncationText">
-            counting stopped at map
-            {{ (detail.run.truncated_at_index ?? 0) + 1
-            }}<span v-if="truncatedMap"> ({{ mapName(truncatedMap) }})</span>:
-            {{ truncationText }}
-        </p> -->
-        <!-- <p v-else>every map played was judged</p> -->
-    </section>
-    <section>
-        <h3>run</h3>
-        <p>
-            board: {{ detail.run.declared_mode }} &rarr;
-            {{ detail.run.resolved_board }}
-        </p>
-        <p>time played: {{ formatDuration(detail.run.active_elapsed) }}</p>
-        <p v-if="wallSeconds !== null">
-            wall clock: {{ formatDuration(wallSeconds) }}
-        </p>
-        <p v-if="pausedSeconds !== null">
-            paused / resting: {{ formatDuration(pausedSeconds) }}
-        </p>
-        <p>maps served: {{ maps.length }}</p>
-        <p>time on confirmed fcs: {{ formatDuration(fcSeconds) }}</p>
-        <p v-if="detail.run.avg_fc_score !== null">
-            average run score:
-            {{ formatScore(detail.run.avg_fc_score) }}
-        </p>
-        <p v-if="detail.run.avg_fc_accuracy !== null">
-            average run accuracy:
-            {{ formatAccuracy(detail.run.avg_fc_accuracy) }}
-        </p>
-        <p>pool version: {{ detail.run.pool_version }}</p>
-        <p>seed: {{ detail.run.seed }}</p>
-        <p>started: {{ detail.run.started_at }}</p>
-        <p>ended: {{ detail.run.ended_at }}</p>
-    </section>
-    <section>
-        <h3>outcomes</h3>
-        <ul>
-            <li v-for="[outcome, count] in outcomeCounts" :key="outcome">
-                {{ OUTCOME_LABELS[outcome] }}: {{ count }}
-            </li>
-        </ul>
-    </section>
-    <section>
-        <h3>difficulty</h3>
-        <p v-if="avgFcStars !== null">
-            average star rating of confirmed fcs:
-            {{ formatStars(avgFcStars) }}
-        </p>
-        <p v-if="avgServedStars !== null">
-            average star rating served: {{ formatStars(avgServedStars) }}
-        </p>
-        <p v-if="avgFcBpm !== null">
-            average bpm of confirmed fcs: {{ Math.round(avgFcBpm) }}
-        </p>
-        <p v-if="hardestFc">
-            hardest fc:
-            {{ formatStars(hardestFc.original_star_rating) }}&#9733; -
-            {{ mapName(hardestFc) }}
-        </p>
-        <p v-if="fastestFc?.bpm">
-            fastest fc: {{ Math.round(fastestFc.bpm) }} bpm -
-            {{ mapName(fastestFc) }}
-        </p>
-        <p v-if="longestFc">
-            longest fc: {{ formatDuration(longestFc.total_length) }} -
-            {{ mapName(longestFc) }}
-        </p>
-        <p v-if="fcMaps.length === 0">no confirmed fcs</p>
-    </section>
-    <section>
-        <h3>mods used</h3>
-        <p v-if="modCounts.length === 0">none</p>
-        <ul v-else>
-            <li v-for="[acronym, count] in modCounts" :key="acronym">
-                {{ acronym }}: {{ count }}
-            </li>
-        </ul>
-    </section>
-    <section v-if="disagreements.length > 0">
-        <h3>claims the validator did not agree with</h3>
-        <ul>
-            <li v-for="m in disagreements" :key="m.seq_index">
-                map {{ m.seq_index + 1 }}: claimed {{ m.claimed_outcome }},
-                judged
-                {{ OUTCOME_LABELS[m.outcome] }}
-            </li>
-        </ul>
-    </section>
-    <section>
-        <h3>maps</h3>
-        <ol>
-            <li v-for="m in maps" :key="m.seq_index">
-                <p>{{ mapName(m) }} ({{ m.creator }})</p>
-                <p>
-                    {{ formatStars(m.original_star_rating) }}&#9733; -
-                    {{ formatDuration(m.total_length) }}
-                    <span v-if="m.bpm"> - {{ Math.round(m.bpm) }} bpm</span>
-                </p>
-                <p>
-                    {{ OUTCOME_LABELS[m.outcome] }}
-                    <span v-if="m.outcome === 'unjudged'"
-                        >- the run stopped counting before this map</span
+        <div class="stat-box">
+            <dt class="stat-label">score</dt>
+            <dd class="stat-value">
+                {{ formatScore(detail.run.avg_fc_score) }}
+            </dd>
+        </div>
+        <div class="stat-box">
+            <dt class="stat-label">accuracy</dt>
+            <dd class="stat-value">
+                {{ formatAccuracy(detail.run.avg_fc_accuracy) }}
+            </dd>
+        </div>
+    </dl>
+    <section class="timeline-section">
+        <h2 class="section-title">
+            timeline
+        </h2>
+        <table class="maps-table">
+            <tbody>
+                <template v-for="m in maps" :key="m.seq_index">
+                    <tr
+                        v-if="m.seq_index === detail.run.truncated_at_index"
+                        class="truncation-row"
                     >
-                    <span v-else-if="!m.confirmed">(unconfirmed)</span>
-                </p>
-                <p v-if="m.claimed_outcome !== m.outcome">
-                    claimed: {{ m.claimed_outcome ?? 'no claim' }}
-                </p>
-                <p v-if="m.score_max_combo !== null">
-                    combo: {{ m.score_max_combo }} /
-                    {{ m.map_max_combo ?? '?' }}
-                    <span v-if="comboPercent(m) !== null"
-                        >({{ comboPercent(m)!.toFixed(1) }}%)</span
-                    >
-                </p>
-                <p v-if="m.mods && m.mods.length > 0">
-                    mods: {{ m.mods.map((mod) => mod.acronym).join(', ') }}
-                </p>
-                <p v-if="prepSeconds(m) !== null">
-                    time before starting:
-                    {{ formatDuration(prepSeconds(m)!) }}
-                </p>
-                <p v-if="playSeconds(m) !== null">
-                    time on the map: {{ formatDuration(playSeconds(m)!) }}
-                </p>
-                <p v-if="m.total_score !== null">
-                    {{ formatScore(m.total_score) }}
-                </p>
-                <p v-if="m.accuracy !== null">
-                    accuracy: {{ formatAccuracy(m.accuracy) }}
-                </p>
-                <p v-if="m.confirmed_score_id">
-                    score id: {{ m.confirmed_score_id }}
-                </p>
-                <p v-if="m.nsfw">nsfw</p>
-                <a
-                    :href="`https://osu.ppy.sh/b/${m.map_id}`"
-                    target="_blank"
-                    rel="noreferrer"
-                    >open beatmap</a
-                >
-            </li>
-        </ol>
+                        <td class="map-index">
+                            <span class="index-dot"><Flag :size="18" /></span>
+                        </td>
+                        <td colspan="3">
+                            <div class="truncation">
+                                <hr class="separator" />
+                                <span class="truncation-text">
+                                    validation stopped: {{ truncationText }}
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="map-index">
+                            <span class="index-dot">{{ m.seq_index + 1 }}</span>
+                        </td>
+                        <td class="mono map-served-time">
+                            {{
+                                formatClock(
+                                    secondsBetween(
+                                        detail.run.started_at,
+                                        m.served_at
+                                    )
+                                )
+                            }}
+                        </td>
+                        <td>
+                            <a
+                                :href="mapHref(m)"
+                                target="_blank"
+                                rel="noreferrer"
+                                :class="`map-link ${!m.confirmed_score_id && 'no-score'}`"
+                            >
+                                <div class="map-info">
+                                    <div class="map-difficulty">
+                                        <span
+                                            :style="{
+                                                backgroundColor: starColor(
+                                                    m.original_star_rating
+                                                ),
+                                                color: starTextColor(
+                                                    m.original_star_rating
+                                                )
+                                            }"
+                                            class="star-rating-label"
+                                        >
+                                            <Star
+                                                :size="14"
+                                                :fill="
+                                                    starTextColor(
+                                                        m.original_star_rating
+                                                    )
+                                                "
+                                            />
+                                            {{
+                                                formatStars(m.original_star_rating)
+                                            }}
+                                        </span>
+                                    </div>
+                                    <span class="map-title">{{ m.title }}</span>
+                                    <span v-if="m.mods?.length" class="map-mods">
+                                        <template
+                                            v-for="mod in m.mods"
+                                            :key="mod.acronym"
+                                        >
+                                            <img
+                                                v-if="modIcon(modName(mod.acronym))"
+                                                :src="modIcon(modName(mod.acronym))"
+                                                :alt="mod.acronym"
+                                                :title="modName(mod.acronym)"
+                                                class="mod-icon"
+                                            />
+                                            <span v-else>{{
+                                                mod.acronym
+                                            }}</span>
+                                        </template>
+                                    </span>
+                                </div>
+                                <MapCover
+                                    :map="m"
+                                    variant="slimcover"
+                                    class="map-img"
+                                />
+                            </a>
+                        </td>
+                        <td>
+                            <div :class="`map-outcome outcome-${m.outcome}`">
+                                <component
+                                    :is="OUTCOME_ICONS[m.outcome]"
+                                />
+                                <span>
+                                    {{ OUTCOME_LABELS[m.outcome] }}
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                </template>
+            </tbody>
+        </table>
     </section>
 </template>
 
@@ -161,58 +209,69 @@ import { computed } from 'vue'
 import type {
     MapOutcome,
     RunDetail,
-    RunDetailMap
-    /* TruncationReason */
+    RunDetailMap,
+    TruncationReason
 } from '../../lib/types'
-import { formatDuration } from '../../lib/time'
-import { formatAccuracy, formatScore, formatStars } from '../../lib/format'
+import { formatClock, formatDuration } from '../../lib/time'
+import {
+    formatAccuracy,
+    formatBoard,
+    formatScore,
+    formatStars
+} from '../../lib/format'
+import MapCover from '../MapCover.vue'
+import { modIcon, modName } from '../../lib/mods'
+import { starColor, starTextColor } from '../../lib/stars'
+import { CircleCheck, CircleChevronsRight, CircleDashed, CircleOff, Flag, Star, Ticket, TimerOff, type LucideIcon } from '@lucide/vue'
 
-const props = defineProps<{ detail: RunDetail }>()
+const props = defineProps<{ detail: RunDetail; advanced: boolean }>()
 
 const OUTCOME_LABELS: Record<MapOutcome, string> = {
-    unjudged: 'not judged',
-    fc: 'full combo',
-    a_skip: 'a-skip',
+    unjudged: 'unjudged',
+    fc: 'FC',
+    a_skip: 'skip',
     free_skip: 'free skip',
     unplayable: 'unplayable',
-    incomplete_final: 'unfinished, time ran out'
+    incomplete_final: 'unfinished'
 }
 
-/* const TRUNCATION_LABELS: Record<TruncationReason, string> = {
-    banned_mod: 'the score on it used a banned mod',
+const OUTCOME_ICONS: Record<MapOutcome, LucideIcon> = {
+    unjudged: CircleDashed,
+    fc: CircleCheck,
+    a_skip: CircleChevronsRight,
+    free_skip: Ticket,
+    unplayable: CircleOff,
+    incomplete_final: TimerOff
+}
+
+const TRUNCATION_LABELS: Record<TruncationReason, string> = {
+    banned_mod: 'banned mod used',
     rejected_unplayable:
-        'it was marked unplayable, but its status did not justify that',
-    missing_score: 'no score was found for it',
+        'invalid unplayable claim',
+    missing_score: 'no score found',
     over_limit:
-        'it was full-comboed, but the score landed outside the time limit',
-    not_qualifying: 'the score was neither a full combo nor good enough to skip'
-} */
+        'played after time ran out',
+    not_qualifying: 'no FC or A rank'
+}
 
 const maps = computed(() => props.detail.maps)
 
 const fcMaps = computed(() => maps.value.filter((m) => m.outcome === 'fc'))
 
-/* const unconfirmed = computed(
+const unconfirmed = computed(
     () =>
         maps.value.filter(
             (m) => m.claimed_outcome === 'fc' && m.outcome !== 'fc'
         ).length
-) */
+)
 
-/* const claimedFcCount = computed(() => fcMaps.value.length + unconfirmed.value) */
+const claimedFcCount = computed(() => fcMaps.value.length + unconfirmed.value)
 
-/* const truncatedMap = computed(
-    () =>
-        maps.value.find(
-            (m) => m.seq_index === props.detail.run.truncated_at_index
-        ) ?? null
-) */
-
-/* const truncationText = computed(() => {
+const truncationText = computed(() => {
     const reason = props.detail.run.truncation_reason
 
     return reason ? TRUNCATION_LABELS[reason] : null
-}) */
+})
 
 const outcomeCounts = computed(() => tally(maps.value.map((m) => m.outcome)))
 
@@ -229,18 +288,6 @@ const avgServedStars = computed(() =>
 )
 
 const avgFcBpm = computed(() => average(fcMaps.value.map((m) => m.bpm)))
-
-const hardestFc = computed(() =>
-    best(fcMaps.value, (m) => m.original_star_rating)
-)
-
-const fastestFc = computed(() => best(fcMaps.value, (m) => m.bpm ?? 0))
-
-const longestFc = computed(() => best(fcMaps.value, (m) => m.total_length))
-
-const fcSeconds = computed(() =>
-    fcMaps.value.reduce((total, m) => total + m.total_length, 0)
-)
 
 const wallSeconds = computed(() => {
     const run = props.detail.run
@@ -271,36 +318,10 @@ function average(values: (number | null)[]): number | null {
         : null
 }
 
-function best(
-    candidates: RunDetailMap[],
-    score: (m: RunDetailMap) => number
-): RunDetailMap | null {
-    return candidates.reduce<RunDetailMap | null>(
-        (top, m) => (!top || score(m) > score(top) ? m : top),
-        null
-    )
-}
-
-function mapName(m: RunDetailMap): string {
-    return `${m.artist} - ${m.title} [${m.difficulty_name}]`
-}
-
-function comboPercent(m: RunDetailMap): number | null {
-    return m.map_max_combo && m.score_max_combo !== null
-        ? (m.score_max_combo / m.map_max_combo) * 100
-        : null
-}
-
-function playSeconds(m: RunDetailMap): number | null {
-    return m.score_started_at && m.score_ended_at
-        ? secondsBetween(m.score_started_at, m.score_ended_at)
-        : null
-}
-
-function prepSeconds(m: RunDetailMap): number | null {
-    return m.score_started_at
-        ? Math.max(0, secondsBetween(m.served_at, m.score_started_at))
-        : null
+function mapHref(m: RunDetailMap): string {
+    return m.confirmed_score_id
+        ? `https://osu.ppy.sh/scores/${m.confirmed_score_id}`
+        : `https://osu.ppy.sh/b/${m.map_id}`
 }
 
 function secondsBetween(from: string, to: string): number {
@@ -317,3 +338,212 @@ function tally<T>(keys: T[]): [T, number][] {
     return [...counts.entries()].sort((a, b) => b[1] - a[1])
 }
 </script>
+
+<style scoped>
+.main-stats {
+    display: flex;
+}
+
+.stat-board {
+    display: flex;
+}
+
+.section-title {
+    font-weight: 400;
+    font-size: 1.5rem;
+    background-color: var(--bg-2);
+    width: fit-content;
+    margin-left: .5rem;
+    padding: .25rem 1rem;
+    border-radius: 0.5rem 0.5rem 0 0;
+    border: 2px solid var(--border);
+    border-bottom: 2px solid var(--bg-2);
+    transform: translateY(2px);
+}
+
+.timeline-section {
+    margin-top: var(--default-spacing);
+}
+
+.maps-table {
+    background-color: var(--bg-2);
+    border: 2px solid var(--border);
+    width: 100%;
+    border-spacing: 0 .5rem;
+    padding-right: .5rem;
+    border-radius: .5rem;
+}
+
+.maps-table td {
+    white-space: nowrap;
+    text-align: left;
+    padding: 0 .5rem;
+    height: 50px;
+    background-color: var(--bg);
+}
+
+.maps-table td:nth-child(2) {
+    border-radius: .25rem 0 0 .25rem;
+}
+
+.maps-table td:last-child {
+    border-radius: 0 .25rem .25rem 0;
+}
+
+.maps-table .map-index {
+    position: relative;
+    text-align: center;
+    background-color: transparent;
+    color: var(--text-muted-2);
+}
+
+.map-index::before {
+    content: '';
+    position: absolute;
+    top: -.25rem;
+    bottom: -.25rem;
+    left: 50%;
+    width: 2px;
+    transform: translateX(-50%);
+    background-color: var(--surface);
+}
+
+tr:first-child .map-index::before {
+    top: 50%;
+}
+
+tr:last-child .map-index::before {
+    bottom: 50%;
+}
+
+.index-dot {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    padding: .25rem;
+    border-radius: 50%;
+    border: 2px solid var(--surface);
+    min-width: 2rem;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background-color: var(--bg-2);
+}
+
+.maps-table .truncation-row td {
+    background-color: transparent;
+}
+
+.truncation {
+    display: grid;
+    align-items: center;
+    justify-items: center;
+}
+
+.truncation > * {
+    grid-area: 1 / 1;
+}
+
+.truncation-text {
+    padding: 0 .5rem;
+    background-color: var(--bg-2);
+    color: var(--text-muted-2);
+    font-size: 1rem;
+}
+
+.maps-table .map-served-time {
+    text-align: center;
+}
+
+.map-link {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    overflow: hidden;
+    border-radius: .5rem;
+}
+
+.map-link > * {
+    grid-area: 1 / 1;
+}
+
+.map-info {
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    padding: 0 0.5rem;
+    gap: 0.5rem;
+    text-shadow: 1px 1px 2px #000;
+}
+
+.map-title {
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    padding: 1rem 0 1rem 1rem;
+    margin: -1rem 0 -1rem -1rem;
+    mask-image: linear-gradient(to right, black 90%, transparent 95%);
+}
+
+.map-img {
+    width: 100%;
+    height: 50px;
+    filter: brightness(50%);
+    transform: scale(1.02);
+    object-fit: cover;
+    transition: 0.2s;
+}
+
+.no-score {
+    filter: grayscale(1) brightness(75%);
+}
+
+.map-mods {
+    display: flex;
+    margin-left: auto;
+}
+
+.mod-icon {
+    height: 1.5rem;
+}
+
+.star-rating-label {
+    width: fit-content;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 1rem;
+    font-size: 0.9rem;
+    text-shadow: none;
+}
+
+.map-outcome {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+.outcome-unjudged {
+    color: #8b8fa8;
+}
+
+.outcome-fc {
+    color: var(--old-7);
+}
+
+.outcome-a_skip {
+    color: #7dd3fc;
+}
+
+.outcome-free_skip {
+    color: #93a4f5;
+}
+
+.outcome-unplayable {
+    color: var(--danger);
+}
+
+.outcome-incomplete_final {
+    color: #fbbf24;
+}
+</style>

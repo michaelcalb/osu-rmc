@@ -3,7 +3,7 @@
         <div class="timer-box">
             <span class="timer-label">run timer</span>
             <span :class="`mono timer ${prepSecondsLeft === 0 && 'active'}`">
-                {{ formatDuration(mainSecondsLeft).padStart(5, '0') }}
+                {{ formatClock(mainSecondsLeft) }}
             </span>
         </div>
         <div class="timer-box prep-timer-box">
@@ -76,12 +76,7 @@
                     </div>
                 </div>
 
-                <img
-                    :src="coverUrl(map.set_id, map.cover_updated_at, 'cover')"
-                    :alt="`${map.artist} - ${map.title}`"
-                    class="map-img"
-                    @error="useDefaultBg"
-                />
+                <MapCover :map="map" class="map-img" />
             </a>
         </template>
 
@@ -166,14 +161,14 @@
 </template>
 
 <script setup lang="ts">
-import { coverUrl } from '../../../lib/covers.ts'
 import { formatStars } from '../../../lib/format.ts'
-import { formatDuration } from '../../../lib/time.ts'
+import { formatClock, formatDuration } from '../../../lib/time.ts'
 import { starColor, starTextColor } from '../../../lib/stars.ts'
 import type { RunState, ServedMap, SkipKind } from '../../../lib/types'
 import { Clock, FastForward, Metronome, Play, Star } from '@lucide/vue'
 import defaultBg from '../../../assets/default-map-bg.jpg'
 import { ref } from 'vue'
+import MapCover from '../../MapCover.vue'
 
 defineProps<{
     run: RunState
@@ -210,10 +205,6 @@ function startHold(key: string, action: () => void) {
 function cancelHold() {
     clearTimeout(holdTimer)
     holding.value = null
-}
-
-function useDefaultBg(event: Event) {
-    ;(event.target as HTMLImageElement).src = defaultBg
 }
 </script>
 
@@ -297,7 +288,7 @@ button:disabled {
 
 .map-img {
     width: 100%;
-    filter: brightness(50%) blur(2px);
+    filter: brightness(50%);
     transform: scale(1.02);
     aspect-ratio: 500 / 187;
     object-fit: cover;

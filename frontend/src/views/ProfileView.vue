@@ -1,5 +1,5 @@
 <template>
-    <Note> this is a temporary design </Note>
+    <Note> wip, expect changes </Note>
 
     <p v-if="loading">loading...</p>
     <p v-else-if="error">error: {{ error }}</p>
@@ -36,14 +36,14 @@
             <h3 class="box-title">stats</h3>
             <div class="box">
                 <div class="boards-box">
-                    <div
+                    <dl
                         class="board-stats"
                         v-for="b in profile.boards"
                         :key="b.board"
                     >
                         <div>
                             <dt class="board-label">
-                                {{ boardName(b.board) }} rank
+                                {{ formatBoard(b.board) }} rank
                             </dt>
                             <dd :class="`board-value run-rank rank-${b.rank}`">
                                 {{ b.rank ? `#${b.rank}` : '-' }}
@@ -51,13 +51,13 @@
                         </div>
                         <div>
                             <dt class="board-label">
-                                {{ boardName(b.board) }} runs
+                                {{ formatBoard(b.board) }} runs
                             </dt>
                             <dd>
                                 {{ profile.runsByBoard[b.board] }}
                             </dd>
                         </div>
-                    </div>
+                    </dl>
                 </div>
 
                 <hr class="v-separator" />
@@ -85,9 +85,9 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { ApiError, get } from '../lib/api'
-import type { Board, Profile } from '../lib/types'
+import type { Profile } from '../lib/types'
 import { formatHours } from '../lib/time'
-import { formatAccuracy } from '../lib/format.ts'
+import { formatAccuracy, formatBoard } from '../lib/format.ts'
 import { ExternalLink } from '@lucide/vue'
 import Note from '../components/Note.vue'
 
@@ -96,10 +96,6 @@ const props = defineProps<{ id: string }>()
 const profile = ref<Profile | null>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)
-
-const boardName = (board: Board) => {
-    return board === 'no_mod' ? 'no mod' : 'free mod'
-}
 
 watch(
     () => props.id,
@@ -204,7 +200,6 @@ watch(
 .board-value {
     font-size: 2.5rem;
     font-weight: 500;
-    color: var(--);
 }
 
 .stats-box {

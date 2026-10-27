@@ -69,7 +69,7 @@
                     <tr class="lb-h-row">
                         <th></th>
                         <th></th>
-                        <th>FC</th>
+                        <th>FCs</th>
                         <th>score</th>
                         <th>accuracy</th>
                         <th>time</th>
