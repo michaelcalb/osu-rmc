@@ -1,64 +1,40 @@
 <template>
-    <div>
-        <section>
-            <h3>run</h3>
-            <p>run time: {{ formatDuration(detail.run.active_elapsed) }}</p>
-            <p v-if="pausedSeconds !== null">
-                prep time: {{ formatDuration(pausedSeconds) }}
-            </p>
-            <p v-if="wallSeconds !== null">
-                total time: {{ formatDuration(wallSeconds) }}
-            </p>
-        </section>
-        <hr />
-        <p>pool version: {{ detail.run.pool_version }}</p>
-        <p>seed: {{ detail.run.seed }}</p>
-        <hr />
-        <section>
-            <h3>mods used</h3>
-            <p v-if="modCounts.length === 0">none</p>
-            <ul v-else>
-                <li v-for="[acronym, count] in modCounts" :key="acronym">
-                    {{ acronym }}: {{ count }}
-                </li>
-            </ul>
-        </section>
-        <hr />
-        <section>
-            <h3>outcomes</h3>
-            <ul>
-                <li v-for="[outcome, count] in outcomeCounts" :key="outcome">
-                    {{ OUTCOME_LABELS[outcome] }}: {{ count }}
-                </li>
-            </ul>
-        </section>
-        <hr />
-    </div>
-    <dl class="stat-board">
-        <dt class="stat-label">board</dt>
-        <dd class="stat-value">
+    <dl class="run-specs">
+        <dt class="spec-label">board</dt>
+        <dd class="spec-value">
             {{ formatBoard(detail.run.resolved_board) }}
-            {{
-                detail.run.declared_mode !== detail.run.resolved_board
-                    ? '(converted)'
-                    : null
-            }}
+            <ArrowLeftRight
+                class="converted-icon"
+                :size="20"
+                :stroke-width="3"
+                v-if="detail.run.declared_mode !== detail.run.resolved_board"
+            />
+        </dd>
+
+        <dt class="spec-label">pool</dt>
+        <dd class="spec-value">
+            {{ detail.run.pool_version }}
+        </dd>
+
+        <dt class="spec-label">seed</dt>
+        <dd class="spec-value">
+            {{ detail.run.seed }}
         </dd>
     </dl>
-    <dl class="main-stats">
-        <div class="stat-box">
+    <dl class="stats">
+        <div>
             <dt class="stat-label">FCs</dt>
             <dd class="stat-value">
                 {{ detail.run.fc_count }}
             </dd>
         </div>
-        <div class="stat-box">
+        <div>
             <dt class="stat-label">score</dt>
             <dd class="stat-value">
                 {{ formatScore(detail.run.avg_fc_score) }}
             </dd>
         </div>
-        <div class="stat-box">
+        <div>
             <dt class="stat-label">accuracy</dt>
             <dd class="stat-value">
                 {{ formatAccuracy(detail.run.avg_fc_accuracy) }}
@@ -68,6 +44,11 @@
     <section class="timeline-section">
         <h2 class="section-title">
             timeline
+            <span class="timer-sum">
+                &lpar;{{ formatDuration(detail.run.active_elapsed) }}
+                +
+                {{ formatDuration(pausedSeconds || 0) }}&rpar;
+            </span>
         </h2>
         <TooltipProvider :delay-duration="0">
             <table class="maps-table">
@@ -78,7 +59,9 @@
                             class="truncation-row"
                         >
                             <td class="map-index">
-                                <span class="index-dot"><Flag :size="18" /></span>
+                                <span class="index-dot"
+                                    ><Flag :size="18"
+                                /></span>
                             </td>
                             <td :colspan="hasDisagreements ? 4 : 3">
                                 <div class="truncation">
@@ -91,7 +74,9 @@
                         </tr>
                         <tr>
                             <td class="map-index">
-                                <span class="index-dot">{{ m.seq_index + 1 }}</span>
+                                <span class="index-dot">{{
+                                    m.seq_index + 1
+                                }}</span>
                             </td>
                             <td class="mono map-served-time">
                                 {{
@@ -132,21 +117,38 @@
                                                     "
                                                 />
                                                 {{
-                                                    formatStars(m.original_star_rating)
+                                                    formatStars(
+                                                        m.original_star_rating
+                                                    )
                                                 }}
                                             </span>
                                         </div>
-                                        <span class="map-title">{{ m.title }}</span>
-                                        <span v-if="m.mods?.length" class="map-mods">
+                                        <span class="map-title">{{
+                                            m.title
+                                        }}</span>
+                                        <span
+                                            v-if="m.mods?.length"
+                                            class="map-mods"
+                                        >
                                             <template
                                                 v-for="mod in m.mods"
                                                 :key="mod.acronym"
                                             >
                                                 <img
-                                                    v-if="modIcon(modName(mod.acronym))"
-                                                    :src="modIcon(modName(mod.acronym))"
+                                                    v-if="
+                                                        modIcon(
+                                                            modName(mod.acronym)
+                                                        )
+                                                    "
+                                                    :src="
+                                                        modIcon(
+                                                            modName(mod.acronym)
+                                                        )
+                                                    "
                                                     :alt="mod.acronym"
-                                                    :title="modName(mod.acronym)"
+                                                    :title="
+                                                        modName(mod.acronym)
+                                                    "
                                                     class="mod-icon"
                                                 />
                                                 <span v-else>{{
@@ -163,10 +165,10 @@
                                 </a>
                             </td>
                             <td>
-                                <div :class="`map-outcome outcome-${m.outcome}`">
-                                    <component
-                                        :is="OUTCOME_ICONS[m.outcome]"
-                                    />
+                                <div
+                                    :class="`map-outcome outcome-${m.outcome}`"
+                                >
+                                    <component :is="OUTCOME_ICONS[m.outcome]" />
                                     <span>
                                         {{ OUTCOME_LABELS[m.outcome] }}
                                     </span>
@@ -175,7 +177,7 @@
                             <td v-if="hasDisagreements" class="map-claim">
                                 <TooltipRoot v-if="disagrees(m)">
                                     <TooltipTrigger class="claim-trigger">
-                                        <TriangleAlert 
+                                        <TriangleAlert
                                             :size="20"
                                             :aria-label="`invalid claim on map ${m.seq_index + 1}`"
                                         />
@@ -220,7 +222,19 @@ import {
 import MapCover from '../MapCover.vue'
 import { modIcon, modName } from '../../lib/mods'
 import { starColor, starTextColor } from '../../lib/stars'
-import { CircleCheck, CircleChevronsRight, CircleDashed, CircleOff, Flag, Star, Ticket, TimerOff, TriangleAlert, type LucideIcon } from '@lucide/vue'
+import {
+    ArrowLeftRight,
+    CircleCheck,
+    CircleChevronsRight,
+    CircleDashed,
+    CircleOff,
+    Flag,
+    Star,
+    Ticket,
+    TimerOff,
+    TriangleAlert,
+    type LucideIcon
+} from '@lucide/vue'
 import {
     TooltipContent,
     TooltipPortal,
@@ -253,7 +267,8 @@ const VERDICT_TEXT: Record<MapOutcome, string> = {
     a_skip: 'the score has a miss, so it counts as an A-rank skip',
     free_skip: 'it counts as the free skip',
     unplayable: 'it counts as unplayable',
-    incomplete_final: 'no score was found, so as the last map it counts as unfinished'
+    incomplete_final:
+        'no score was found, so as the last map it counts as unfinished'
 }
 
 const OUTCOME_ICONS: Record<MapOutcome, LucideIcon> = {
@@ -267,11 +282,9 @@ const OUTCOME_ICONS: Record<MapOutcome, LucideIcon> = {
 
 const TRUNCATION_LABELS: Record<TruncationReason, string> = {
     banned_mod: 'banned mod used',
-    rejected_unplayable:
-        'invalid unplayable claim',
+    rejected_unplayable: 'invalid unplayable claim',
     missing_score: 'no score found',
-    over_limit:
-        'played after time ran out',
+    over_limit: 'played after time ran out',
     not_qualifying: 'no FC or A rank'
 }
 
@@ -282,12 +295,6 @@ const truncationText = computed(() => {
 
     return reason ? TRUNCATION_LABELS[reason] : null
 })
-
-const outcomeCounts = computed(() => tally(maps.value.map((m) => m.outcome)))
-
-const modCounts = computed(() =>
-    tally(maps.value.flatMap((m) => (m.mods ?? []).map((mod) => mod.acronym)))
-)
 
 const wallSeconds = computed(() => {
     const run = props.detail.run
@@ -320,25 +327,49 @@ function mapHref(m: RunDetailMap): string {
 function secondsBetween(from: string, to: string): number {
     return Math.round((Date.parse(to) - Date.parse(from)) / 1000)
 }
-
-function tally<T>(keys: T[]): [T, number][] {
-    const counts = new Map<T, number>()
-
-    for (const key of keys) {
-        counts.set(key, (counts.get(key) ?? 0) + 1)
-    }
-
-    return [...counts.entries()].sort((a, b) => b[1] - a[1])
-}
 </script>
 
 <style scoped>
-.main-stats {
-    display: flex;
+.run-specs {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0 1rem;
+    align-items: center;
 }
 
-.stat-board {
+.spec-label {
+    font-weight: 400;
+}
+
+.spec-value {
+    color: var(--text-muted-3);
     display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-weight: 500;
+}
+
+.converted-icon {
+    color: var(--text-muted-3);
+}
+
+.stats {
+    display: flex;
+    justify-content: center;
+    gap: var(--default-spacing);
+    font-size: 1.5rem;
+}
+
+.stats > * {
+    background: var(--bg-2);
+    padding: .5rem 2rem;
+    border-radius: .5rem;
+    border: 2px solid var(--border);    
+}
+
+.stat-label {
+    font-size: 1rem;
+    color: var(--text-muted-3);
 }
 
 .section-title {
@@ -346,41 +377,42 @@ function tally<T>(keys: T[]): [T, number][] {
     font-size: 1.5rem;
     background-color: var(--bg-2);
     width: fit-content;
-    margin-left: .5rem;
-    padding: .25rem 1rem;
+    margin-left: 0.5rem;
+    padding: 0.25rem 1rem;
     border-radius: 0.5rem 0.5rem 0 0;
     border: 2px solid var(--border);
     border-bottom: 2px solid var(--bg-2);
     transform: translateY(2px);
 }
 
-.timeline-section {
-    margin-top: var(--default-spacing);
+.timer-sum {
+    font-size: 1rem;
+    color: var(--text-muted-3);
 }
 
 .maps-table {
+    border-spacing: 0 0.5rem;
+    padding-right: 0.5rem;
+    width: 100%;
+    border-radius: 0.5rem;
     background-color: var(--bg-2);
     border: 2px solid var(--border);
-    width: 100%;
-    border-spacing: 0 .5rem;
-    padding-right: .5rem;
-    border-radius: .5rem;
 }
 
 .maps-table td {
     white-space: nowrap;
     text-align: left;
-    padding: 0 .5rem;
+    padding: 0 0.5rem;
     height: 50px;
     background-color: var(--bg);
 }
 
 .maps-table td:nth-child(2) {
-    border-radius: .25rem 0 0 .25rem;
+    border-radius: 0.25rem 0 0 0.25rem;
 }
 
 .maps-table td:last-child {
-    border-radius: 0 .25rem .25rem 0;
+    border-radius: 0 0.25rem 0.25rem 0;
 }
 
 .maps-table .map-index {
@@ -393,8 +425,8 @@ function tally<T>(keys: T[]): [T, number][] {
 .map-index::before {
     content: '';
     position: absolute;
-    top: -.25rem;
-    bottom: -.25rem;
+    top: -0.25rem;
+    bottom: -0.25rem;
     left: 50%;
     width: 2px;
     transform: translateX(-50%);
@@ -413,7 +445,7 @@ tr:last-child .map-index::before {
     position: relative;
     display: inline-grid;
     place-items: center;
-    padding: .25rem;
+    padding: 0.25rem;
     border-radius: 50%;
     border: 2px solid var(--surface);
     width: 100%;
@@ -436,7 +468,7 @@ tr:last-child .map-index::before {
 }
 
 .truncation-text {
-    padding: 0 .5rem;
+    padding: 0 0.5rem;
     background-color: var(--bg-2);
     color: var(--text-muted-2);
     font-size: 1rem;
@@ -450,7 +482,7 @@ tr:last-child .map-index::before {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     overflow: hidden;
-    border-radius: .5rem;
+    border-radius: 0.5rem;
 }
 
 .map-link > * {
@@ -512,7 +544,7 @@ tr:last-child .map-index::before {
 .map-outcome {
     display: flex;
     align-items: center;
-    gap: .5rem;
+    gap: 0.5rem;
 }
 
 .claim-trigger {

@@ -4,6 +4,24 @@
             <h1 class="title">run {{ id }}</h1>
             <hr class="separator" />
             <p class="run-status subtitle">{{ statusLabel }}</p>
+        </div>
+        <div v-if="player" class="heading-group">
+            <div class="run-author">
+                <span>played by</span>
+                <RouterLink
+                    :to="`/users/${player.user_id}`"
+                    class="link-1 user-link"
+                >
+                    <div class="pfp-box">
+                        <img
+                            :src="`https://a.ppy.sh/${player.user_id}`"
+                            :alt="player.username"
+                            class="pfp"
+                        />
+                    </div>
+                    <span class="username">{{ player.username }}</span>
+                </RouterLink>
+            </div>
             <TooltipProvider v-if="endedAt" :delay-duration="0">
                 <TooltipRoot>
                     <TooltipTrigger
@@ -14,7 +32,7 @@
                         {{ timeAgo(endedAt) }}
                     </TooltipTrigger>
                     <TooltipPortal>
-                        <TooltipContent class="tooltip" :side-offset="4">
+                        <TooltipContent class="tooltip" :side-offset="4" side="bottom" align="end">
                             <p>
                                 {{ exactTime(endedAt).date }}
                                 <span class="tooltip-time">
@@ -25,19 +43,6 @@
                     </TooltipPortal>
                 </TooltipRoot>
             </TooltipProvider>
-        </div>
-        <div v-if="player" class="run-author">
-            <span>played by</span>
-            <RouterLink :to="`/users/${player.user_id}`" class="link-1 user-link">
-                <div class="pfp-box">
-                    <img
-                        :src="`https://a.ppy.sh/${player.user_id}`"
-                        :alt="player.username"
-                        class="pfp"
-                    />
-                </div>
-                <span class="username">{{ player.username }}</span>
-            </RouterLink>
         </div>
     </div>
 
@@ -56,10 +61,7 @@
             <DetailActive v-else-if="pending.status === 'active'" />
             <DetailAbandoned v-else />
         </template>
-        <DetailComplete
-            v-else-if="detail"
-            :detail="detail"
-        />
+        <DetailComplete v-else-if="detail" :detail="detail" />
     </div>
 </template>
 
@@ -79,7 +81,13 @@ import DetailActive from '../components/run-detail/DetailActive.vue'
 import DetailAbandoned from '../components/run-detail/DetailAbandoned.vue'
 import DetailComplete from '../components/run-detail/DetailComplete.vue'
 import { exactTime, timeAgo } from '../lib/time.ts'
-import { TooltipContent, TooltipPortal, TooltipProvider, TooltipRoot, TooltipTrigger } from 'reka-ui'
+import {
+    TooltipContent,
+    TooltipPortal,
+    TooltipProvider,
+    TooltipRoot,
+    TooltipTrigger
+} from 'reka-ui'
 
 const props = defineProps<{ id: string }>()
 
@@ -192,16 +200,19 @@ onScopeDispose(stopPolling)
     justify-content: space-between;
 }
 
+.heading-group {
+    text-align: end;
+    font-size: 1.2rem;
+}
+
 .ended-at {
     color: var(--text-muted-2);
-    font-size: 1.2rem;
 }
 
 .run-author {
     display: flex;
     align-items: center;
-    font-size: 1.2rem;
-    gap: .5rem;
+    gap: 0.5rem;
     height: fit-content;
 }
 
@@ -213,6 +224,12 @@ onScopeDispose(stopPolling)
 .user-link {
     display: flex;
     align-items: center;
-    gap: .5rem;
+    gap: 0.5rem;
+}
+
+.detail-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--default-spacing);
 }
 </style>
