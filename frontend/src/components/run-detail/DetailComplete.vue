@@ -1,6 +1,6 @@
 <template>
-    <div v-if="advanced">
-        <section v-if="advanced">
+    <div>
+        <section>
             <h3>run</h3>
             <p>run time: {{ formatDuration(detail.run.active_elapsed) }}</p>
             <p v-if="pausedSeconds !== null">
@@ -10,27 +10,11 @@
                 total time: {{ formatDuration(wallSeconds) }}
             </p>
         </section>
-        <p>claimed: {{ claimedFcCount }}</p>
-        <p v-if="unconfirmed > 0">not confirmed: {{ unconfirmed }}</p>
-        <p v-else>every map played was judged</p>
         <hr />
-        <p v-if="advanced">pool version: {{ detail.run.pool_version }}</p>
-        <p v-if="advanced">seed: {{ detail.run.seed }}</p>
+        <p>pool version: {{ detail.run.pool_version }}</p>
+        <p>seed: {{ detail.run.seed }}</p>
         <hr />
-        <section v-if="advanced">
-            <h3>difficulty</h3>
-            <p v-if="avgFcStars !== null">
-                average star rating of confirmed fcs:
-                {{ formatStars(avgFcStars) }}
-            </p>
-            <p v-if="avgServedStars !== null">
-                average star rating served: {{ formatStars(avgServedStars) }}
-            </p>
-            <p v-if="avgFcBpm !== null">
-                average bpm of confirmed fcs: {{ Math.round(avgFcBpm) }}
-            </p>
-        </section>
-        <section v-if="advanced">
+        <section>
             <h3>mods used</h3>
             <p v-if="modCounts.length === 0">none</p>
             <ul v-else>
@@ -39,18 +23,8 @@
                 </li>
             </ul>
         </section>
-        <section v-if="disagreements.length > 0 && advanced">
-            <h3>invalid claims</h3>
-            <ul>
-                <li v-for="m in disagreements" :key="m.seq_index">
-                    map {{ m.seq_index + 1 }}: claimed {{ m.claimed_outcome }},
-                    judged
-                    {{ OUTCOME_LABELS[m.outcome] }}
-                </li>
-            </ul>
-        </section>
         <hr />
-        <section v-if="advanced">
+        <section>
             <h3>outcomes</h3>
             <ul>
                 <li v-for="[outcome, count] in outcomeCounts" :key="outcome">
@@ -95,118 +69,142 @@
         <h2 class="section-title">
             timeline
         </h2>
-        <table class="maps-table">
-            <tbody>
-                <template v-for="m in maps" :key="m.seq_index">
-                    <tr
-                        v-if="m.seq_index === detail.run.truncated_at_index"
-                        class="truncation-row"
-                    >
-                        <td class="map-index">
-                            <span class="index-dot"><Flag :size="18" /></span>
-                        </td>
-                        <td colspan="3">
-                            <div class="truncation">
-                                <hr class="separator" />
-                                <span class="truncation-text">
-                                    validation stopped: {{ truncationText }}
-                                </span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="map-index">
-                            <span class="index-dot">{{ m.seq_index + 1 }}</span>
-                        </td>
-                        <td class="mono map-served-time">
-                            {{
-                                formatClock(
-                                    secondsBetween(
-                                        detail.run.started_at,
-                                        m.served_at
-                                    )
-                                )
-                            }}
-                        </td>
-                        <td>
-                            <a
-                                :href="mapHref(m)"
-                                target="_blank"
-                                rel="noreferrer"
-                                :class="`map-link ${!m.confirmed_score_id && 'no-score'}`"
-                            >
-                                <div class="map-info">
-                                    <div class="map-difficulty">
-                                        <span
-                                            :style="{
-                                                backgroundColor: starColor(
-                                                    m.original_star_rating
-                                                ),
-                                                color: starTextColor(
-                                                    m.original_star_rating
-                                                )
-                                            }"
-                                            class="star-rating-label"
-                                        >
-                                            <Star
-                                                :size="14"
-                                                :fill="
-                                                    starTextColor(
-                                                        m.original_star_rating
-                                                    )
-                                                "
-                                            />
-                                            {{
-                                                formatStars(m.original_star_rating)
-                                            }}
-                                        </span>
-                                    </div>
-                                    <span class="map-title">{{ m.title }}</span>
-                                    <span v-if="m.mods?.length" class="map-mods">
-                                        <template
-                                            v-for="mod in m.mods"
-                                            :key="mod.acronym"
-                                        >
-                                            <img
-                                                v-if="modIcon(modName(mod.acronym))"
-                                                :src="modIcon(modName(mod.acronym))"
-                                                :alt="mod.acronym"
-                                                :title="modName(mod.acronym)"
-                                                class="mod-icon"
-                                            />
-                                            <span v-else>{{
-                                                mod.acronym
-                                            }}</span>
-                                        </template>
+        <TooltipProvider :delay-duration="0">
+            <table class="maps-table">
+                <tbody>
+                    <template v-for="m in maps" :key="m.seq_index">
+                        <tr
+                            v-if="m.seq_index === detail.run.truncated_at_index"
+                            class="truncation-row"
+                        >
+                            <td class="map-index">
+                                <span class="index-dot"><Flag :size="18" /></span>
+                            </td>
+                            <td :colspan="hasDisagreements ? 4 : 3">
+                                <div class="truncation">
+                                    <hr class="separator" />
+                                    <span class="truncation-text">
+                                        validation stopped: {{ truncationText }}
                                     </span>
                                 </div>
-                                <MapCover
-                                    :map="m"
-                                    variant="slimcover"
-                                    class="map-img"
-                                />
-                            </a>
-                        </td>
-                        <td>
-                            <div :class="`map-outcome outcome-${m.outcome}`">
-                                <component
-                                    :is="OUTCOME_ICONS[m.outcome]"
-                                />
-                                <span>
-                                    {{ OUTCOME_LABELS[m.outcome] }}
-                                </span>
-                            </div>
-                        </td>
-                    </tr>
-                </template>
-            </tbody>
-        </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="map-index">
+                                <span class="index-dot">{{ m.seq_index + 1 }}</span>
+                            </td>
+                            <td class="mono map-served-time">
+                                {{
+                                    formatClock(
+                                        secondsBetween(
+                                            detail.run.started_at,
+                                            m.served_at
+                                        )
+                                    )
+                                }}
+                            </td>
+                            <td>
+                                <a
+                                    :href="mapHref(m)"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    :class="`map-link ${!m.confirmed_score_id && 'no-score'}`"
+                                >
+                                    <div class="map-info">
+                                        <div class="map-difficulty">
+                                            <span
+                                                :style="{
+                                                    backgroundColor: starColor(
+                                                        m.original_star_rating
+                                                    ),
+                                                    color: starTextColor(
+                                                        m.original_star_rating
+                                                    )
+                                                }"
+                                                class="star-rating-label"
+                                            >
+                                                <Star
+                                                    :size="14"
+                                                    :fill="
+                                                        starTextColor(
+                                                            m.original_star_rating
+                                                        )
+                                                    "
+                                                />
+                                                {{
+                                                    formatStars(m.original_star_rating)
+                                                }}
+                                            </span>
+                                        </div>
+                                        <span class="map-title">{{ m.title }}</span>
+                                        <span v-if="m.mods?.length" class="map-mods">
+                                            <template
+                                                v-for="mod in m.mods"
+                                                :key="mod.acronym"
+                                            >
+                                                <img
+                                                    v-if="modIcon(modName(mod.acronym))"
+                                                    :src="modIcon(modName(mod.acronym))"
+                                                    :alt="mod.acronym"
+                                                    :title="modName(mod.acronym)"
+                                                    class="mod-icon"
+                                                />
+                                                <span v-else>{{
+                                                    mod.acronym
+                                                }}</span>
+                                            </template>
+                                        </span>
+                                    </div>
+                                    <MapCover
+                                        :map="m"
+                                        variant="slimcover"
+                                        class="map-img"
+                                    />
+                                </a>
+                            </td>
+                            <td>
+                                <div :class="`map-outcome outcome-${m.outcome}`">
+                                    <component
+                                        :is="OUTCOME_ICONS[m.outcome]"
+                                    />
+                                    <span>
+                                        {{ OUTCOME_LABELS[m.outcome] }}
+                                    </span>
+                                </div>
+                            </td>
+                            <td v-if="hasDisagreements" class="map-claim">
+                                <TooltipRoot v-if="disagrees(m)">
+                                    <TooltipTrigger class="claim-trigger">
+                                        <TriangleAlert 
+                                            :size="20"
+                                            :aria-label="`invalid claim on map ${m.seq_index + 1}`"
+                                        />
+                                    </TooltipTrigger>
+                                    <TooltipPortal>
+                                        <TooltipContent
+                                            class="tooltip"
+                                            :side-offset="4"
+                                        >
+                                            {{ CLAIM_TEXT[m.claimed_outcome!] }}
+                                            <br />
+                                            but
+                                            {{ VERDICT_TEXT[m.outcome] }}
+                                        </TooltipContent>
+                                    </TooltipPortal>
+                                </TooltipRoot>
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </TooltipProvider>
     </section>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
 import type {
+    ClaimedOutcome,
     MapOutcome,
     RunDetail,
     RunDetailMap,
@@ -222,9 +220,16 @@ import {
 import MapCover from '../MapCover.vue'
 import { modIcon, modName } from '../../lib/mods'
 import { starColor, starTextColor } from '../../lib/stars'
-import { CircleCheck, CircleChevronsRight, CircleDashed, CircleOff, Flag, Star, Ticket, TimerOff, type LucideIcon } from '@lucide/vue'
+import { CircleCheck, CircleChevronsRight, CircleDashed, CircleOff, Flag, Star, Ticket, TimerOff, TriangleAlert, type LucideIcon } from '@lucide/vue'
+import {
+    TooltipContent,
+    TooltipPortal,
+    TooltipProvider,
+    TooltipRoot,
+    TooltipTrigger
+} from 'reka-ui'
 
-const props = defineProps<{ detail: RunDetail; advanced: boolean }>()
+const props = defineProps<{ detail: RunDetail }>()
 
 const OUTCOME_LABELS: Record<MapOutcome, string> = {
     unjudged: 'unjudged',
@@ -233,6 +238,22 @@ const OUTCOME_LABELS: Record<MapOutcome, string> = {
     free_skip: 'free skip',
     unplayable: 'unplayable',
     incomplete_final: 'unfinished'
+}
+
+const CLAIM_TEXT: Record<ClaimedOutcome, string> = {
+    fc: 'the player moved on, which counts as claiming an FC',
+    a_skip: 'the player skipped this map with an A rank',
+    free_skip: 'the player used their free skip here',
+    unplayable: 'the player marked this map as unplayable'
+}
+
+const VERDICT_TEXT: Record<MapOutcome, string> = {
+    unjudged: 'it was never judged',
+    fc: 'the score is a full combo, so it counts as an FC',
+    a_skip: 'the score has a miss, so it counts as an A-rank skip',
+    free_skip: 'it counts as the free skip',
+    unplayable: 'it counts as unplayable',
+    incomplete_final: 'no score was found, so as the last map it counts as unfinished'
 }
 
 const OUTCOME_ICONS: Record<MapOutcome, LucideIcon> = {
@@ -256,17 +277,6 @@ const TRUNCATION_LABELS: Record<TruncationReason, string> = {
 
 const maps = computed(() => props.detail.maps)
 
-const fcMaps = computed(() => maps.value.filter((m) => m.outcome === 'fc'))
-
-const unconfirmed = computed(
-    () =>
-        maps.value.filter(
-            (m) => m.claimed_outcome === 'fc' && m.outcome !== 'fc'
-        ).length
-)
-
-const claimedFcCount = computed(() => fcMaps.value.length + unconfirmed.value)
-
 const truncationText = computed(() => {
     const reason = props.detail.run.truncation_reason
 
@@ -278,16 +288,6 @@ const outcomeCounts = computed(() => tally(maps.value.map((m) => m.outcome)))
 const modCounts = computed(() =>
     tally(maps.value.flatMap((m) => (m.mods ?? []).map((mod) => mod.acronym)))
 )
-
-const avgFcStars = computed(() =>
-    average(fcMaps.value.map((m) => m.original_star_rating))
-)
-
-const avgServedStars = computed(() =>
-    average(maps.value.map((m) => m.original_star_rating))
-)
-
-const avgFcBpm = computed(() => average(fcMaps.value.map((m) => m.bpm)))
 
 const wallSeconds = computed(() => {
     const run = props.detail.run
@@ -301,22 +301,15 @@ const pausedSeconds = computed(() =>
         : Math.max(0, wallSeconds.value - props.detail.run.active_elapsed)
 )
 
-const disagreements = computed(() =>
-    maps.value.filter(
-        (m) =>
-            m.claimed_outcome !== null &&
-            m.outcome !== 'unjudged' &&
-            m.claimed_outcome !== m.outcome
+function disagrees(m: RunDetailMap): boolean {
+    return (
+        m.claimed_outcome !== null &&
+        m.outcome !== 'unjudged' &&
+        m.claimed_outcome !== m.outcome
     )
-)
-
-function average(values: (number | null)[]): number | null {
-    const present = values.filter((value) => value !== null)
-
-    return present.length
-        ? present.reduce((total, value) => total + value, 0) / present.length
-        : null
 }
+
+const hasDisagreements = computed(() => maps.value.some(disagrees))
 
 function mapHref(m: RunDetailMap): string {
     return m.confirmed_score_id
@@ -423,7 +416,6 @@ tr:last-child .map-index::before {
     padding: .25rem;
     border-radius: 50%;
     border: 2px solid var(--surface);
-    min-width: 2rem;
     width: 100%;
     aspect-ratio: 1 / 1;
     background-color: var(--bg-2);
@@ -521,6 +513,12 @@ tr:last-child .map-index::before {
     display: flex;
     align-items: center;
     gap: .5rem;
+}
+
+.claim-trigger {
+    display: flex;
+    color: var(--text-muted-2);
+    cursor: help;
 }
 
 .outcome-unjudged {

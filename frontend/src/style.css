@@ -140,10 +140,15 @@ button {
     padding: 0.25rem 0.5rem;
     font-size: 1rem;
     animation: tooltip-in 0.1s;
+    z-index: 727; /* :iwanttodie: */
 }
 
 .tooltip[data-state='closed'] {
     animation: tooltip-out 0.1s;
+}
+
+.tooltip-time {
+    color: var(--text-muted-2);
 }
 
 .mono {

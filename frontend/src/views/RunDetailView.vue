@@ -1,22 +1,44 @@
 <template>
-    <div class="title-section shared-section">
-        <h1 class="title">run {{ id }}</h1>
-        <hr class="separator" />
-    </div>
-
-    <div class="run-info">
-        <p v-if="player" class="subtitle">
-            {{ statusLabel }} by
-            <RouterLink :to="`/users/${player.user_id}`" class="link-1">
-                {{ player.username }}
+    <div class="heading">
+        <div class="title-section">
+            <h1 class="title">run {{ id }}</h1>
+            <hr class="separator" />
+            <p class="run-status subtitle">{{ statusLabel }}</p>
+            <TooltipProvider v-if="endedAt" :delay-duration="0">
+                <TooltipRoot>
+                    <TooltipTrigger
+                        as="time"
+                        :datetime="endedAt"
+                        class="ended-at"
+                    >
+                        {{ timeAgo(endedAt) }}
+                    </TooltipTrigger>
+                    <TooltipPortal>
+                        <TooltipContent class="tooltip" :side-offset="4">
+                            <p>
+                                {{ exactTime(endedAt).date }}
+                                <span class="tooltip-time">
+                                    {{ exactTime(endedAt).time }}
+                                </span>
+                            </p>
+                        </TooltipContent>
+                    </TooltipPortal>
+                </TooltipRoot>
+            </TooltipProvider>
+        </div>
+        <div v-if="player" class="run-author">
+            <span>played by</span>
+            <RouterLink :to="`/users/${player.user_id}`" class="link-1 user-link">
+                <div class="pfp-box">
+                    <img
+                        :src="`https://a.ppy.sh/${player.user_id}`"
+                        :alt="player.username"
+                        class="pfp"
+                    />
+                </div>
+                <span class="username">{{ player.username }}</span>
             </RouterLink>
-        </p>
-        <p v-if="endedAt" class="ended-at">
-            <time :datetime="endedAt">
-                {{ exactTime(endedAt).date }}
-                <span class="ended-time">{{ exactTime(endedAt).time }}</span>
-            </time>
-        </p>
+        </div>
     </div>
 
     <div class="detail-container">
@@ -56,7 +78,8 @@ import DetailAwaiting from '../components/run-detail/DetailAwaiting.vue'
 import DetailActive from '../components/run-detail/DetailActive.vue'
 import DetailAbandoned from '../components/run-detail/DetailAbandoned.vue'
 import DetailComplete from '../components/run-detail/DetailComplete.vue'
-import { exactTime } from '../lib/time.ts'
+import { exactTime, timeAgo } from '../lib/time.ts'
+import { TooltipContent, TooltipPortal, TooltipProvider, TooltipRoot, TooltipTrigger } from 'reka-ui'
 
 const props = defineProps<{ id: string }>()
 
@@ -164,15 +187,32 @@ onScopeDispose(stopPolling)
 </script>
 
 <style scoped>
-.run-info {
-
+.heading {
+    display: flex;
+    justify-content: space-between;
 }
 
 .ended-at {
     color: var(--text-muted-2);
+    font-size: 1.2rem;
 }
 
-.detail-container {
+.run-author {
+    display: flex;
+    align-items: center;
     font-size: 1.2rem;
+    gap: .5rem;
+    height: fit-content;
+}
+
+.pfp-box {
+    height: 2rem;
+    corner-shape: initial;
+}
+
+.user-link {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
 }
 </style>

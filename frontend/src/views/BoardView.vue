@@ -365,10 +365,6 @@ watch(
     text-decoration: underline;
 }
 
-.tooltip-time {
-    color: var(--text-muted-2);
-}
-
 .pfp {
     height: calc(48px * 0.8);
 }
