@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common'
+import { APP_GUARD } from '@nestjs/core'
 import { ScheduleModule } from '@nestjs/schedule'
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
 import { DbModule } from './db/db.module'
 import { PoolModule } from './pool/pool.module'
 import { RunsModule } from './runs/runs.module'
@@ -12,6 +14,9 @@ import { ProfilesModule } from './profiles/profiles.module'
 @Module({
     imports: [
         ScheduleModule.forRoot(),
+        ThrottlerModule.forRoot([
+            { ttl: 60_000, limit: 120, blockDuration: 0 }
+        ]),
         DbModule,
         PoolModule,
         RunsModule,
@@ -20,6 +25,7 @@ import { ProfilesModule } from './profiles/profiles.module'
         AuthModule,
         LeaderboardsModule,
         ProfilesModule
-    ]
+    ],
+    providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }]
 })
 export class AppModule {}
