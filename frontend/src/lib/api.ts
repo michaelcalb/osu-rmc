@@ -1,3 +1,5 @@
+import { markRateLimited } from '../composables/useRateLimit'
+
 const BASE = import.meta.env.VITE_API_URL
 
 if (!BASE) {
@@ -25,6 +27,10 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
     const text = await res.text()
 
     if (!res.ok) {
+        if (res.status === 429) {
+            markRateLimited()
+        }
+
         throw new ApiError(res.status, errorMessage(text, res.status))
     }
 

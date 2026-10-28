@@ -1,4 +1,4 @@
-import type { Board } from "./types"
+import type { Board } from './types'
 
 const score = new Intl.NumberFormat('en', { maximumFractionDigits: 0 })
 

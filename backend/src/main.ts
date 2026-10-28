@@ -14,8 +14,7 @@ async function bootstrap() {
 
     app.enableCors({
         origin: requireEnv('FRONTEND_URL'),
-        credentials: true,
-        exposedHeaders: ['Retry-After']
+        credentials: true
     })
 
     app.enableShutdownHooks()

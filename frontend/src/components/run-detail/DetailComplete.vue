@@ -345,7 +345,7 @@ function secondsBetween(from: string, to: string): number {
     color: var(--text-muted-3);
     display: flex;
     align-items: center;
-    gap: .5rem;
+    gap: 0.5rem;
     font-weight: 500;
 }
 
@@ -362,9 +362,9 @@ function secondsBetween(from: string, to: string): number {
 
 .stats > * {
     background: var(--bg-2);
-    padding: .5rem 2rem;
-    border-radius: .5rem;
-    border: 2px solid var(--border);    
+    padding: 0.5rem 2rem;
+    border-radius: 0.5rem;
+    border: 2px solid var(--border);
 }
 
 .stat-label {

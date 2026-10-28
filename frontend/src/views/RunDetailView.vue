@@ -32,7 +32,12 @@
                         {{ timeAgo(endedAt) }}
                     </TooltipTrigger>
                     <TooltipPortal>
-                        <TooltipContent class="tooltip" :side-offset="4" side="bottom" align="end">
+                        <TooltipContent
+                            class="tooltip"
+                            :side-offset="4"
+                            side="bottom"
+                            align="end"
+                        >
                             <p>
                                 {{ exactTime(endedAt).date }}
                                 <span class="tooltip-time">

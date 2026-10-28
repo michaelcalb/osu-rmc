@@ -6,11 +6,14 @@
     </main>
 
     <AppFooter />
+
+    <RateLimitDialog />
 </template>
 
 <script setup lang="ts">
 import AppFooter from './components/AppFooter.vue'
 import AppHeader from './components/AppHeader.vue'
+import RateLimitDialog from './components/RateLimitDialog.vue'
 </script>
 
 <style scoped>

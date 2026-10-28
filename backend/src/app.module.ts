@@ -14,9 +14,7 @@ import { ProfilesModule } from './profiles/profiles.module'
 @Module({
     imports: [
         ScheduleModule.forRoot(),
-        ThrottlerModule.forRoot([
-            { ttl: 60_000, limit: 120, blockDuration: 0 }
-        ]),
+        ThrottlerModule.forRoot([{ ttl: 60_000, limit: 90, blockDuration: 0 }]),
         DbModule,
         PoolModule,
         RunsModule,

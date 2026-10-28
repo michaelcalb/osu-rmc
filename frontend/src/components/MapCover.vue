@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { coverUrl, type CoverVariant } from '../lib/covers';
+import { coverUrl, type CoverVariant } from '../lib/covers'
 import type { ServedMap } from '../lib/types'
 import defaultBg from '../assets/default-map-bg.jpg'
 
