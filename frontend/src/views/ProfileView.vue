@@ -161,7 +161,7 @@ watch(
     width: fit-content;
     background-color: var(--bg-2);
     font-weight: 400;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     padding: 0.25rem 1rem;
     border: 2px solid var(--border);
     border-bottom: 2px solid transparent;
@@ -192,13 +192,13 @@ watch(
 }
 
 .board-label {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: 300;
     color: var(--text-muted-2);
 }
 
 .board-value {
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: 500;
 }
 
@@ -207,7 +207,7 @@ watch(
     grid-template-columns: max-content 1fr;
     gap: 0.5rem 2rem;
     align-content: start;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
 }
 
 .stats-box dt {

@@ -96,7 +96,7 @@ import { RouterLink } from 'vue-router'
 
 .intro-section {
     text-align: justify;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
 }
 
 .idk-section {

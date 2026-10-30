@@ -147,7 +147,7 @@ const BANNED_MODS = ['autoplay', 'cinema', 'relax', 'autopilot', 'spun out']
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
 }
 
 .mode-rules {

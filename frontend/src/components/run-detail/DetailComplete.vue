@@ -374,7 +374,7 @@ function secondsBetween(from: string, to: string): number {
 
 .section-title {
     font-weight: 400;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     background-color: var(--bg-2);
     width: fit-content;
     margin-left: 0.5rem;
