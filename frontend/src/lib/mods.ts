@@ -49,6 +49,20 @@ const MOD_NAMES: Record<string, string> = {
     SV2: 'score v2'
 }
 
+export const ALLOWED_MODS: readonly string[] = [
+    'NF',
+    'AC',
+    'PF',
+    'SD',
+    'ST',
+    'CL',
+    'MR',
+    'AL',
+    'SG',
+    'TD'
+]
+export const BANNED_MODS: readonly string[] = ['AT', 'CN', 'RX', 'AP', 'SO']
+
 const icons = import.meta.glob<string>('../assets/mods/*.png', {
     eager: true,
     import: 'default'
