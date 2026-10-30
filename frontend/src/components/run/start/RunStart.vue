@@ -107,16 +107,6 @@ const declaredMode = ref<Board>('no_mod')
     gap: 1rem;
 }
 
-.mod-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
-
-.mod-icon {
-    height: 1.75rem;
-}
-
 .mode-description {
     margin: var(--default-spacing) 0;
 }
