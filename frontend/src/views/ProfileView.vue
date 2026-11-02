@@ -1,8 +1,7 @@
 <template>
     <Note v-if="profile"> wip, expect changes </Note>
 
-    <p v-if="loading">loading...</p>
-    <ErrorPage v-else-if="error !== null" :status="error" />
+    <ErrorPage v-if="error !== null" :status="error" />
     <template v-else-if="profile">
         <section class="title-section">
             <div>
@@ -83,7 +82,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import { ApiError, get } from '../lib/api'
 import type { Profile } from '../lib/types'
 import { formatHours } from '../lib/time'
@@ -95,27 +94,13 @@ import ErrorPage from '../components/ErrorPage.vue'
 const props = defineProps<{ id: string }>()
 
 const profile = ref<Profile | null>(null)
-const loading = ref(true)
 const error = ref<number | null>(null)
 
-watch(
-    () => props.id,
-    async (id) => {
-        loading.value = true
-        error.value = null
-
-        try {
-            profile.value = await get<Profile>(`/users/${id}`)
-        } catch (e) {
-            error.value =
-                e instanceof ApiError ? e.status : 0
-            profile.value = null
-        } finally {
-            loading.value = false
-        }
-    },
-    { immediate: true }
-)
+try {
+    profile.value = await get<Profile>(`/users/${props.id}`)
+} catch (e) {
+    error.value = e instanceof ApiError ? e.status : 0
+}
 </script>
 
 <style scoped>

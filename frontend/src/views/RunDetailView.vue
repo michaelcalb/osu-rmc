@@ -54,9 +54,7 @@
         </div>
 
         <div class="detail-container">
-            <p v-if="loading">loading...</p>
-
-            <template v-else-if="pending">
+            <template v-if="pending">
                 <DetailValidating
                     v-if="validating"
                     :slow="slow"
@@ -75,7 +73,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onScopeDispose, ref, watch } from 'vue'
+import { computed, onScopeDispose, ref } from 'vue'
 import { ApiError, get } from '../lib/api'
 import type {
     RunDetail,
@@ -116,7 +114,6 @@ const MAX_POLLS = 6
 
 const detail = ref<RunDetail | null>(null)
 const pending = ref<UnfinishedRun | null>(null)
-const loading = ref(true)
 const error = ref<number | null>(null)
 const pollError = ref<string | null>(null)
 const polls = ref(0)
@@ -187,30 +184,15 @@ function armPoll(id: string) {
     }, POLL_MS)
 }
 
-watch(
-    () => props.id,
-    async (id) => {
-        stopPolling()
-        polls.value = 0
-        loading.value = true
-        error.value = null
-        pollError.value = null
-
-        try {
-            await fetchRun(id)
-        } catch (e) {
-            error.value = e instanceof ApiError ? e.status : 0
-            detail.value = null
-            pending.value = null
-        }
-
-        loading.value = false
-        armPoll(id)
-    },
-    { immediate: true }
-)
-
 onScopeDispose(stopPolling)
+
+try {
+    await fetchRun(props.id)
+} catch (e) {
+    error.value = e instanceof ApiError ? e.status : 0
+}
+
+armPoll(props.id)
 </script>
 
 <style scoped>

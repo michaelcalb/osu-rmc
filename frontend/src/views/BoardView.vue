@@ -60,8 +60,7 @@
             </PaginationRoot>
         </nav>
 
-        <p v-if="loading">loading...</p>
-        <ErrorMessage v-else-if="error">{{ error }}</ErrorMessage>
+        <ErrorMessage v-if="error">{{ error }}</ErrorMessage>
         <p v-else-if="rows.length === 0">no runs yet</p>
         <TooltipProvider v-else :delay-duration="0">
             <table class="lb-table">
@@ -153,7 +152,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { ChevronLeft, ChevronRight } from '@lucide/vue'
 import {
@@ -179,8 +178,7 @@ const LIMIT = 10
 
 const router = useRouter()
 
-const route = useRoute()
-const board = computed(() => String(route.params.board))
+const board = String(useRoute().params.board)
 
 const rows = ref<BoardRow[]>([])
 const page = ref(1)
@@ -199,7 +197,7 @@ async function load() {
 
     try {
         const result = await get<BoardPage>(
-            `/leaderboards/${board.value}?limit=${LIMIT}&offset=${offset.value}`
+            `/leaderboards/${board}?limit=${LIMIT}&offset=${offset.value}`
         )
 
         if (token !== latest) {
@@ -228,14 +226,7 @@ function goTo(value: number) {
     void load()
 }
 
-watch(
-    board,
-    () => {
-        page.value = 1
-        void load()
-    },
-    { immediate: true }
-)
+await load()
 </script>
 
 <style scoped>

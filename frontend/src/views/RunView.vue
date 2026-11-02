@@ -1,6 +1,5 @@
 <template>
-    <p v-if="loading">loading...</p>
-    <ErrorPage v-else-if="loadError !== null" :status="loadError" />
+    <ErrorPage v-if="loadError !== null" :status="loadError" />
 
     <template v-else-if="run && !validating">
         <RunAwaiting
@@ -37,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useRun } from '../composables/useRun'
 import RunActive from '../components/run/active/RunActive.vue'
@@ -48,7 +47,6 @@ import ErrorMessage from '../components/ErrorMessage.vue'
 import ErrorPage from '../components/ErrorPage.vue'
 
 const router = useRouter()
-const loading = ref(true)
 const starting = ref(false)
 const loadError = ref<number | null>(null)
 
@@ -83,15 +81,11 @@ const validating = computed(
             run.value?.status === 'validating')
 )
 
-onMounted(async () => {
-    await load()
+await load()
 
-    if (error.value) {
-        loadError.value = errorStatus.value
-    }
-
-    loading.value = false
-})
+if (error.value) {
+    loadError.value = errorStatus.value
+}
 
 async function onStart(mode: Board) {
     starting.value = true
