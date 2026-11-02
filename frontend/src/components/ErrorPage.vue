@@ -1,16 +1,13 @@
 <template>
     <section class="error-page">
         <div class="error-container">
-            <hr class="v-separator">
+            <hr class="v-separator" />
             <div class="error-message">
                 <h1 class="error-code mono" v-if="status">{{ status }}</h1>
                 <p class="error-desc">{{ message }}</p>
             </div>
         </div>
-        <img
-            src="../assets/error.png"
-            class="image"
-        />
+        <img src="../assets/error.png" class="image" />
     </section>
 </template>
 
@@ -22,7 +19,7 @@ const { status } = defineProps<{ status: number }>()
 const MESSAGES: Record<number, string> = {
     0: "couldn't reach the server. either it's down or you're offline.",
     400: "the server didn't understand that request.",
-    404: "page not found."
+    404: 'page not found.'
 }
 
 const message = computed(
@@ -50,7 +47,7 @@ const message = computed(
 .error-message {
     display: flex;
     flex-direction: column;
-    gap: .5rem;
+    gap: 0.5rem;
 }
 
 .error-code {

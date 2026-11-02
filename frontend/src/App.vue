@@ -6,7 +6,10 @@
             <Suspense
                 v-if="Component"
                 @pending="navigating = true"
-                @resolve="navigating = false; ready = true"
+                @resolve="
+                    navigating = false
+                    ready = true
+                "
             >
                 <component :is="Component" :key="route.path" />
             </Suspense>
