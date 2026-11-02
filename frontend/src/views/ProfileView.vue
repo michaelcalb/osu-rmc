@@ -1,8 +1,8 @@
 <template>
-    <Note> wip, expect changes </Note>
+    <Note v-if="profile"> wip, expect changes </Note>
 
     <p v-if="loading">loading...</p>
-    <p v-else-if="error">error: {{ error }}</p>
+    <ErrorPage v-else-if="error !== null" :status="error" />
     <template v-else-if="profile">
         <section class="title-section">
             <div>
@@ -90,12 +90,13 @@ import { formatHours } from '../lib/time'
 import { formatAccuracy, formatBoard } from '../lib/format.ts'
 import { ExternalLink } from '@lucide/vue'
 import Note from '../components/Note.vue'
+import ErrorPage from '../components/ErrorPage.vue'
 
 const props = defineProps<{ id: string }>()
 
 const profile = ref<Profile | null>(null)
 const loading = ref(true)
-const error = ref<string | null>(null)
+const error = ref<number | null>(null)
 
 watch(
     () => props.id,
@@ -107,7 +108,7 @@ watch(
             profile.value = await get<Profile>(`/users/${id}`)
         } catch (e) {
             error.value =
-                e instanceof ApiError ? e.message : 'could not load profile'
+                e instanceof ApiError ? e.status : 0
             profile.value = null
         } finally {
             loading.value = false

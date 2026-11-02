@@ -61,7 +61,7 @@
         </nav>
 
         <p v-if="loading">loading...</p>
-        <p v-else-if="error">error: {{ error }}</p>
+        <ErrorMessage v-else-if="error">{{ error }}</ErrorMessage>
         <p v-else-if="rows.length === 0">no runs yet</p>
         <TooltipProvider v-else :delay-duration="0">
             <table class="lb-table">
@@ -173,6 +173,7 @@ import { ApiError, get } from '../lib/api'
 import type { BoardPage, BoardRow } from '../lib/types'
 import { exactTime, timeAgo } from '../lib/time'
 import { formatAccuracy, formatScore } from '../lib/format'
+import ErrorMessage from '../components/ErrorMessage.vue'
 
 const LIMIT = 10
 
@@ -212,7 +213,7 @@ async function load() {
             return
         }
 
-        error.value = e instanceof ApiError ? e.message : 'could not load board'
+        error.value = e instanceof ApiError ? e.message : "couldn't load board"
         rows.value = []
         total.value = 0
     } finally {

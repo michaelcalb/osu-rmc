@@ -27,21 +27,27 @@ const router = createRouter({
             meta: { requiresAuth: true }
         },
         {
-            path: '/boards/:board',
+            path: '/boards/:board(no_mod|free_mod)',
             name: 'board',
             component: () => import('./views/BoardView.vue')
         },
         {
-            path: '/runs/:id',
+            path: '/runs/:id(\\d+)',
             name: 'run-detail',
             component: () => import('./views/RunDetailView.vue'),
             props: true
         },
         {
-            path: '/users/:id',
+            path: '/users/:id(\\d+)',
             name: 'profile',
             component: () => import('./views/ProfileView.vue'),
             props: true
+        },
+        {
+            path: '/:pathMatch(.*)*',
+            name: 'not-found',
+            component: () => import('./components/ErrorPage.vue'),
+            props: { status: 404 }
         }
     ],
     scrollBehavior(to) {

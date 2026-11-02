@@ -1,73 +1,77 @@
 <template>
-    <div class="heading">
-        <div class="title-section">
-            <h1 class="title">run {{ id }}</h1>
-            <hr class="separator" />
-            <p class="run-status subtitle">{{ statusLabel }}</p>
-        </div>
-        <div v-if="player" class="heading-group">
-            <div class="run-author">
-                <span>played by</span>
-                <RouterLink
-                    :to="`/users/${player.user_id}`"
-                    class="link-1 user-link"
-                >
-                    <div class="pfp-box">
-                        <img
-                            :src="`https://a.ppy.sh/${player.user_id}`"
-                            :alt="player.username"
-                            class="pfp"
-                        />
-                    </div>
-                    <span class="username">{{ player.username }}</span>
-                </RouterLink>
+    <ErrorPage v-if="error !== null" :status="error" />
+    <template v-else>
+        <div class="heading">
+            <div class="title-section">
+                <h1 class="title">run {{ id }}</h1>
+                <hr class="separator" />
+                <p class="run-status subtitle">{{ statusLabel }}</p>
             </div>
-            <TooltipProvider v-if="endedAt" :delay-duration="0">
-                <TooltipRoot>
-                    <TooltipTrigger
-                        as="time"
-                        :datetime="endedAt"
-                        class="ended-at"
+            <div v-if="player" class="heading-group">
+                <div class="run-author">
+                    <span>played by</span>
+                    <RouterLink
+                        :to="`/users/${player.user_id}`"
+                        class="link-1 user-link"
                     >
-                        {{ timeAgo(endedAt) }}
-                    </TooltipTrigger>
-                    <TooltipPortal>
-                        <TooltipContent
-                            class="tooltip"
-                            :side-offset="4"
-                            side="bottom"
-                            align="end"
+                        <div class="pfp-box">
+                            <img
+                                :src="`https://a.ppy.sh/${player.user_id}`"
+                                :alt="player.username"
+                                class="pfp"
+                            />
+                        </div>
+                        <span class="username">{{ player.username }}</span>
+                    </RouterLink>
+                </div>
+                <TooltipProvider v-if="endedAt" :delay-duration="0">
+                    <TooltipRoot>
+                        <TooltipTrigger
+                            as="time"
+                            :datetime="endedAt"
+                            class="ended-at"
                         >
-                            <p>
-                                {{ exactTime(endedAt).date }}
-                                <span class="tooltip-time">
-                                    {{ exactTime(endedAt).time }}
-                                </span>
-                            </p>
-                        </TooltipContent>
-                    </TooltipPortal>
-                </TooltipRoot>
-            </TooltipProvider>
+                            {{ timeAgo(endedAt) }}
+                        </TooltipTrigger>
+                        <TooltipPortal>
+                            <TooltipContent
+                                class="tooltip"
+                                :side-offset="4"
+                                side="bottom"
+                                align="end"
+                            >
+                                <p>
+                                    {{ exactTime(endedAt).date }}
+                                    <span class="tooltip-time">
+                                        {{ exactTime(endedAt).time }}
+                                    </span>
+                                </p>
+                            </TooltipContent>
+                        </TooltipPortal>
+                    </TooltipRoot>
+                </TooltipProvider>
+            </div>
         </div>
-    </div>
 
-    <div class="detail-container">
-        <p v-if="loading">loading...</p>
-        <p v-else-if="error">error: {{ error }}</p>
+        <div class="detail-container">
+            <p v-if="loading">loading...</p>
 
-        <template v-else-if="pending">
-            <DetailValidating
-                v-if="validating"
-                :slow="slow"
-                :delayed="pending.delayed"
-            />
-            <DetailVoid v-else-if="pending.status === 'void'" />
-            <DetailAwaiting v-else-if="pending.awaitingValidation" />
-            <DetailActive v-else-if="pending.status === 'active'" />
-            <DetailAbandoned v-else />
-        </template>
-        <DetailComplete v-else-if="detail" :detail="detail" />
-    </div>
+            <template v-else-if="pending">
+                <DetailValidating
+                    v-if="validating"
+                    :slow="slow"
+                    :delayed="pending.delayed"
+                />
+                <DetailVoid v-else-if="pending.status === 'void'" />
+                <DetailAwaiting v-else-if="pending.awaitingValidation" />
+                <DetailActive v-else-if="pending.status === 'active'" />
+                <DetailAbandoned v-else />
+            </template>
+            <DetailComplete v-else-if="detail" :detail="detail" />
+
+            <ErrorMessage v-if="pollError">{{ pollError }}</ErrorMessage>
+        </div>
+    </template>
 </template>
 
 <script setup lang="ts">
@@ -85,6 +89,8 @@ import DetailAwaiting from '../components/run-detail/DetailAwaiting.vue'
 import DetailActive from '../components/run-detail/DetailActive.vue'
 import DetailAbandoned from '../components/run-detail/DetailAbandoned.vue'
 import DetailComplete from '../components/run-detail/DetailComplete.vue'
+import ErrorPage from '../components/ErrorPage.vue'
+import ErrorMessage from '../components/ErrorMessage.vue'
 import { exactTime, timeAgo } from '../lib/time.ts'
 import {
     TooltipContent,
@@ -111,7 +117,8 @@ const MAX_POLLS = 6
 const detail = ref<RunDetail | null>(null)
 const pending = ref<UnfinishedRun | null>(null)
 const loading = ref(true)
-const error = ref<string | null>(null)
+const error = ref<number | null>(null)
+const pollError = ref<string | null>(null)
 const polls = ref(0)
 
 let timer: ReturnType<typeof setTimeout> | null = null
@@ -146,17 +153,10 @@ const player = computed(() => detail.value?.run ?? pending.value)
 const endedAt = computed(() => detail.value?.run.ended_at ?? null)
 
 async function fetchRun(id: string) {
-    try {
-        const lookup = await get<RunLookup>(`/leaderboards/runs/${id}`)
+    const lookup = await get<RunLookup>(`/leaderboards/runs/${id}`)
 
-        error.value = null
-        detail.value = lookup.status === 'complete' ? lookup : null
-        pending.value = lookup.status === 'complete' ? null : lookup
-    } catch (e) {
-        error.value = e instanceof ApiError ? e.message : 'could not load run'
-        detail.value = null
-        pending.value = null
-    }
+    detail.value = lookup.status === 'complete' ? lookup : null
+    pending.value = lookup.status === 'complete' ? null : lookup
 }
 
 function stopPolling() {
@@ -175,7 +175,13 @@ function armPoll(id: string) {
         timer = null
         polls.value += 1
 
-        await fetchRun(id)
+        try {
+            await fetchRun(id)
+            pollError.value = null
+        } catch (e) {
+            pollError.value =
+                e instanceof ApiError ? e.message : "couldn't refresh run"
+        }
 
         armPoll(id)
     }, POLL_MS)
@@ -187,8 +193,16 @@ watch(
         stopPolling()
         polls.value = 0
         loading.value = true
+        error.value = null
+        pollError.value = null
 
-        await fetchRun(id)
+        try {
+            await fetchRun(id)
+        } catch (e) {
+            error.value = e instanceof ApiError ? e.status : 0
+            detail.value = null
+            pending.value = null
+        }
 
         loading.value = false
         armPoll(id)

@@ -55,9 +55,9 @@
                     rel="noopener noreferrer"
                     class="link-1"
                     >Discord</a
-                >. thanks for playing <span class="mono">;&rpar;</span>
+                >. thanks for playing <span class="mono">&lt;3</span>
             </p>
-            <p>glhf! <span class="mono">&lt;3</span></p>
+            <p>glhf! <span class="mono">;&rpar;</span></p>
         </section>
         <section class="idk-section">
             <span>empty space <span class="mono">;&lpar;</span></span>

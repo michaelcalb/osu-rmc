@@ -114,6 +114,7 @@
 <script setup lang="ts">
 import { RouterLink, useRouter } from 'vue-router'
 import { useSession } from '../composables/useSession'
+import { ApiError } from '../lib/api.ts'
 import AppPopover from './AppPopover.vue'
 import {
     Asterisk,
@@ -131,7 +132,16 @@ const { user, loading, login, logout } = useSession()
 const ICON_SIZE = 20
 
 async function signOut() {
-    await logout()
+    try {
+        await logout()
+    } catch (e) {
+        if (!(e instanceof ApiError && e.status === 429)) {
+            alert("couldn't log out. please try again in a bit.")
+        }
+
+        return
+    }
+
     await router.push({ name: 'home' })
 }
 </script>

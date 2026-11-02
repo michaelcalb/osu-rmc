@@ -10,6 +10,7 @@ export function useRun() {
     const map = ref<ServedMap | null>(null)
     const clock = ref<Clock | null>(null)
     const error = ref<string | null>(null)
+    const errorStatus = ref<number | null>(null)
     const busy = ref(false)
 
     const syncedAt = ref(0)
@@ -64,11 +65,13 @@ export function useRun() {
     async function call<T>(fn: () => Promise<T>): Promise<T | null> {
         busy.value = true
         error.value = null
+        errorStatus.value = null
 
         try {
             return await fn()
         } catch (e) {
             error.value = e instanceof ApiError ? e.message : 'request failed'
+            errorStatus.value = e instanceof ApiError ? e.status : 0
             return null
         } finally {
             busy.value = false
@@ -152,6 +155,7 @@ export function useRun() {
         run,
         map,
         error,
+        errorStatus,
         busy,
         prepSecondsLeft,
         mainSecondsLeft,

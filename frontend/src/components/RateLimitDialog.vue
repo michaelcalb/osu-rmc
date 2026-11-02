@@ -8,7 +8,7 @@
                     <span class="mono">&gt;&colon;&lpar;</span></DialogTitle
                 >
                 <DialogDescription>
-                    you're making too many requests. please, try again later.
+                    you're making too many requests. please try again later.
                 </DialogDescription>
                 <DialogClose class="rate-limit-close">ok, sorry</DialogClose>
             </DialogContent>
