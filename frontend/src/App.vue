@@ -6,10 +6,7 @@
             <Suspense
                 v-if="Component"
                 @pending="navigating = true"
-                @resolve="
-                    navigating = false
-                    ready = true
-                "
+                @resolve="onResolve"
             >
                 <component :is="Component" :key="route.path" />
             </Suspense>
@@ -34,6 +31,11 @@ import { ref } from 'vue'
 
 const navigating = ref(false)
 const ready = ref(false)
+
+function onResolve() {
+    navigating.value = false
+    ready.value = true
+}
 </script>
 
 <style scoped>
