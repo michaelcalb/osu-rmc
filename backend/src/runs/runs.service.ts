@@ -1,7 +1,5 @@
 import {
     ConflictException,
-    HttpException,
-    HttpStatus,
     Inject,
     Injectable,
     NotFoundException
@@ -128,9 +126,8 @@ export class RunsService {
             .executeTakeFirstOrThrow()
 
         if (Number(row.count) >= MAX_STARTS_PER_HOUR) {
-            throw new HttpException(
-                `limit is ${MAX_STARTS_PER_HOUR} runs per hour`,
-                HttpStatus.TOO_MANY_REQUESTS
+            throw new ConflictException(
+                `limit is ${MAX_STARTS_PER_HOUR} runs per hour`
             )
         }
     }
