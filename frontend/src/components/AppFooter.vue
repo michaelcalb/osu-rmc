@@ -1,7 +1,14 @@
 <template>
     <footer class="footer">
         <div class="f-content">
-            <span class="version"> v{{ version }} </span>
+            <span class="version">
+                v{{ commit.date }}・<a
+                    :href="`https://github.com/michaelcalb/osu-rmc/commit/${commit.hash}`"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >{{ commit.hash }}</a
+                >
+            </span>
             <span class="f-text"
                 >made with
                 <abbr
@@ -26,9 +33,9 @@
 
 <script setup lang="ts">
 import { Heart } from '@lucide/vue'
-import { version } from '../../package.json'
 import { ref, watch } from 'vue'
 
+const commit = __COMMIT__
 const doYouLoveMeLoveMeLoveMe = ref(false)
 let previousTitle = ''
 
@@ -83,6 +90,6 @@ watch(doYouLoveMeLoveMeLoveMe, (love) => {
 }
 
 .version {
-    opacity: 0.273;
+    opacity: 0.5;
 }
 </style>
