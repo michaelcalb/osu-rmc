@@ -1,3 +1,5 @@
+import { createHash } from "node:crypto"
+
 export const SEQUENCE_LENGTH = 60
 
 // ABSOLUTELY DO NOT TOUCH THIS
@@ -29,28 +31,15 @@ export function generateSeed(): string {
         .join('')
 }
 
-function hashSeed(seed: string): number {
-    let hash = 0x811c9dc5
-
-    for (let i = 0; i < seed.length; i++) {
-        hash ^= seed.charCodeAt(i)
-        hash = Math.imul(hash, 0x01000193) >>> 0
-    }
-
-    return hash
-}
-
 export function createRng(seed: string): () => number {
-    let state = hashSeed(seed)
+    let counter = 0
 
     return function next(): number {
-        state = (state + 0x6d2b79f5) >>> 0
+        const digest = createHash('sha256')
+            .update(`${seed}:${counter++}`)
+            .digest()
 
-        let t = state
-        t = Math.imul(t ^ (t >>> 15), t | 1)
-        t ^= t + Math.imul(t ^ (t >>> 7), t | 61)
-
-        return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+        return digest.readUintBE(0, 6) / 2 ** 48
     }
 }
 
