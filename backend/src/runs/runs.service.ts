@@ -465,8 +465,18 @@ export class RunsService {
             throw new ConflictException('time expired')
         }
 
-        if (outcome === 'free_skip' && run.free_skip_used) {
-            throw new ConflictException('free skip already used')
+        if (outcome === 'free_skip') {
+            const claimed = await this.db
+                .updateTable('runs')
+                .set({ free_skip_used: true })
+                .where('id', '=', runId)
+                .where('free_skip_used', '=', false)
+                .returning('id')
+                .executeTakeFirst()
+
+            if (!claimed) {
+                throw new ConflictException('free skip already used')
+            }
         }
 
         const current = await this.db
@@ -487,14 +497,6 @@ export class RunsService {
             .where('run_id', '=', runId)
             .where('seq_index', '=', current.seq_index)
             .execute()
-
-        if (outcome === 'free_skip') {
-            await this.db
-                .updateTable('runs')
-                .set({ free_skip_used: true })
-                .where('id', '=', runId)
-                .execute()
-        }
 
         return this.revealNext(userId, runId)
     }
