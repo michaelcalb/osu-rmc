@@ -18,6 +18,7 @@ import {
     STATE_COOKIE_PATH,
     readSession,
     sessionCookieOptions,
+    sessionValue,
     stateCookieOptions
 } from './session'
 
@@ -55,7 +56,7 @@ export class AuthController {
 
         const identity = await this.auth.login(code)
 
-        res.cookie(SESSION_COOKIE, String(identity.id), sessionCookieOptions())
+        res.cookie(SESSION_COOKIE, sessionValue(identity.id), sessionCookieOptions())
 
         const frontend = process.env.FRONTEND_URL
 

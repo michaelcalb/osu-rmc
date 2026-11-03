@@ -21,6 +21,10 @@ export function sessionCookieOptions(): CookieOptions {
     return { ...baseOptions(), path: '/', maxAge: SESSION_MAX_AGE_MS }
 }
 
+export function sessionValue(userId: number): string {
+    return `${userId}:${Date.now()}`
+}
+
 export function stateCookieOptions(): CookieOptions {
     return {
         ...baseOptions(),
@@ -36,7 +40,11 @@ export function readSession(req: Request): number | null {
         return null
     }
 
-    const id = Number(raw)
+    const [id, issuedAt] = raw.split(':').map(Number)
 
-    return Number.isInteger(id) && id > 0 ? id : null
+    if (!Number.isInteger(id) || id <= 0 || !Number.isInteger(issuedAt)) {
+        return null
+    }
+
+    return Date.now() - issuedAt < SESSION_MAX_AGE_MS ? id : null
 }
