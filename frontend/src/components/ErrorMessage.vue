@@ -14,6 +14,15 @@
     position: absolute;
     top: calc(var(--default-spacing) / 2);
     right: var(--default-spacing);
-    animation: slide-from-top 0.5s cubic-bezier(0.32, 0.08, 0, 1);
+    animation:
+        slide-from-top 0.5s cubic-bezier(0.32, 0.08, 0, 1),
+        fade-out 0.3s 4.7s forwards;
+}
+
+@keyframes fade-out {
+    to {
+        opacity: 0;
+        visibility: hidden;
+    }
 }
 </style>
