@@ -107,7 +107,52 @@
                     </div>
                 </button>
             </section>
+            <button
+                class="menu-toggle"
+                :class="{ open: menuOpen }"
+                :aria-expanded="menuOpen"
+                aria-label="menu"
+                @click="menuOpen = !menuOpen"
+            >
+                <ChevronDown :size="ICON_SIZE * 1.5" class="chevron" />
+            </button>
         </div>
+        <Transition name="drop">
+            <nav v-if="menuOpen" class="mobile-menu" @click="menuOpen = false">
+                <RouterLink
+                    v-if="user"
+                    :to="`/users/${user.id}`"
+                    class="option mobile-option"
+                >
+                    <UserRound :size="ICON_SIZE" />
+                    <span>profile</span>
+                </RouterLink>
+
+                <button
+                    v-else-if="!loading"
+                    @click="login"
+                    class="option mobile-option"
+                >
+                    <LogIn :size="ICON_SIZE" />
+                    <span>login</span>
+                </button>
+
+                <RouterLink to="/boards/no_mod" class="option mobile-option">
+                    <Trophy :size="ICON_SIZE" />
+                    <span>leaderboards</span>
+                </RouterLink>
+
+                <RouterLink to="/help" class="option mobile-option">
+                    <CircleQuestionMark :size="ICON_SIZE" />
+                    <span>how to play</span>
+                </RouterLink>
+
+                <RouterLink to="/run" class="option mobile-option">
+                    <Play :size="ICON_SIZE" />
+                    <span>start a run</span>
+                </RouterLink>
+            </nav>
+        </Transition>
     </header>
 </template>
 
@@ -118,18 +163,22 @@ import { ApiError } from '../lib/api.ts'
 import AppPopover from './AppPopover.vue'
 import {
     Asterisk,
+    ChevronDown,
     CircleQuestionMark,
     LoaderCircle,
     LogIn,
     LogOut,
+    Play,
     Trophy,
     UserRound
 } from '@lucide/vue'
+import { ref } from 'vue'
 
 const router = useRouter()
 const { user, loading, login, logout } = useSession()
 
 const ICON_SIZE = 20
+const menuOpen = ref(false)
 
 async function signOut() {
     try {
@@ -297,6 +346,58 @@ async function signOut() {
 
 .pfp {
     height: 48px;
+}
+
+.menu-toggle,
+.mobile-menu {
+    display: none;
+}
+
+.chevron {
+    transition: transform 0.2s;
+}
+
+.menu-toggle.open .chevron {
+    transform: rotate(180deg);
+}
+
+.mobile-menu {
+    position: absolute;
+    top: calc(100% + 2px);
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    background-color: var(--h-bg);
+    border-bottom: 2px solid var(--surface);
+}
+
+.mobile-option {
+    padding: 1rem var(--default-spacing);
+}
+
+.mobile-option:hover {
+    background-color: var(--surface);
+}
+
+.drop-enter-active,
+.drop-leave-active {
+    transition: clip-path 0.2s;
+}
+
+.drop-enter-from,
+.drop-leave-to {
+    clip-path: inset(0 0 100% 0);
+}
+
+@media (max-width: 700px) {
+    .h-group > :not(.rmc-logo) {
+        display: none;
+    }
+
+    .menu-toggle,
+    .mobile-menu {
+        display: flex;
+    }
 }
 
 @keyframes hop {
