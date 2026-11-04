@@ -48,6 +48,7 @@ const message = computed(
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    flex-shrink: 1;
 }
 
 .error-code {
