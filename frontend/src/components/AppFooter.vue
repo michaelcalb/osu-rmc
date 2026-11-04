@@ -3,14 +3,14 @@
         <div class="f-content">
             <span class="version">
                 v{{ commit.date }}・<a
-                    :href="`https://github.com/michaelcalb/osu-rmc/commit/${commit.hash}`"
+                    href="https://github.com/michaelcalb/osu-rmc"
                     target="_blank"
                     rel="noopener noreferrer"
                     >{{ commit.hash }}</a
                 >
             </span>
             <span class="f-text"
-                >made with
+                >made with&nbsp;
                 <abbr
                     title="love, passion &amp; coffee"
                     class="ily"
@@ -18,15 +18,15 @@
                     @mouseup="doYouLoveMeLoveMeLoveMe = false"
                     ><Heart :size="16"
                 /></abbr>
-                by
+                &nbsp;by&nbsp;
                 <a
                     href="https://osu.ppy.sh/users/13955247"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="michas"
                     >michas</a
-                ></span
-            >
+                >
+            </span>
         </div>
     </footer>
 </template>
@@ -61,9 +61,13 @@ watch(doYouLoveMeLoveMeLoveMe, (love) => {
 .f-content {
     display: flex;
     justify-content: space-between;
-    align-items: center;
     flex: 1;
     max-width: var(--content-max-width);
+}
+
+.f-text {
+    display: flex;
+    align-items: center;
 }
 
 .ily {
@@ -72,7 +76,7 @@ watch(doYouLoveMeLoveMeLoveMe, (love) => {
 }
 
 .ily svg {
-    vertical-align: middle;
+    display: block;
     fill: transparent;
     transition: fill 0.2s;
 }
