@@ -51,6 +51,7 @@
             </span>
         </h2>
         <TooltipProvider :delay-duration="0">
+            <div class="table-scroll">
             <table class="maps-table">
                 <tbody>
                     <template v-for="m in maps" :key="m.seq_index">
@@ -199,6 +200,7 @@
                     </template>
                 </tbody>
             </table>
+            </div>
         </TooltipProvider>
     </section>
 </template>
@@ -354,8 +356,11 @@ function secondsBetween(from: string, to: string): number {
 }
 
 .stats {
-    display: flex;
-    justify-content: center;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    width: fit-content;
+    margin: 0 auto;
     gap: var(--default-spacing);
     font-size: 1.5rem;
 }
@@ -370,6 +375,13 @@ function secondsBetween(from: string, to: string): number {
 .stat-label {
     font-size: 1rem;
     color: var(--text-muted-3);
+}
+
+@media (max-width: 700px) {
+    .stats {
+        grid-auto-flow: row;
+        gap: 1rem;
+    }
 }
 
 .section-title {
@@ -390,10 +402,22 @@ function secondsBetween(from: string, to: string): number {
     color: var(--text-muted-3);
 }
 
+.table-scroll {
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin-inline: calc(-1 * var(--default-spacing));
+    padding-inline: var(--default-spacing);
+}
+
+.table-scroll::-webkit-scrollbar {
+    display: none;
+}
+
 .maps-table {
     border-spacing: 0 0.5rem;
     padding-right: 0.5rem;
     width: 100%;
+    min-width: 600px;
     border-radius: 0.5rem;
     background-color: var(--bg-2);
     border: 2px solid var(--border);
@@ -445,11 +469,10 @@ tr:last-child .map-index::before {
     position: relative;
     display: inline-grid;
     place-items: center;
-    padding: 0.25rem;
     border-radius: 50%;
     border: 2px solid var(--surface);
-    width: 100%;
-    aspect-ratio: 1 / 1;
+    width: 2rem;
+    height: 2rem;
     background-color: var(--bg-2);
 }
 
@@ -481,6 +504,8 @@ tr:last-child .map-index::before {
 .map-link {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 50px;
+    align-items: center;
     overflow: hidden;
     border-radius: 0.5rem;
 }
@@ -510,7 +535,6 @@ tr:last-child .map-index::before {
 
 .map-img {
     width: 100%;
-    height: 50px;
     filter: brightness(50%);
     transform: scale(1.02);
     object-fit: cover;

@@ -198,12 +198,18 @@ armPoll(props.id)
 <style scoped>
 .heading {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
+    column-gap: var(--default-spacing);
 }
 
 .heading-group {
     text-align: end;
     font-size: 1.2rem;
+    margin-bottom: var(--default-spacing);
+    min-width: 0;
+    flex-shrink: 1;
+    margin-left: auto;
 }
 
 .ended-at {
@@ -226,6 +232,15 @@ armPoll(props.id)
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    min-width: 0;
+    flex-shrink: 1;
+}
+
+.username {
+    flex-shrink: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .detail-container {

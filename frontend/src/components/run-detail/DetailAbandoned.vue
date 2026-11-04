@@ -1,5 +1,5 @@
 <template>
-    <p>this run was abandoned.</p>
+    <p>this run was abandoned and will be deleted within the hour.</p>
     <p>{{ message }}</p>
 </template>
 
