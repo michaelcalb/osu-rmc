@@ -176,6 +176,10 @@ button {
     transform: scale(1.1);
 }
 
+.error {
+    color: var(--danger);
+}
+
 .rank-1,
 .rank-2,
 .rank-3 {

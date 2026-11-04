@@ -60,7 +60,7 @@
             </PaginationRoot>
         </nav>
 
-        <ErrorMessage v-if="error">{{ error }}</ErrorMessage>
+        <p v-if="error" class="error">{{ error }}</p>
         <p v-else-if="rows.length === 0">no runs yet</p>
         <TooltipProvider v-else :delay-duration="0">
             <table class="lb-table">
@@ -172,7 +172,6 @@ import { ApiError, get } from '../lib/api'
 import type { BoardPage, BoardRow } from '../lib/types'
 import { exactTime, timeAgo } from '../lib/time'
 import { formatAccuracy, formatScore } from '../lib/format'
-import ErrorMessage from '../components/ErrorMessage.vue'
 
 const LIMIT = 10
 
