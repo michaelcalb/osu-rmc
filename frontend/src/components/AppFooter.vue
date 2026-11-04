@@ -61,6 +61,8 @@ watch(doYouLoveMeLoveMeLoveMe, (love) => {
 .f-content {
     display: flex;
     justify-content: space-between;
+    flex-wrap: wrap;
+    column-gap: var(--default-spacing);
     flex: 1;
     max-width: var(--content-max-width);
 }
@@ -68,6 +70,7 @@ watch(doYouLoveMeLoveMeLoveMe, (love) => {
 .f-text {
     display: flex;
     align-items: center;
+    margin-left: auto;
 }
 
 .ily {
