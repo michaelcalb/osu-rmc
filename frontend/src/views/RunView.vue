@@ -119,14 +119,6 @@ async function onEnd() {
 }
 
 async function onValidate() {
-    if (
-        !confirm(
-            'if you are still playing the last map, finish it first. start validation?'
-        )
-    ) {
-        return
-    }
-
     await requestValidation()
 
     if (!error.value) {
