@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto"
+import { createHash } from 'node:crypto'
 
 export const SEQUENCE_LENGTH = 60
 

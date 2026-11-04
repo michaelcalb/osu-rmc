@@ -56,7 +56,11 @@ export class AuthController {
 
         const identity = await this.auth.login(code)
 
-        res.cookie(SESSION_COOKIE, sessionValue(identity.id), sessionCookieOptions())
+        res.cookie(
+            SESSION_COOKIE,
+            sessionValue(identity.id),
+            sessionCookieOptions()
+        )
 
         const frontend = process.env.FRONTEND_URL
 
