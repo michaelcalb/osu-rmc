@@ -130,6 +130,7 @@ import { CircleQuestionMark, Dices, Trophy } from '@lucide/vue'
     border-radius: 0.5rem;
     border: 2px solid transparent;
     overflow: hidden;
+    text-shadow: 1px 1px 2px #000;
     background:
         linear-gradient(
                 180deg,
@@ -155,6 +156,8 @@ import { CircleQuestionMark, Dices, Trophy } from '@lucide/vue'
 }
 
 .action-text {
+    position: relative;
+    z-index: 1;
     font-size: 1.2rem;
 }
 
