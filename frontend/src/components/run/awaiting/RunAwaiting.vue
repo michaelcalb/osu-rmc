@@ -9,9 +9,7 @@
             then, either start the validation (literally just click the button
             below) or delete it.
         </p>
-        <p>
-            if no action is taken in 8 hours, your run will be deleted.
-        </p>
+        <p>if no action is taken in 8 hours, your run will be deleted.</p>
     </section>
     <section class="controls">
         <button

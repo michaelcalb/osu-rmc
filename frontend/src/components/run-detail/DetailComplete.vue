@@ -52,154 +52,169 @@
         </h2>
         <TooltipProvider :delay-duration="0">
             <div class="table-scroll">
-            <table class="maps-table">
-                <tbody>
-                    <template v-for="m in maps" :key="m.seq_index">
-                        <tr
-                            v-if="m.seq_index === detail.run.truncated_at_index"
-                            class="truncation-row"
-                        >
-                            <td class="map-index">
-                                <span class="index-dot"
-                                    ><Flag :size="18"
-                                /></span>
-                            </td>
-                            <td :colspan="hasDisagreements ? 4 : 3">
-                                <div class="truncation">
-                                    <hr class="separator" />
-                                    <span class="truncation-text">
-                                        validation stopped: {{ truncationText }}
-                                    </span>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="map-index">
-                                <span class="index-dot">{{
-                                    m.seq_index + 1
-                                }}</span>
-                            </td>
-                            <td class="mono map-served-time">
-                                {{
-                                    formatClock(
-                                        secondsBetween(
-                                            detail.run.started_at,
-                                            m.served_at
-                                        )
-                                    )
-                                }}
-                            </td>
-                            <td>
-                                <a
-                                    :href="mapHref(m)"
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    :class="`map-link ${!m.confirmed_score_id && 'no-score'}`"
-                                >
-                                    <div class="map-info">
-                                        <div class="map-difficulty">
-                                            <span
-                                                :style="{
-                                                    backgroundColor: starColor(
-                                                        m.original_star_rating
-                                                    ),
-                                                    color: starTextColor(
-                                                        m.original_star_rating
-                                                    )
-                                                }"
-                                                class="star-rating-label"
-                                            >
-                                                <Star
-                                                    :size="14"
-                                                    :fill="
-                                                        starTextColor(
-                                                            m.original_star_rating
-                                                        )
-                                                    "
-                                                />
-                                                {{
-                                                    formatStars(
-                                                        m.original_star_rating
-                                                    )
-                                                }}
-                                            </span>
-                                        </div>
-                                        <span class="map-title">{{
-                                            m.title
-                                        }}</span>
-                                        <span
-                                            v-if="m.mods?.length"
-                                            class="map-mods"
-                                        >
-                                            <template
-                                                v-for="mod in m.mods"
-                                                :key="mod.acronym"
-                                            >
-                                                <img
-                                                    v-if="
-                                                        modIcon(
-                                                            modName(mod.acronym)
-                                                        )
-                                                    "
-                                                    :src="
-                                                        modIcon(
-                                                            modName(mod.acronym)
-                                                        )
-                                                    "
-                                                    :alt="mod.acronym"
-                                                    :title="
-                                                        modName(mod.acronym)
-                                                    "
-                                                    class="mod-icon"
-                                                />
-                                                <span v-else>{{
-                                                    mod.acronym
-                                                }}</span>
-                                            </template>
+                <table class="maps-table">
+                    <tbody>
+                        <template v-for="m in maps" :key="m.seq_index">
+                            <tr
+                                v-if="
+                                    m.seq_index ===
+                                    detail.run.truncated_at_index
+                                "
+                                class="truncation-row"
+                            >
+                                <td class="map-index">
+                                    <span class="index-dot"
+                                        ><Flag :size="18"
+                                    /></span>
+                                </td>
+                                <td :colspan="hasDisagreements ? 4 : 3">
+                                    <div class="truncation">
+                                        <hr class="separator" />
+                                        <span class="truncation-text">
+                                            validation stopped:
+                                            {{ truncationText }}
                                         </span>
                                     </div>
-                                    <MapCover
-                                        :map="m"
-                                        variant="slimcover"
-                                        class="map-img"
-                                    />
-                                </a>
-                            </td>
-                            <td>
-                                <div
-                                    :class="`map-outcome outcome-${m.outcome}`"
-                                >
-                                    <component :is="OUTCOME_ICONS[m.outcome]" />
-                                    <span>
-                                        {{ OUTCOME_LABELS[m.outcome] }}
-                                    </span>
-                                </div>
-                            </td>
-                            <td v-if="hasDisagreements" class="map-claim">
-                                <TooltipRoot v-if="disagrees(m)">
-                                    <TooltipTrigger class="claim-trigger">
-                                        <TriangleAlert
-                                            :size="20"
-                                            :aria-label="`invalid claim on map ${m.seq_index + 1}`"
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="map-index">
+                                    <span class="index-dot">{{
+                                        m.seq_index + 1
+                                    }}</span>
+                                </td>
+                                <td class="mono map-served-time">
+                                    {{
+                                        formatClock(
+                                            secondsBetween(
+                                                detail.run.started_at,
+                                                m.served_at
+                                            )
+                                        )
+                                    }}
+                                </td>
+                                <td>
+                                    <a
+                                        :href="mapHref(m)"
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        :class="`map-link ${!m.confirmed_score_id && 'no-score'}`"
+                                    >
+                                        <div class="map-info">
+                                            <div class="map-difficulty">
+                                                <span
+                                                    :style="{
+                                                        backgroundColor:
+                                                            starColor(
+                                                                m.original_star_rating
+                                                            ),
+                                                        color: starTextColor(
+                                                            m.original_star_rating
+                                                        )
+                                                    }"
+                                                    class="star-rating-label"
+                                                >
+                                                    <Star
+                                                        :size="14"
+                                                        :fill="
+                                                            starTextColor(
+                                                                m.original_star_rating
+                                                            )
+                                                        "
+                                                    />
+                                                    {{
+                                                        formatStars(
+                                                            m.original_star_rating
+                                                        )
+                                                    }}
+                                                </span>
+                                            </div>
+                                            <span class="map-title">{{
+                                                m.title
+                                            }}</span>
+                                            <span
+                                                v-if="m.mods?.length"
+                                                class="map-mods"
+                                            >
+                                                <template
+                                                    v-for="mod in m.mods"
+                                                    :key="mod.acronym"
+                                                >
+                                                    <img
+                                                        v-if="
+                                                            modIcon(
+                                                                modName(
+                                                                    mod.acronym
+                                                                )
+                                                            )
+                                                        "
+                                                        :src="
+                                                            modIcon(
+                                                                modName(
+                                                                    mod.acronym
+                                                                )
+                                                            )
+                                                        "
+                                                        :alt="mod.acronym"
+                                                        :title="
+                                                            modName(mod.acronym)
+                                                        "
+                                                        class="mod-icon"
+                                                    />
+                                                    <span v-else>{{
+                                                        mod.acronym
+                                                    }}</span>
+                                                </template>
+                                            </span>
+                                        </div>
+                                        <MapCover
+                                            :map="m"
+                                            variant="slimcover"
+                                            class="map-img"
                                         />
-                                    </TooltipTrigger>
-                                    <TooltipPortal>
-                                        <TooltipContent
-                                            class="tooltip"
-                                            :side-offset="4"
-                                        >
-                                            {{ CLAIM_TEXT[m.claimed_outcome!] }}
-                                            <br />
-                                            but
-                                            {{ VERDICT_TEXT[m.outcome] }}
-                                        </TooltipContent>
-                                    </TooltipPortal>
-                                </TooltipRoot>
-                            </td>
-                        </tr>
-                    </template>
-                </tbody>
-            </table>
+                                    </a>
+                                </td>
+                                <td>
+                                    <div
+                                        :class="`map-outcome outcome-${m.outcome}`"
+                                    >
+                                        <component
+                                            :is="OUTCOME_ICONS[m.outcome]"
+                                        />
+                                        <span>
+                                            {{ OUTCOME_LABELS[m.outcome] }}
+                                        </span>
+                                    </div>
+                                </td>
+                                <td v-if="hasDisagreements" class="map-claim">
+                                    <TooltipRoot v-if="disagrees(m)">
+                                        <TooltipTrigger class="claim-trigger">
+                                            <TriangleAlert
+                                                :size="20"
+                                                :aria-label="`invalid claim on map ${m.seq_index + 1}`"
+                                            />
+                                        </TooltipTrigger>
+                                        <TooltipPortal>
+                                            <TooltipContent
+                                                class="tooltip"
+                                                :side-offset="4"
+                                            >
+                                                {{
+                                                    CLAIM_TEXT[
+                                                        m.claimed_outcome!
+                                                    ]
+                                                }}
+                                                <br />
+                                                but
+                                                {{ VERDICT_TEXT[m.outcome] }}
+                                            </TooltipContent>
+                                        </TooltipPortal>
+                                    </TooltipRoot>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
             </div>
         </TooltipProvider>
     </section>

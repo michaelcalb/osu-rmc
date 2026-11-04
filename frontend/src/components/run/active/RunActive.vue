@@ -289,7 +289,9 @@ button:disabled {
 .map-img {
     width: 100%;
     filter: brightness(50%);
-        height: calc((var(--content-max-width) - 2 * var(--default-spacing)) / 2 * 187 / 500);
+    height: calc(
+        (var(--content-max-width) - 2 * var(--default-spacing)) / 2 * 187 / 500
+    );
     object-fit: cover;
     transition: 0.2s;
 }
@@ -322,7 +324,7 @@ button:disabled {
     gap: 0.3rem;
     padding: 0.2rem 0.5rem;
     border-radius: 1rem;
-    font-size: .9rem;
+    font-size: 0.9rem;
     text-shadow: none;
 }
 

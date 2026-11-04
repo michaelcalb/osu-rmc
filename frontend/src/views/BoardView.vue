@@ -61,90 +61,92 @@
         <p v-else-if="rows.length === 0">no runs yet</p>
         <TooltipProvider v-else :delay-duration="0">
             <div class="table-scroll">
-            <table class="lb-table">
-                <thead>
-                    <tr class="lb-h-row">
-                        <th></th>
-                        <th></th>
-                        <th>FCs</th>
-                        <th>score</th>
-                        <th>accuracy</th>
-                        <th>time</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr
-                        v-for="(row, index) in rows"
-                        :key="row.id"
-                        class="lb-row"
-                        @click="router.push(`/runs/${row.id}`)"
-                    >
-                        <td>
-                            <RouterLink
-                                :to="`/runs/${row.id}`"
-                                :class="`rank-${offset + index + 1}`"
-                                @click.stop
-                            >
-                                #{{ offset + index + 1 }}
-                            </RouterLink>
-                        </td>
-                        <td>
-                            <div class="user">
+                <table class="lb-table">
+                    <thead>
+                        <tr class="lb-h-row">
+                            <th></th>
+                            <th></th>
+                            <th>FCs</th>
+                            <th>score</th>
+                            <th>accuracy</th>
+                            <th>time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr
+                            v-for="(row, index) in rows"
+                            :key="row.id"
+                            class="lb-row"
+                            @click="router.push(`/runs/${row.id}`)"
+                        >
+                            <td>
                                 <RouterLink
-                                    class="pfp-box"
-                                    :to="`/users/${row.user_id}`"
+                                    :to="`/runs/${row.id}`"
+                                    :class="`rank-${offset + index + 1}`"
                                     @click.stop
                                 >
-                                    <img
-                                        :src="`https://a.ppy.sh/${row.user_id}`"
-                                        :alt="row.username"
-                                        class="pfp"
-                                    />
+                                    #{{ offset + index + 1 }}
                                 </RouterLink>
-                                <RouterLink
-                                    class="username"
-                                    :to="`/users/${row.user_id}`"
-                                    @click.stop
-                                >
-                                    {{ row.username }}
-                                </RouterLink>
-                            </div>
-                        </td>
-                        <td>
-                            {{ row.fc_count }}
-                        </td>
-                        <td>
-                            {{ formatScore(row.avg_fc_score) }}
-                        </td>
-                        <td>
-                            {{ formatAccuracy(row.avg_fc_accuracy) }}
-                        </td>
-                        <td>
-                            <TooltipRoot v-if="row.ended_at">
-                                <TooltipTrigger
-                                    as="time"
-                                    :datetime="row.ended_at"
-                                >
-                                    {{ timeAgo(row.ended_at) }}
-                                </TooltipTrigger>
-                                <TooltipPortal>
-                                    <TooltipContent
-                                        class="tooltip"
-                                        :side-offset="4"
+                            </td>
+                            <td>
+                                <div class="user">
+                                    <RouterLink
+                                        class="pfp-box"
+                                        :to="`/users/${row.user_id}`"
+                                        @click.stop
                                     >
-                                        <p>
-                                            {{ exactTime(row.ended_at).date }}
-                                            <span class="tooltip-time">{{
-                                                exactTime(row.ended_at).time
-                                            }}</span>
-                                        </p>
-                                    </TooltipContent>
-                                </TooltipPortal>
-                            </TooltipRoot>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                                        <img
+                                            :src="`https://a.ppy.sh/${row.user_id}`"
+                                            :alt="row.username"
+                                            class="pfp"
+                                        />
+                                    </RouterLink>
+                                    <RouterLink
+                                        class="username"
+                                        :to="`/users/${row.user_id}`"
+                                        @click.stop
+                                    >
+                                        {{ row.username }}
+                                    </RouterLink>
+                                </div>
+                            </td>
+                            <td>
+                                {{ row.fc_count }}
+                            </td>
+                            <td>
+                                {{ formatScore(row.avg_fc_score) }}
+                            </td>
+                            <td>
+                                {{ formatAccuracy(row.avg_fc_accuracy) }}
+                            </td>
+                            <td>
+                                <TooltipRoot v-if="row.ended_at">
+                                    <TooltipTrigger
+                                        as="time"
+                                        :datetime="row.ended_at"
+                                    >
+                                        {{ timeAgo(row.ended_at) }}
+                                    </TooltipTrigger>
+                                    <TooltipPortal>
+                                        <TooltipContent
+                                            class="tooltip"
+                                            :side-offset="4"
+                                        >
+                                            <p>
+                                                {{
+                                                    exactTime(row.ended_at).date
+                                                }}
+                                                <span class="tooltip-time">{{
+                                                    exactTime(row.ended_at).time
+                                                }}</span>
+                                            </p>
+                                        </TooltipContent>
+                                    </TooltipPortal>
+                                </TooltipRoot>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </TooltipProvider>
     </div>
