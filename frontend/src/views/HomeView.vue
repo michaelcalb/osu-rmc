@@ -126,6 +126,7 @@ import { CircleQuestionMark, Dices, Trophy } from '@lucide/vue'
 }
 
 .action-link {
+    min-height: 80px;
     position: relative;
     border-radius: 0.5rem;
     border: 2px solid transparent;
@@ -168,5 +169,11 @@ import { CircleQuestionMark, Dices, Trophy } from '@lucide/vue'
     margin-block: auto;
     color: rgb(from var(--accent) r g b / 0.5);
     transition: 0.2s;
+}
+
+@media (max-width: 700px) {
+    .content-container {
+        grid-template-columns: 1fr;
+    }
 }
 </style>

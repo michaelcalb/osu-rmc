@@ -200,4 +200,16 @@ try {
 .stats-box dd {
     color: var(--text-muted-3);
 }
+
+@media (max-width: 700px) {
+    .box {
+        grid-template-columns: 1fr;
+    }
+
+    .v-separator {
+        width: auto;
+        height: 2px;
+        margin: 0;
+    }
+}
 </style>

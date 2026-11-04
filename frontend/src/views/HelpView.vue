@@ -243,4 +243,19 @@ import ModList from '../components/ModList.vue'
     font-weight: 300;
     font-size: 2rem;
 }
+
+@media (max-width: 700px) {
+    .layout {
+        grid-template-columns: 1fr;
+    }
+
+    .toc {
+        position: static;
+        flex-direction: row;
+        flex-wrap: wrap;
+        column-gap: 1rem;
+        border-right: none;
+        border-bottom: 2px solid var(--border);
+    }
+}
 </style>

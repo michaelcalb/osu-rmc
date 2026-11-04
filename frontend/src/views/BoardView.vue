@@ -19,9 +19,6 @@
                         >free mod</RouterLink
                     >
                 </div>
-                <span class="total-runs"
-                    >{{ total }} run{{ total === 1 ? '' : 's' }}</span
-                >
             </div>
 
             <PaginationRoot
@@ -63,6 +60,7 @@
         <p v-if="error" class="error">{{ error }}</p>
         <p v-else-if="rows.length === 0">no runs yet</p>
         <TooltipProvider v-else :delay-duration="0">
+            <div class="table-scroll">
             <table class="lb-table">
                 <thead>
                     <tr class="lb-h-row">
@@ -147,6 +145,7 @@
                     </tr>
                 </tbody>
             </table>
+            </div>
         </TooltipProvider>
     </div>
 </template>
@@ -246,15 +245,11 @@ await load()
     flex-direction: column;
     gap: 0.1rem;
     align-self: flex-start;
+    margin-bottom: var(--default-spacing);
 }
 
 .active {
     background-color: var(--surface);
-}
-
-.total-runs {
-    align-self: flex-end;
-    color: var(--text-muted-2);
 }
 
 .pagination-list {
@@ -299,12 +294,25 @@ await load()
     align-items: center;
 }
 
+.table-scroll {
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin-inline: calc(-1 * var(--default-spacing));
+    padding-inline: var(--default-spacing);
+}
+
+.table-scroll::-webkit-scrollbar {
+    display: none;
+}
+
 .lb-table {
     width: 100%;
+    min-width: 700px;
     border-spacing: 0 0.25rem;
 }
 
 .lb-table :is(th, td) {
+    white-space: nowrap;
     text-align: left;
     min-width: 3rem;
 }
