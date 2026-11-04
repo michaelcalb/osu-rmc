@@ -262,7 +262,7 @@ button:disabled {
 }
 
 .map-link:hover .map-img {
-    transform: scale(1.04);
+    transform: scale(1.02);
 }
 
 .map-link > * {
@@ -289,8 +289,7 @@ button:disabled {
 .map-img {
     width: 100%;
     filter: brightness(50%);
-    transform: scale(1.02);
-    aspect-ratio: 500 / 187;
+        height: calc((var(--content-max-width) - 2 * var(--default-spacing)) / 2 * 187 / 500);
     object-fit: cover;
     transition: 0.2s;
 }
@@ -323,7 +322,7 @@ button:disabled {
     gap: 0.3rem;
     padding: 0.2rem 0.5rem;
     border-radius: 1rem;
-    font-size: 0.9rem;
+    font-size: .9rem;
     text-shadow: none;
 }
 
@@ -440,5 +439,23 @@ button:disabled {
 
 .end-run-btn {
     background-color: #722727;
+}
+
+@media (max-width: 700px) {
+    .timer-container,
+    .map-container,
+    .timer-swap-btn-group,
+    .controls-container,
+    .finish-run-btn-group {
+        flex-direction: column;
+    }
+
+    .map-link {
+        width: 100%;
+    }
+
+    .timer-swap-btn-group > * {
+        padding: 1rem;
+    }
 }
 </style>
