@@ -1,19 +1,20 @@
 <template>
     <AppHeader />
 
-    <main class="main" v-show="ready">
-        <RouterView v-slot="{ Component, route }">
-            <Suspense
-                v-if="Component"
-                @pending="navigating = true"
-                @resolve="onResolve"
-            >
-                <component :is="Component" :key="route.path" />
-            </Suspense>
-        </RouterView>
-    </main>
-
-    <AppFooter v-show="ready" />
+    <div class="page">
+        <main class="main" v-show="ready">
+            <RouterView v-slot="{ Component, route }">
+                <Suspense
+                    v-if="Component"
+                    @pending="navigating = true"
+                    @resolve="onResolve"
+                >
+                    <component :is="Component" :key="route.path" />
+                </Suspense>
+            </RouterView>
+        </main>
+        <AppFooter v-show="ready" />
+    </div>
 
     <div v-if="navigating" class="page-loading">
         <LoaderCircle class="spinner" :size="48" />
@@ -39,13 +40,20 @@ function onResolve() {
 </script>
 
 <style scoped>
+.page {
+    margin: 0 auto;
+    width: 100%;
+    max-width: var(--content-max-width);
+    background-color: var(--bg-2);
+    border-radius: 0 0 1rem 1rem;
+}
+
 .main {
     position: relative;
     display: flex;
     flex-direction: column;
     justify-self: center;
     width: 100%;
-    max-width: var(--content-max-width);
     border-radius: 0 0 1rem 1rem;
     background: linear-gradient(to bottom, var(--h-bg), var(--surface)) fixed
         border-box;
