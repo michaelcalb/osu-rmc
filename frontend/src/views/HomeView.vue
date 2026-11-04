@@ -33,11 +33,6 @@
                 first before hopping into your first run.
             </p>
             <p>
-                this project is still a work in progress, so expect a lot of
-                changes, design-wise mostly. the core mechanics will most likely
-                remain the same.
-            </p>
-            <p>
                 if you're having trouble, have any questions or just want to
                 share your thoughts on this project, feel free to contact me
                 through
@@ -55,18 +50,44 @@
                     rel="noopener noreferrer"
                     class="link-1"
                     >Discord</a
-                >. thanks for playing <span class="mono">&lt;3</span>
+                >. thanks for stopping by. <span class="mono">&lt;3</span>
+            </p>
+            <p>
+                this project is not affiliated with
+                <a
+                    href="https://osu.ppy.sh/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="link-1"
+                    >osu!</a
+                >
             </p>
             <p>glhf! <span class="mono">;&rpar;</span></p>
         </section>
-        <section class="idk-section">
-            <span>empty space <span class="mono">;&lpar;</span></span>
+        <section class="actions-section">
+            <RouterLink to="/help" class="action-link">
+                <p class="action-text">check the rules</p>
+                <CircleQuestionMark
+                    :stroke-width="0.5"
+                    :size="112"
+                    class="action-icon"
+                />
+            </RouterLink>
+            <RouterLink to="/boards/no_mod" class="action-link">
+                <p class="action-text">view the leaderboards</p>
+                <Trophy :stroke-width="0.5" :size="112" class="action-icon" />
+            </RouterLink>
+            <RouterLink to="/run" class="action-link">
+                <p class="action-text">start a new run</p>
+                <Dices :stroke-width="0.5" :size="112" class="action-icon" />
+            </RouterLink>
         </section>
     </div>
 </template>
 
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
+import { CircleQuestionMark, Dices, Trophy } from '@lucide/vue'
 </script>
 
 <style scoped>
@@ -99,13 +120,54 @@ import { RouterLink } from 'vue-router'
     font-size: 1.1rem;
 }
 
-.idk-section {
-    background-color: var(--bg);
-    border: 2px dashed var(--border);
-    border-radius: 10px;
-    opacity: 0.5;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.intro-section > :last-child {
+    text-align: right;
+}
+
+.actions-section {
+    display: grid;
+    gap: calc(var(--default-spacing) / 2);
+}
+
+.action-link {
+    position: relative;
+    border-radius: 0.5rem;
+    border: 2px solid transparent;
+    overflow: hidden;
+    background:
+        linear-gradient(
+                180deg,
+                var(--bg-2),
+                rgb(from var(--accent) r g b / 0.1)
+            )
+            padding-box,
+        linear-gradient(var(--bg-2), var(--bg-2)) padding-box,
+        linear-gradient(180deg, var(--bg-2), var(--accent)) border-box;
+}
+
+.action-link:hover {
+    background: rgb(from var(--accent) r g b / 0.1) padding-box;
+    border-color: var(--accent);
+}
+
+.action-link:hover .action-icon {
+    transform: scale(1.1) rotate(-2deg);
+}
+
+.action-link > * {
+    margin: 1rem;
+}
+
+.action-text {
+    font-size: 1.2rem;
+}
+
+.action-icon {
+    position: absolute;
+    inset-block: 0;
+    right: 0;
+    margin-block: auto;
+    color: rgb(from var(--accent) r g b / 0.5);
+    transition: 0.2s;
 }
 </style>
