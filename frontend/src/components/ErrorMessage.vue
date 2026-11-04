@@ -4,6 +4,7 @@
 
 <style scoped>
 .error {
+    z-index: 1;
     color: var(--danger);
     background-color: var(--bg-2);
     font-size: 1rem;
@@ -11,6 +12,7 @@
     border-radius: 0.5rem;
     padding: 0.25rem 0.5rem;
     width: fit-content;
+    max-width: calc(100% - 2 * var(--default-spacing));
     position: absolute;
     top: calc(var(--default-spacing) / 2);
     right: var(--default-spacing);
