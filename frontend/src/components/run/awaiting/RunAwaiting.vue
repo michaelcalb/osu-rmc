@@ -10,8 +10,7 @@
             below) or delete it.
         </p>
         <p>
-            if no action is taken in 8 hours, your run will be considered
-            "forgotten" and will be deleted.
+            if no action is taken in 8 hours, your run will be deleted.
         </p>
     </section>
     <section class="controls">
@@ -49,6 +48,7 @@ const emit = defineEmits<{
 
 .controls {
     display: flex;
+    flex-wrap: wrap;
     gap: var(--default-spacing);
     margin-top: var(--default-spacing);
 }
@@ -65,6 +65,6 @@ const emit = defineEmits<{
 }
 
 .delete-btn {
-    background-color: rgb(from var(--danger) r g b / 50%);
+    background-color: #722727;
 }
 </style>
