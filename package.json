@@ -5,6 +5,7 @@
         "dev": "pnpm run \"/^dev:/\"",
         "dev:frontend": "pnpm --dir frontend dev",
         "dev:backend": "pnpm --dir backend start:dev",
+        "build": "pnpm format && pnpm --dir backend build && pnpm --dir frontend build",
         "format": "prettier --write --ignore-unknown \"{backend,frontend}/src/**\" \"backend/test/**\"",
         "format:check": "prettier --check --ignore-unknown \"{backend,frontend}/src/**\" \"backend/test/**\""
     },
