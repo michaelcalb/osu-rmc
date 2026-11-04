@@ -120,10 +120,6 @@ import { CircleQuestionMark, Dices, Trophy } from '@lucide/vue'
     font-size: 1.1rem;
 }
 
-.intro-section > :last-child {
-    text-align: right;
-}
-
 .actions-section {
     display: grid;
     gap: calc(var(--default-spacing) / 2);
