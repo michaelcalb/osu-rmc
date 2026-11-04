@@ -1,6 +1,4 @@
 <template>
-    <Note v-if="profile"> wip, expect changes </Note>
-
     <ErrorPage v-if="error !== null" :status="error" />
     <template v-else-if="profile">
         <section class="title-section">
@@ -88,7 +86,6 @@ import type { Profile } from '../lib/types'
 import { formatHours } from '../lib/time'
 import { formatAccuracy, formatBoard } from '../lib/format.ts'
 import { ExternalLink } from '@lucide/vue'
-import Note from '../components/Note.vue'
 import ErrorPage from '../components/ErrorPage.vue'
 
 const props = defineProps<{ id: string }>()
