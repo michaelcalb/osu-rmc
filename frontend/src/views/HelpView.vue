@@ -159,7 +159,7 @@
                 </p>
                 <p>
                     for a more in depth version of how the validation process
-                    works, refer to this documentation.
+                    works, refer to <a href="https://docs.michas.dev/osu-rmc/validation" target="_blank" rel="noopener noreferrer" class="link-1">this documentation</a>.
                 </p>
             </section>
 
